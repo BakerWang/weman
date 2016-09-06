@@ -1,0 +1,93 @@
+<form id="editAdvanceForm">
+	<div id="Member_Form_Advance_" class="detail">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%">
+			<tbody>
+				<tr>
+					<th style="width: 150px;">当前预存款:</th>
+					<td id="curr">${member.advance?c }</td>
+				</tr>
+				<tr>
+					<th>预存款充值</th>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<th>充值金额（增/减）:</th>
+					<td><input class="input_text" type="text"
+						name="modify_advance" size="20" dataType="float"
+						id="modify_advance" /> 输入负值即可减少预存款</td>
+				</tr>
+				<tr>
+					<th>备注:</th>
+					<td><input class="input_text" type="text" name="modify_memo"
+						size="30" id="modify_memo" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<input type="hidden" value="${memberid }" name="memberid" />
+	</div>
+	<div class="submitlist" align="center">
+		<table>
+			<tr>
+				<td><input name="button" type="button" value="　确　定　"
+					class="submitBtn button blueButton" id="editAdvanceBtn" /></td>
+			</tr>
+		</table>
+	</div>
+</form>
+
+<div class="detail">
+	<table cellspacing="0" cellpadding="0" border="0" width="100%">
+		<thead>
+			<tr>
+				<th>交易时间</th>
+				<th>业务摘要</th>
+				<th>存入金额</th>
+				<th>支出金额</th>
+				<th>当前余额</th>
+				<th>支付方式</th>
+				<th>订单号</th>
+				<th>管理备注</th>
+			</tr>
+		</thead>
+		<tbody>
+			<#list listAdvanceLogs as advance>
+			<tr>
+				<td><@dateformat pattern="yyyy-MM-dd HH:mm:ss"
+					time="${advance.mtime?c}" /></td>
+				<td>${advance.memo}</td>
+				<td>${advance.import_money?string("currency")}</td>
+				<td>${advance.explode_money?string("currency")}</td>
+				<td>${advance.member_advance?string("currency")}</td>
+				<td>${advance.paymethod!''}</td>
+				<td>${advance.order_id!''}</td>
+				<td>${advance.message!''}</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+</div>
+<script>
+	$(function() {
+		$("#editAdvanceBtn").click(function() {
+				$.Loading.show('正在更新数据，请稍侯...');
+				var that = this;
+				var options = {
+					url : "${ctx}/shop/admin/member!editAdvance.do",
+					type : "POST",
+					dataType : 'json',
+					success : function(result) {
+						if (result.result == 1) {
+							$.Loading.success(result.message);
+						} else {
+							$.Loading.error(result.message);
+						}
+					},
+					error : function(e) {
+						$.Loading.hide();
+						alert("出现错误 ，请重试");
+					}
+				};
+				$('#editAdvanceForm').ajaxSubmit(options);
+		});
+	});
+</script>

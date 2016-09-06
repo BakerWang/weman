@@ -1,0 +1,190 @@
+<#include '/admin/header.html' > 
+<#assign dateformat="com.enation.framework.directive.DateformateDirective"?new()>
+<#assign permssion="com.enation.app.base.core.directive.PermssionDirective"?new()>
+
+<style>
+.input_text {
+	width: 180px;
+}
+</style>
+
+<div class="main">
+	<form method="post" id="theForm">
+		<input type="hidden" value="${orderinfo.member_id!'' }" name="sellBackList.member_id" />
+		<input type="hidden" value="${orderinfo.order_id }" name="orderId" />
+		<input type="hidden" value="1" name="status"/>
+		<div class="shadowBoxWhite  whiteBox detail">
+			<table cellspacing="0" cellpadding="0" border="0" style="width: 99%;">
+				<tr>
+					<th class="title" colspan="8">退货申请</th>
+				</tr>
+				<tr>
+					<td align="right">退货单号：</td>
+					<td>${orderinfo.sn } <input type="hidden" name="sellBackList.tradeno" value="${orderinfo.sn }" /></td>
+					<td>状态：</td>
+					<td>申请退货</td>
+				</tr>
+				<tr>
+					<td>关联订单号：</td>
+					<td>${orderinfo.sn } 
+						<input type="hidden" name="sellBackList.ordersn" value="${orderinfo.sn }" /></td>
+					<td>订单使用：</td>
+					<td><span id="meta"></span> 已支付：￥${orderinfo.paymoney}</td>
+				</tr>
+
+				<tr>
+					<td>退货人：</td>
+					<td>${orderinfo.ship_name } 
+						<input type="hidden" name="sellBackList.sndto" value="${orderinfo.ship_name }">
+					</td>
+					<td>退货仓库：</td>
+					<td >
+						<select id="depotid" name="depotid" class="input_text">
+							<#list depotlist as dl >
+								<option value="${dl.id }">${dl.name }</option>
+							</#list>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>退款方式：</td>
+					<td>
+						<select name="sellBackList.refund_way" id="refund_way"> 
+							<option value="0">-- 请选择退款方式 --</option>
+							<#list paymentList as payment  >
+								<#if payment.type!="cod">
+									<option value="${payment.name}"> ${payment.name} </option>
+								</#if>
+							</#list>
+						</select>
+					</td>
+					<td>退款账号</td>
+					<td><input type="text" class="input_text" id="return_account" name="sellBackList.return_account" data-options="required:true"/> </td>
+				</tr>
+				<tr>
+					<td align="right">操作备注：</td>
+					<td colspan="3">
+						<input type="text" class="input_text" value="" id="seller_remark" name="sellBackList.seller_remark" />
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br>
+		<div class="shadowBoxWhite  whiteBox detail" >
+			<table class="goodsList" cellspacing="0" cellpadding="0" border="0" style="width: 99%;">
+				<thead>
+					<tr>
+						<th class="title" colspan="5">请选择要退货的商品</th>
+					</tr>
+					<tr>
+						<th data-options="field:'gid',width:50">选择</th>
+						<th data-options="field:'name',width:300">商品名称</th>
+						<th data-options="field:'price',width:100">金额</th>
+						<th data-options="field:'payNum',width:200">购买数量</th>
+						<th data-options="field:'goodsNum',width:160">退货数量</th>
+					</tr>
+				</thead>
+				<#list orderItem as data>
+					<tr>
+						<td>
+							<input type="checkbox" checked="" value="${data.goods_id }" name="goodsId" /> 
+							<input type="hidden" checked="" value="${data.goods_id }" name="gid" />
+							<input type="hidden" value="${data.product_id}" name="productId" >
+						</td>
+						<td>${data.name }&nbsp;&nbsp;${data.other!''}<input type="hidden" name="goodsName"
+							value="${data.name }" />
+						</td>
+						<td>${data.price } <input type="hidden" name="goodsPrice"
+							value="${data.price }" />
+						</td>
+						<td>${data.num } <input type="hidden" name="payNum"
+							class="input_text" value="${data.num }" />
+						</td>
+						<td>
+							<input type="text" class="input_text  easyui-numberbox" value="${data.num }" id="goodsNum" 
+							 style="width: 80%;" name="goodsNum" data-options="required:true" num="${data.num }" />
+						</td>
+					</tr>
+				</#list>
+			</table>
+		</div>
+	</form>
+	<div class="buttonWrap">
+		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交申请</a>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+function is_number(val){
+	var reg=/^(-?\d*)\.?\d{1,3}$/;
+	if(!reg.test(val)){
+		return false;
+	}else{
+		return true;
+	}
+}
+
+function submitForm() {
+	var next=true;
+	$("input[name='goodsNum']").each(function(){
+		var n = $(this).val();
+		var num = $(this).attr("num");
+		alert($(this).attr("num"));
+		if(n==0){
+			alert("退货数量不能为 0 ");
+			next= false;
+		}
+		if(!$.isNumeric(n)){
+			alert("请输入数字");
+			$(this).val(0);
+			next= false;
+		}
+		if(parseInt(n)>parseInt(num)){
+			alert("您输入的数量大于客户购买数量，请重新输入数量！");
+			$(this).val(0);
+			next= false;
+		}
+	});
+	if(!next){
+		return false;
+	}
+	if($("#refund_way").val()=="0"){
+		alert("请选择退款方式");
+		return false;
+	}
+	if($("#return_account").val()==""){
+		alert("请填写退款账号");
+		return false;
+	}
+	var formflag= $("#theForm").form('validate');
+	if(formflag){
+		$.Loading.success("正在提交......");
+		$(".savebtn").linkbutton("disable");
+		var options = {
+				url : "sellBack!save.do",
+				type : "POST",
+				dataType : 'json',
+				success : function(result){
+					if(result.result==1){
+						$.Loading.success(result.message);
+						parent.reloadTabGrid("退货单");
+						newTab("退货入库","${ctx}/shop/admin/sellBack!returned.do?id="+result.id);						
+						parent.CloseTabByTitle("申请退货");
+					}
+					if(result.result==0){ 
+						$.Loading.error(result.message);
+					}
+					$(".savebtn").linkbutton("enable");
+				},
+				error : function(e) {
+					alert("出现错误 ，请重试");
+					$(".savebtn").linkbutton("enable");
+				}
+			};
+		$("#theForm").ajaxSubmit(options);
+	}		 
+}
+
+</script>
+<#include '/admin/footer.html' >

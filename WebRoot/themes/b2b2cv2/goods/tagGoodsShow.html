@@ -1,0 +1,134 @@
+<#include '/store/store_header.html' />
+<#assign storeTagsGoods=newTag("storeTagsGoodsTag")>
+<#assign storeTagsGoodsList=storeTagsGoods("'mark':'${mark}'")>
+<div class="store_center">
+<#include '/store/left_menu.html' />
+	<div id="sotre_right_content" class="sotre_right_content">
+		<div class="path">
+			<span style="color:#999;">您的位置：</span>
+			<span>></span>
+			<a href="#"> 分类管理 </a><span>></span>标签列表
+		</div>
+		<div class="store_right_main">
+			<div class="tabmenu">
+				<ul class="tab pngFix">
+					<li class="active">
+						<a hre="#">标签列表</a>
+					</li>
+				</ul>
+				<a class="ncu_btn3" id="add" href="javascript:void(0);" mark="${mark}" tagid="${tagid}" style="right:150px;">添加标签</a> 
+				<a class="ncu_btn3" id="delete" href="javascript:void(0);" style="right:75px;">批量删除</a> 
+				<a class="ncu_btn3" id="saveSort" href="javascript:void(0);" >保存排序</a> 
+			</div>
+			<!-- 标签列表 -->
+			<form id="goodsTagForm">
+			<input type="hidden" name="tagId" value="${tagid}"/>
+			<div class="store_tab_list">
+				<div class="s_commont_list">
+	  				<table class="groupbuy_list_table sotre_tab_list"  id="detailFind">
+	  					<tbody>
+	  						<tr>
+	  							<th style="width:400px;text-align:center;">商品名称</th>
+	  							<th style="width:300px;text-align:center;">排序</th>
+	  							<th style="width:100px;text-align:center;">操作</th>
+	  						</tr>
+	  					</tbody>
+	  					<tbody>
+	  						<#list storeTagsGoodsList.goodsTag.result as storeTagGoods>
+	  							<tr>
+	  								<td style="width:400px;">
+	  									<input type="checkbox" name="reg_id" value="${storeTagGoods.goods_id}" class="select_tab_store">
+	  									<span>
+	  										<@substring	title="${storeTagGoods.name}" length="50" dot="..." />
+										</span>	
+	  								</td>
+	  								<td style="width:300px;">
+	  									<input type="hidden" name="regId" value="${storeTagGoods.goods_id}">
+								    	<input type="text" name="ordernum" class="ordernum input_text" value="${storeTagGoods.ordernum!'0'}" reg_id="${storeTagGoods.goods_id}"/>
+								    	<input type="hidden" id="order_num_${storeTagGoods.goods_id}" value="${storeTagGoods.ordernum!'0'}">
+	  								</td>
+	  								<td class="storegoodslist_tools">
+	  									<a href="javascript:void" name="delteRel" reg_id="${storeTagGoods.goods_id}" class="tool2"><i></i>删除</a>
+	  								</td>
+	  							</tr>
+	  						</#list>
+	  					</tbody>
+	  				</table>
+	  			</div>	
+			</div>
+			</form>
+		</div>	
+	</div>
+</div>
+
+<script type="text/javascript">
+
+$(function(){
+	$("#saveSort").click(function(){
+		var options = {
+				url : "${ctx}/api/b2b2c/tag!saveSort.do?ajax=yes",
+				type : "POST",
+				dataType : 'json',
+				success : function(data) {	
+					alert(data.message);
+					if(data.result==1){
+						location.reload();
+					}
+				},
+				error : function(e) {
+					alert("出现错误 ，请重试");
+				}
+		};
+		$("#goodsTagForm").ajaxSubmit(options);
+	});
+	$(".ordernum").blur(function(){
+		var reg_id= $(this).attr("reg_id");
+		if($(this).val()!=$("#order_num_"+reg_id).val()){
+			$(this).attr("name","ordernum");
+		}
+	});
+	$("a[name='delteRel']").click(function(){
+		var reg_id=$(this).attr("reg_id");
+		$.ajax({
+			url : "${ctx}/api/b2b2c/tag!deleteRel.do?ajax=yes&tagId=${tagid}&reg_id="+reg_id,
+			type : "POST",
+			dataType : 'json',
+			success : function(data) {
+				alert(data.message);
+				if(data.result==1){
+					location.reload();
+				}
+			},
+			error : function() {
+				alert("出现错误，请重试");
+			}
+		});
+	});
+	$("#delete").click(function(){
+		var options = {
+				url : "${ctx}/api/b2b2c/tag!deleteRel.do?ajax=yes",
+				type : "POST",
+				dataType : 'json',
+				success : function(data) {	
+					alert(data.message);
+					if(data.result==1){
+						location.reload();
+					}
+				},
+				error : function(e) {
+					alert("出现错误 ，请重试");
+				}
+		};
+		$("#goodsTagForm").ajaxSubmit(options);
+	});
+	$("#add").click(function(){
+		var mark=$(this).attr("mark");
+		var tagid=$(this).attr("tagid");
+		location.href="store_goods_list.html?type=tag&mark="+mark+"&tagId="+tagid+"&menu=store_goods";
+	});
+	
+	selectMenu(4);
+})
+</script>
+
+<#include '/common/footer.html' />

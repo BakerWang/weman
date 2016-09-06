@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="api" namespace="/api" extends="eop_default">
+		<interceptors>
+			<interceptor name="globalInterceptor" class="com.enation.app.api.interceptor.GlobalInterceptor">
+			</interceptor>
+			<interceptor-stack name="globalStack">
+				<interceptor-ref name="globalInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="globalStack" />
+
+		<action name="GlobalAction_*" class="com.enation.app.api.action.GlobalAction" method="{1}">
+		</action>
+		<action name="InitUserAction_*" class="com.enation.app.api.action.InitUserAction" method="{1}">
+		</action>
+		<action name="ProductAction_*" class="com.enation.app.api.action.ProductAction" method="{1}">
+		</action>
+		<action name="ArticleAction_*" class="com.enation.app.api.action.ArticleAction" method="{1}">
+		</action>
+		<action name="PersionAction_*" class="com.enation.app.api.action.PersionAction" method="{1}">
+		</action>
+		<action name="UploadAction_*" class="com.enation.app.api.action.admin.action.AdminUploadAction" method="{1}">
+		</action>
+	</package>
+	<package name="apiAdmin" namespace="/apiAdmin" extends="eop_default">
+		<action name="ShareAction_*" class="com.enation.app.api.action.admin.action.ShareAction" method="{1}">
+			<result name="themeSuccess">/admin/api/shareThemeDetails.jsp</result>
+			<result name="articleSuccess">/admin/api/shareArticleDetails.jsp</result>
+		</action>
+		<action name="AdminSendMessage_*" class="com.enation.app.api.action.admin.action.AdminSendMessage" method="{1}">
+			<result name="addSendMessageJspSuccess">/admin/api/newSendMsg.jsp</result>
+			<result name="sendMessageListSuccess">/admin/api/sendMessageList.jsp</result>
+		</action>
+		<action name="AdminProductAction_*" class="com.enation.app.api.action.admin.action.AdminProductAction" method="{1}">
+			<result name="saveThemeTagSuccess">/admin/api/newThemeTag.jsp</result>
+			<result name="themeTagListSuccess">/admin/api/themeTagList.jsp</result>
+			<result name="getThemeListSuccess">/admin/api/adminTheme.jsp</result>
+			<result name="goNewThemeSuccess">/admin/api/newTheme.jsp</result>
+			<result name="goThemeDetailsSuccess">/admin/api/updateTheme.jsp</result>
+			<result name="addProductJspSuccess">/admin/api/addGoods.jsp</result>
+		</action>
+		<action name="AdminBannerAction_*" class="com.enation.app.api.action.admin.action.AdminBannerAction" method="{1}">
+			<result name="bannerListSuccess">/admin/api/bannerList.jsp</result>
+			<result name="newBannerSuccess">/admin/api/newBanner.jsp</result>
+		</action>
+		<action name="AdminArticleAction_*" class="com.enation.app.api.action.admin.action.AdminArticleAction" method="{1}">
+			<result name="articleListSuccess">/admin/api/articleList.jsp</result>
+			<result name="articleTagListSuccess">/admin/api/articleTagList.jsp</result>
+			<result name="fetchArticleCommentListSuccess">/admin/api/articleCommentList.jsp</result>
+			<result name="userActionListSuccess">/admin/api/userActionList.jsp</result>
+		</action>
+		<action name="AdminUploadAction_*" class="com.enation.app.api.action.admin.action.AdminUploadAction" method="{1}">
+		</action>
+	</package>
+
+
+
+</struts>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pricefilter>
+	<cat id="0">
+		<price  max="100">100元以下</price>
+		<price min="100" max="500">100-500元</price>
+		<price min="500" max="1000">500-1000元</price>
+		<price min="2000" max="3000">2000-3000元</price>
+		<price min="50000" max="100000">5万-10万</price>
+		<price min="100000" max="200000">10万-20万</price>
+		<price min="200000">20万以上</price>
+	</cat>
+</pricefilter>

@@ -1,0 +1,92 @@
+<#include 'member_header.html' />
+<!-- 退货申请标签 -->
+<#assign sellBackTag=newTag("sellBackTag")>
+<#assign sellBack=sellBackTag("{'id':${id} }")>
+<!-- 退货商品 标签 -->
+<#assign sellBackGoodsListTag=newTag("sellBackGoodsListTag")>
+<#assign sellBackGoodsList=sellBackGoodsListTag("{'id':${id},'sn':${sn} }")>
+<style>
+.order_detail .order_intro {width:100%;}
+</style>
+<div class="user_order">
+	<div class="order_detail">
+		<div class="order_intro">
+			<h1>订单信息</h1>
+			<div class="detail_list">
+				<dl>
+					<dt>订单编号：</dt>
+					<dd>${sellBack.ordersn}</dd>
+				</dl>
+				<dl class="online">
+					<dt>申请时间：</dt>
+					<dd><@dateformat time="${sellBack.regtime?c}" pattern="yyyy-MM-dd HH:mm"/></dd>
+				</dl>
+				<dl>
+					<dt>状态：</dt>
+					<dd>
+					  	<#if sellBack.tradestatus  == 0>
+					    		<span>申请退货</span>
+						<#elseif sellBack.tradestatus  == 1||sellBack.tradestatus==2>
+							<span>审核通过</span>
+						<#elseif sellBack.tradestatus  == 3>
+							<span>已完成</span>
+						<#elseif sellBack.tradestatus  == 4>
+							<span>已拒绝</span>
+						<#elseif sellBack.tradestatus  == 5>
+							<span>部分入库</span>
+						</#if>
+					</dd>
+				</dl>
+				<dl>
+					<dt>退货原因：</dt>
+					<dd>${sellBack.remark!''}</dd>
+				</dl>
+				<#if sellBack.seller_remark??> 
+					<dl>
+						<dt>客服回复：</dt>
+						<dd>${sellBack.seller_remark!''}</dd>
+					</dl>
+				</#if>
+			</div>
+		</div>
+	</div>
+	<div class="detail_goodslist">
+		<table>
+			<thead>
+				<tr>
+					<th>图片</th>
+					<th>商品名称</th>
+					<th>单价</th>
+					<th>购买数量</th>
+					<th>退货数量</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list sellBackGoodsList as sellBackGoods>
+					<tr>
+						<td>
+							<a target="_blank" href="../goods-${sellBackGoods.goods_id}.html">
+								<span style="display: block; height: 50px;" class="cart-product-img">
+									<img height="50" src="${sellBackGoods.image!''}"  style="cursor: pointer;" />
+								</span>
+							</a>				
+						</td>
+						<td>
+							${sellBackGoods.name}
+						</td>
+						<td>
+							${sellBackGoods.price?string.currency}
+						</td>
+						<td>
+							${sellBackGoods.num }
+						</td>
+						<td>
+							${sellBackGoods.ship_num!0}
+						</td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+	</div>
+</div>
+<#include '/common/footer.html'/>

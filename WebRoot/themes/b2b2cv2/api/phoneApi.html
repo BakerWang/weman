@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>测试接口</title>
+<script type="text/javascript" src="${ctx}/themes/b2b2cv2/js/jquery.js"></script>
+<script type="text/javascript">
+	function base(urla,dataParam){
+		var dataParamStr = JSON.stringify(dataParam);
+		$.ajax({
+			   type: "POST",
+			   url: urla,
+			   data:dataParamStr,
+			   cache: false,
+			   contentType: "application/json;char=utf-8",
+			   dataType:"json",
+			   success: function(msg){
+				   console.log(msg.result);
+			   }
+		});		
+	}
+// 	function installDb(){
+// 		var url = "GlobalAction_installDb.do";
+// 		var dataParam = {
+// 				"loginType":"global",
+// // 				"clientType":"iphone",
+// // 				"version":"1.0",
+// // 				"deviceToken":"aaaa",
+// 				"username":"123",
+// 				"password":"1234"
+// 		};
+// 		base(url,dataParam);
+// 	}
+	
+	
+	//正式测试接口
+	var accessToken = sessionStorage.getItem('token');
+	
+	function getAccessToken(){
+		var username = $('#username').val();
+		var url = "InitUserAction_fecthAccessToken.do";
+		var dataParam = {
+				"loginType":"global",
+				"username":username
+		};
+		var dataParamStr = JSON.stringify(dataParam);
+		$.ajax({
+			   type: "POST",
+			   url: url,
+			   data:dataParamStr,
+			   cache: false,
+			   contentType: "application/json;char=utf-8",
+			   dataType:"json",
+			   success: function(msg){
+				   console.log(msg);
+				   accessToken = msg.accessToken;
+				   sessionStorage.setItem('token',accessToken); 
+			   }
+		});		
+	}
+	
+	function beginArticleCat(){
+		var url = "ArticleAction_beginArticleCat.do";
+		var dataParam = {
+				"clientType":"iphone",
+				"loginType":"global"
+		};
+		base(url,dataParam);
+	}
+	function beginArticleSearch(){
+		var type = $('#typeBeginArticle').val();
+		var searchStr = $('#searchStr').val();
+		var url = "ArticleAction_beginArticleSearch.do";
+		var dataParam = {
+				"accessToken":'abc',
+				"clientType":"iphone",
+				"searchStr":searchStr,
+				"type":type
+		};
+		base(url,dataParam);
+	}
+	function createArticle(){
+		var url = "ArticleAction_saveArticle.do";
+		var dataParam = {
+				"accessToken":"9fc191053990ede419c9312f15dd7d05",
+				"clientType":"iphone",
+				"content":'我是测试的发文内容！！大家请忽略我的存在!',
+				"good_cat_id":'493,496',
+				"good_cat_name":'卫衣,下装',
+				"good_type_name":'品牌1,品牌2',
+				"address":'上海',
+				"tagStr":'测试1,测试2'
+		};
+		base(url,dataParam);
+	}
+	function articleList(){
+		var url = "ArticleAction_articleList.do";
+		var type = $('#selArticleType').val();
+		if(type==1){
+			var dataParam = {
+					"loginType":"global",
+					"clientType":"iphone",
+					"page":'1'
+			};
+			base(url,dataParam);
+		}else{
+			var dataParam = {
+					"accessToken":accessToken,
+					"clientType":"iphone",
+					"type":type,
+					"page":'1'
+			};
+			base(url,dataParam);
+		}
+	}
+	function articleDetails(){
+		var articleId = $('#articleId').val();
+		var url = "ArticleAction_articleDetails.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"articleId":articleId
+		};
+		base(url,dataParam); 
+	}
+	function createArticleComment(){
+		var articleId = $('#articleIdC').val();
+		var content = $('#commentContent').val();
+		var commentType = $('#commentType').val();
+		var url = "ArticleAction_createArticleComment.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"content":content,
+				"status":commentType,
+				"articleId":articleId
+		};
+		base(url,dataParam); 
+	}
+	function deleteArticle(){
+		var articleId = $('#articleIdDel').val();
+		var url = "ArticleAction_deleteArticle.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"articleId":articleId
+		};
+		base(url,dataParam); 
+	}
+	function articleCommentList(){
+		var articleId = $('#articleIdD').val();
+		var url = "ArticleAction_articleCommentList.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"articleId":articleId,
+				"page":"1"
+		};
+		base(url,dataParam); 
+	}
+	function deleteArticleComment(){
+		var articleCommentId = $('#articleIdCD').val();
+		var url = "ArticleAction_deleteArticleComment.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"commentId":articleCommentId
+		};
+		base(url,dataParam); 
+	}
+	function delUserAction(){
+		var dataId = $('#dataId2').val();
+		var type = $('#actionType2').val();
+		var url = "ArticleAction_delUserAction.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"actionType":type,
+				"dataId":dataId
+		};
+		base(url,dataParam); 
+	}
+	function addUserAction(){
+		var dataId = $('#dataId').val();
+		var type = $('#actionType').val();
+		if(type==5){
+			var url = "ArticleAction_userAction.do";
+			var dataParam = {
+					"accessToken":accessToken,
+					"clientType":"iphone",
+					"actionType":type,
+					"content":"帅帅的",
+					"dataId":dataId
+			};
+			base(url,dataParam);
+		}else if(type == 4){
+			var url = "ArticleAction_userAction.do";
+			var dataParam = {
+					"accessToken":accessToken,
+					"clientType":"iphone",
+					"loveCount":"2",
+					"actionType":type,
+					"dataId":dataId
+			};
+			base(url,dataParam); 
+		}else{
+			var url = "ArticleAction_userAction.do";
+			var dataParam = {
+					"accessToken":accessToken,
+					"clientType":"iphone",
+					"actionType":type,
+					"dataId":dataId
+			};
+			base(url,dataParam); 
+		}
+	}
+	
+	//商品接口
+	function getProductList(){
+		var url = "ProductAction_getProductList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"page":"1"
+		};
+		base(url,dataParam);
+	}
+	
+	function getThemeList(){
+		var username=$('#username').val();
+		var page = $('#themeListPage').val();
+		var url = "ProductAction_getThemeList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"page":page
+		};
+		base(url,dataParam);
+	}
+	
+	function getThemeDetails(){
+		var themeId=$('#themeIdA').val();
+		var url = "ProductAction_getThemeDetails.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"themeId":themeId
+		};
+		base(url,dataParam);
+	}
+	
+	//个人主页接口
+	function saveFAQ(){
+		var url = "PersionAction_sendFAQ.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"content":"恩，app不错，还是有需要提高的地方，比如功能!"
+		};
+		base(url,dataParam);
+	}
+	function getPersionDetails(){
+		var url = "PersionAction_getPersionDetails.do";
+		var typevalue = $('#selUserId2').val();
+		if(typevalue==1){
+			var dataParam = {
+					"accessToken":accessToken,
+					"clientType":"iphone"
+			};
+			base(url,dataParam);
+		}else{
+			var dataParam = {
+					"accessToken":accessToken,
+					"userId":$('#persionUserId2').val(),
+					"clientType":"iphone"
+			};
+			base(url,dataParam);
+		}
+	}
+	function updatePersionDetails(){
+		var url = "PersionAction_updatePersionDetails.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"username":"第一次",
+				"sex":"0",
+				"birthday":"1991-10-05",
+				"height":"170",
+				"weight":"70",
+				"address":"上海",
+				"signature":"第一修改名字！好酷。。"
+		};
+		base(url,dataParam);
+	}
+	function myFriendList(){
+		var type = $("#friendSel").val();
+		var userId = $('#userIdFriendList').val();
+		var url = "PersionAction_myFriendList.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"page":"1",
+				"type":type,
+				"userId":userId
+		};
+		base(url,dataParam);
+	}
+	function fetchActionList(){
+		var type = $("#userActionSel").val();
+		var url = "PersionAction_fetchActionList.do";
+		var typevalue = $('#selUserId').val();
+		if(typevalue==1){
+			var dataParam = {
+					"accessToken":accessToken,
+					"clientType":"iphone",
+					"page":"1",
+					"type":type
+			};
+			base(url,dataParam);
+		}else{
+			var dataParam = {
+					"accessToken":accessToken,
+					"userId":$('#persionUserId').val(),
+					"clientType":"iphone",
+					"page":"1",
+					"type":type
+			};
+			base(url,dataParam);
+		}
+	}
+	function updatePassword(){
+		var url = "PersionAction_verfityPassword.do";
+		var dataParam = {
+				"accessToken":"abcd",
+				"newPassword":$('#newPasswordPersion').val(),
+				"clientType":"iphone"
+		};
+		base(url,dataParam);
+	}
+	function fecthMessageCount(){
+		var url = "PersionAction_fecthMessageCount.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	function fecthMessageList(){
+		var url = "PersionAction_fecthMessageList.do";
+		var dataParam = {
+				"accessToken":accessToken,
+				"clientType":"iphone",
+				"page":"1",
+				"type":$('#selMessageType').val(),
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	//发现接口
+	function getFindList(){
+		var url = "ProductAction_getFindList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	function getFindThemeList(){
+		var url = "ProductAction_getFindThemeList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"page":"1",
+				"typeId":$('#typeId').val(),
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	//未登录的接口
+	function shareBut(){
+		var url = "InitUserAction_shareUrl.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"type":$('#shareType').val(),
+				"data_id":$('#shareDataId').val(),
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	function catchAppInitMessage(){
+		var url = "InitUserAction_catchAppInitMessage.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	function bindClientId(){
+		var url = "InitUserAction_accessClientId.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"deviceToken":$('#deviceToken').val(),
+				"clientId":$('#clientId').val()
+		};
+		base(url,dataParam);
+	}
+	function register(){
+		var url = "InitUserAction_register.do";
+		var dataParam = {
+				"loginType":"global",
+				 "bindNum" : "6B3C03D51ED141D1A32B2168C0181F1A",
+			    "bindType" : "qq",
+				"username":"1235",
+				"sex":"1",
+				"birthday":"1991-01-05",
+				"height":"175",
+				"weight":"70",
+				"deviceToken":"63922e4bada09dfe0dbe0fd0d6b6939bd90c67fe0e96928719c217fe014e4e80",
+				"deviceType":"iphone",
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	
+	function login(){
+		var url = "InitUserAction_login.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"account":$('#loginUser').val(),
+				"password":$('#loginPassword').val()
+		};
+		base(url,dataParam);
+	}
+	function verifyBindAccount(){
+		var url = "InitUserAction_verifyBindAccount.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"bindNum":$('#verifyAccountNum').val(),//代登陆的唯一凭证
+				"bindType":$('#verifyAccountType').val()//type:weixin,qq,sina
+		};
+		base(url,dataParam);
+	}
+	function sendMsg(){
+		var phoneNumber = $('#sendPhone').val();
+		var type = $('#sendMsgType').val();
+		var url = "InitUserAction_sendPhoneMsg.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"type":type,
+				"phoneNumber":phoneNumber
+		};
+		base(url,dataParam); 
+	}
+	
+	function verfityPassword(){
+		var phoneNumber = $('#verfityPhoneNumber').val();
+		var password = $('#newPassword').val();
+		var url = "InitUserAction_verfityPassword.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"newPassword":password,
+				"phoneNumber":phoneNumber
+		};
+		base(url,dataParam); 
+	}
+	
+	function changeUserId(tt){
+		var typevalue = $(tt).val();
+		if(typevalue==1){
+			$('#persionUserId').hide();
+		}else{
+			$('#persionUserId').show();
+		}
+	}
+	function changeUserId2(tt){
+		var typevalue = $(tt).val();
+		if(typevalue==1){
+			$('#persionUserId2').hide();
+		}else{
+			$('#persionUserId2').show();
+		}
+	}
+</script>
+</head>
+<body>
+<h2>说明：<br/>
+	<h4>&nbsp;&nbsp;&nbsp;&nbsp;1.全局接口用"loginType":"global",如果用户登录过后用"accessToken":"abc"</h4>
+	<h4>&nbsp;&nbsp;&nbsp;&nbsp;2.每个接口都有"clientType":"iphone","version":"1.0"</h4>
+</h2>
+	 <br/>
+	测试接口<br/>
+	<input type="button" onclick="installDb()" value="安装API相关DB"/><br/>
+	
+	<input type="text" id="username" value="1234"/><input type="button" onclick="getAccessToken()" value="获取此用户的accessToken"/><br/>
+	<input type="text" id="deviceToken" value="EB33EDD6B748400A8454F32B10E3F1B9EB33EDD6B748400A8454F32B10E3F1B9"/><input type="text" id="clientId" value="123"/><input type="button" onclick="bindClientId()" value="绑定个推的clientId(唯一标示)"/><br/>
+	
+	
+	<h2>登录注册接口测试</h2><br/>
+	<select id="shareType"><option value="theme">主题分享</option><option value="article">发文分享</option></select><input type="text" id="shareDataId" value="108" /><button onclick="shareBut()">获取分享内容</button><br/>
+	
+	<input type="button" onclick="catchAppInitMessage()" value="获取网站初始化信息"/><br/>
+	<select id="sendMsgType"><option value="1">注册验证码</option><option value="2">忘记密码验证码</option></select><input type="text" id="sendPhone" value="18217557671"/> <input type="button" onclick="sendMsg()" value="发送验证码"/><br/>
+	<input type="text" id="verfityPhoneNumber" value="18217557671"/><input type="text" id="newPassword" value="123123"/><input type="button" onclick="verfityPassword()" value="修改密码"/><br/>
+	<input type="button" onclick="register()" value="注册"/><br/>
+	<input id="loginUser" value="18217557674" /><input id="loginPassword" value="123123" /><input type="button" onclick="login()" value="登录"/><br/>
+	<select id="verifyAccountType"><option value="weixin">weixin</option><option value="qq">qq</option><option value="sina">sina</option></select> <input type="text" value="1230" id="verifyAccountNum" /><input type="button" onclick="verifyBindAccount()" value="验证代登陆时是否绑定"/><br/>
+	<h2>社交接口测试</h2><br/>
+	<input type="button" onclick="beginArticleCat()" value="发文之前获取品牌和分类"/>  (全局)<br/>
+	<select id="typeBeginArticle"><option value="1">搜索品牌</option><option value="2">搜索标签</option></select>
+	<input type="text" value="旺" id="searchStr"/>
+	<input type="button" onclick="beginArticleSearch()" value="发文之前搜索发文标签和搜索品牌"/>  (全局)<br/>
+	<input type="button" onclick="createArticle()" value="发文社交"/><br/>
+	<select id="selArticleType"><option value="1">未登录的情况下</option><option value="all">登录后全部</option><option value="friends">只看我关注的（登录后）</option></select><input type="button" onclick="articleList()" value="发文列表"/><br/>
+	<input type="text" id="articleIdD" value="10" /><input type="button" onclick="articleCommentList()" value="获取发文评论列表"/><br/>
+	<input type="text" id="articleId" value="10" /><input type="button" onclick="articleDetails()" value="发文详情"/><br/>
+	<input type="text" id="articleIdDel" value="7" /><input type="button" onclick="deleteArticle()" value="删除发文"/><br/>
+	<input type="text" id="articleIdC" value="7" /><select id="commentType"><option value="1">公开</option><option value="0">私密</option> </select> <input type="text" id="commentContent" value="我是评论。。" /><input type="button" onclick="createArticleComment()" value="评论发文"/><br/>
+	<input type="text" id="articleIdCD" value="7" /><input type="button" onclick="deleteArticleComment()" value="删除发文评论"/><br/>
+	<select id="actionType"><option value="1">关注好友</option><option value="2">收藏主题</option><option value="3">收藏商品</option><option value="4">赞发文</option><option value="5">关注后给好友的印象</option></select><input type="text" id="dataId" value="8" /><input type="button" onclick="addUserAction()" value="添加用户动作"/><br/>
+	<select id="actionType2"><option value="1">关注好友</option><option value="2">收藏主题</option><option value="3">收藏商品</option></select><input type="text" id="dataId2" value="8" /><input type="button" onclick="delUserAction()" value="取消用户动作"/><br/>
+	<h2>商品接口测试</h2><br/>
+<!-- 	<input type="button" onclick="getProductList()" value="获取商品列表"/><br/> -->
+	页数：<input value="1" id="themeListPage" /><input type="button" onclick="getThemeList()" value="获取主题列表"/><br/>
+	主题id：<input value="30" id="themeIdA" /><input type="button" onclick="getThemeDetails()" value="获取主题详情"/><br/>
+	<h2>个人主页接口测试</h2><br/>
+	<input type="button" onclick="saveFAQ()" value="意见反馈"/>(图片是originalFAQ 是list 多个图片 )<br/>
+	<select id="selUserId2" onchange="changeUserId2(this)"><option value="1">访问自己的个人主页</option><option value="2">访问别人的个人主页</option></select><input style="display:none;" id="persionUserId2" type="text" value="6" /><input type="button" onclick="getPersionDetails()" value="获取个人主页和个人信息接口"/><br/>
+	<input type="button" onclick="updatePersionDetails()" value="保存个人信息"/><br/>
+	用户id:<input value="18" id="userIdFriendList" /><select id="friendSel"><option value="1">我的关注</option><option value="2">我的粉丝</option></select><input type="button" onclick="myFriendList()" value="我的关注/我的粉丝"/><br/>
+	<select id="selUserId" onchange="changeUserId(this)"><option value="1">访问自己的个人用户动作</option><option value="2">访问别人的动作</option></select><input style="display:none;" id="persionUserId" type="text" value="6" /><select id="userActionSel"><option value="1">获取用户发文列表</option><option value="2">获取用户收藏主题列表</option><option value="3">获取用户收藏商品列表</option></select><input type="button" onclick="fetchActionList()" value="我的动作列表"/><br/>
+ 	<input type="text" id="newPasswordPersion" value="123123"/><input type="button" onclick="updatePassword()" value="修改密码"/><br/>
+	
+	<input type="button" onclick="fecthMessageCount()" value="获取消息系统的数量"/><br/>
+	<select id="selMessageType"><option value="3">获取被赞列表</option><option value="2">获取被评论列表</option><option value="1">获取被加好友列表</option><option value="4">获取系统通知列表</option> </select><input type="button" onclick="fecthMessageList()" value="获取消息类别列表"/>
+	<h2>发现接口测试</h2><br/>
+	<input type="button" onclick="getFindList()" value="发现接口"/><br/>
+	<input type="text" id="typeId" value="9"/><input type="button" onclick="getFindThemeList()" value="点击发现获取主题列表接口"/><br/>
+</body>
+</html>

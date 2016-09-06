@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dbsolution>
+	<!-- 2016-03-15已添加   手机登录token和DeviceToken表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_deviceToken</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>token</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>tokenType</name><type>varchar</type><size>50</size><option>00</option></field>
+		<field><name>clientId</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+	<action>
+		<command>create</command>
+		<table>es_api_phoneToken</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>token</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>expireDate</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+		
+	<!-- 修改用户表字段 -->
+	<action>
+		<command>alter</command>
+		<table>es_member</table>
+		<field type="add"><name>height</name><type>int</type><size>10</size></field>
+		<field type="add"><name>weight</name><type>int</type><size>10</size></field>
+		<field type="add"><name>orFace</name><type>varchar</type><size>100</size></field>
+	</action>
+<!-- 修改商品表字段 -->
+	<action>
+		<command>alter</command>
+		<table>es_goods</table>
+		<field type="add"><name>url</name><type>varchar</type><size>100</size></field>
+		<field type="add"><name>isShowMKPrice</name><type>int</type><size>1</size></field>
+	</action>
+
+<!-- 主题表模块 -->
+<!-- 主题内容表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_theme_content</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>theme_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>position</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>goods_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>type</name><type>varchar</type><size>20</size><option>00</option></field>
+		<field><name>content</name><type>varchar</type><size>200</size><option>00</option></field>
+		<field><name>fontsize</name><type>varchar</type><size>10</size><option>00</option></field>
+		<field><name>center</name><type>varchar</type><size>10</size><option>11</option></field>
+		<field><name>image</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>imagewidth</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>imageheight</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>status</name><type>varchar</type><size>10</size><option>00</option></field>
+		<field><name>createtime</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 主题表模块 -->
+	<action>
+		<command>create</command>
+		<table>es_api_theme</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>title</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>status</name><type>varchar</type><size>10</size><option>00</option></field>
+		<field><name>image</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>minorImage</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>showDate</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>details</name><type>varchar</type><size>500</size><option>00</option></field>
+		<field><name>love_count</name><type>int</type><size>20</size><option>00</option></field>
+		<field><name>product_count</name><type>int</type><size>20</size><option>00</option></field>
+		<field><name>theme_tag_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 主题标签表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_theme_tag</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>category</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>name</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>image</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>status</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 主题标签中间表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_theme_themetag</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>themeid</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>themetagid</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>	
+<!-- 主题与商品对应表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_theme_product</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>goods_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>theme_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>type</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>product_position</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 系统推送消息的表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_push_message</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>content</name><type>varchar</type><size>255</size><option>00</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>data_id</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>type</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>status</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 绑定代登陆表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_bind_account</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>00</option></field>
+		<field><name>bind_num</name><type>varchar</type><size>200</size><option>00</option></field>
+		<field><name>bind_type</name><type>varchar</type><size>20</size><option>00</option></field>
+		<field><name>status</name><type>varchar</type><size>2</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 全局表  记录app的版本号等等 -->
+	<action>
+		<command>create</command>
+		<table>es_api_globalconstants</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>key</name><type>varchar</type><size>200</size><option>00</option></field>
+		<field><name>value</name><type>varchar</type><size>200</size><option>00</option></field>
+	</action>
+<!-- 首页,发现,社交页的banner表 -->
+	<action>
+		<command>create</command>
+		<table>es_api_banner</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>title</name><type>varchar</type><size>20</size><option>00</option></field>
+		<field><name>image</name><type>varchar</type><size>20</size><option>00</option></field>
+		<field><name>category</name><type>varchar</type><size>2</size><option>00</option></field>
+		<field><name>type</name><type>varchar</type><size>10</size><option>00</option></field>
+		<field><name>details</name><type>varchar</type><size>200</size><option>00</option></field>
+		<field><name>start_time</name><type>long</type><size>20</size><option>00</option></field>
+		<field><name>end_time</name><type>long</type><size>20</size><option>00</option></field>
+		<field><name>status</name><type>varchar</type><size>2</size><option>00</option></field>
+		<field><name>click_count</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+	
+	
+	<!-- 社交部分 -->
+	
+<!-- 发文表 -->	
+	<action>
+		<command>create</command>
+		<table>wh_api_article</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>content</name><type>varchar</type><size>500</size><option>00</option></field>
+		<field><name>image</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>orImage</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>comment_count</name><type>int</type><size>50</size><option>00</option></field>
+		<field><name>view_count</name><type>int</type><size>50</size><option>00</option></field>
+		<field><name>love_count</name><type>int</type><size>50</size><option>00</option></field>
+		<field><name>address</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>tagStr</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>good_cat_id</name><type>varchar</type><size>10</size><option>11</option></field>
+		<field><name>good_type_id</name><type>varchar</type><size>10</size><option>11</option></field>
+		<field><name>good_type_name</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>good_cat_name</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>status</name><type>int</type><size>1</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 标签表（发文的标签表） -->	
+	<action>
+		<command>create</command>
+		<table>wh_api_tag</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>content</name><type>varchar</type><size>500</size><option>00</option></field>
+		<field><name>status</name><type>int</type><size>1</size><option>00</option></field>
+		<field><name>type</name><type>int</type><size>1</size><option>00</option></field>
+		<field><name>member_id</name><type>int</type><size>500</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 发文标签中间表 -->
+	<action>
+		<command>create</command>
+		<table>wh_api_article_tag</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>article_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>tag_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 发文评论表 -->
+	<action>
+		<command>create</command>
+		<table>wh_api_comment</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>content</name><type>varchar</type><size>500</size><option>00</option></field>
+		<field><name>userIds</name><type>varchar</type><size>255</size><option>00</option></field>
+		<field><name>userNames</name><type>varchar</type><size>255</size><option>00</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>article_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>status</name><type>int</type><size>1</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+<!-- 用户动作表  type 1是关注好友 2是收藏主题  3是收藏商品  4是赞  5关注后给印象 -->	
+	<action>
+		<command>create</command>
+		<table>wh_api_action</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>type</name><type>int</type><size>5</size><option>00</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>data_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>content</name><type>varchar</type><size>255</size><option>00</option></field>
+		<field><name>love_count</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>status</name><type>int</type><size>1</size><option>00</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+	
+<!-- 意见反馈表 -->	
+	<action>
+		<command>create</command>
+		<table>wh_api_faq</table>
+		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>member_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>image1</name><type>varchar</type><size>100</size><option>11</option></field>
+		<field><name>image2</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>image3</name><type>varchar</type><size>100</size><option>11</option></field>
+		<field><name>image4</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>content</name><type>varchar</type><size>255</size><option>00</option></field>
+		<field><name>status</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
+	</action>
+	
+</dbsolution>

@@ -1,0 +1,299 @@
+<!-- 获取商品评论标签 -->
+<#assign commentListTag = newTag("commentListTag")>
+<!--调取"评论"标签，并传递参数,获取Page对象-->
+<#assign commentPage = commentListTag("{'goods_id':${goodsid},'type':1}")>
+<div id="discuss_list_wrapper">
+	<div class="grade">
+		<div class="grade_num">
+			<span>
+				<#-- 获取商品评论值标签 -->
+				<#assign storeGoodsCommentInfoTag = newTag("storeGoodsCommentInfoTag")>
+				<#-- 调用商品评论值-->
+				<#assign grade = storeGoodsCommentInfoTag("{'goods_id':${goodsid}}")>
+				<#if grade??&&grade gt 0 && grade lt 6>
+			   		<#list 1..grade as t>
+			   			<i></i>
+			   		</#list>
+			   		<#if 5-grade gt 0>
+				   		<#list 1..6-grade as t>
+				   			<i class="star_off"></i>
+				   		</#list>
+			   		</#if>
+			   		<b>${grade}</b>
+			   	<#else>
+			      <i></i><i></i><i></i><i></i><i></i>
+			      <b >5</b>
+			    </#if>   
+			</span>
+			<em>宝贝综合评分</em>
+		</div>	
+		<div class="btn_wrapper btn">
+			<p>您可对已购商品进行评价</p>
+			<a href="#discussForm" class="blue_btn"></a>
+		</div>
+	</div>
+	<!-- 评论分类tab -->
+	<div class="goods_common_nav">
+		<ul>
+			<li class="selected" type="0">
+				<a href="javascript:;">商品评价</a>
+			</li>
+			<li  type="3">
+				<a href="javascript:;">好评</a>
+			</li>
+			<li type="2">
+				<a href="javascript:;">中评</a>
+			</li>
+			<li type="1">
+				<a href="javascript:;">差评</a>
+			</li>
+		</ul>
+	</div>
+	<div class="grade_list">
+		<div class="commonlist_outside">
+			<#if commentPage.totalCount != 0 >
+			<ul class="common_list0">
+				<#list commentPage.result as comment>  
+					<li <#if !comment_has_next >class="last"</#if>>
+						<div class="problem_pic">
+		        			<#if comment.member_id != 0 && comment.face?exists>
+		        				<#if comment.sex == 0 && comment.face == "">
+		        					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       					<#elseif comment.sex == 1  && comment.face == "">
+		       						<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+			        			<#else>
+			        				<@image src="${comment.face}" width="65"/>
+			        			</#if>
+		       				<#else>
+		       					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       				</#if>
+						</div>
+						<div class="problem_right">
+							<div class="problem_time">
+								<span class="name"> 
+								     <#if comment.member_id != 0>
+						            	${comment.uname!''}
+						            <#else>
+						            	匿名
+						            </#if>
+						         </span>
+			  					<#if comment.levelname?exists>
+			         				<h2>
+			         					<#if comment.levelname?exists>
+											<span class="lv">
+			          							${comment.levelname!''}
+			            					</span>
+			        					</#if>
+			        				</h2>
+			           			</#if>
+								<span class="commom_time"><@dateformat time="${comment.dateline?c}" pattern="yyyy-MM-dd HH:mm"/></span>
+							</div>
+							<div class="common_content">
+								评价详细：<span>${comment.content!''}</span>
+							</div>
+							<#if comment.img?exists && comment.img != ''>
+				             <div class="suolue"><a href="<@imgurl pic='${comment.img}'/>" target="_blank"> <@image src="${comment.img}"  width="150"/> </a></div>
+				            </#if>
+							 <#if comment.replystatus==1>
+							<div class="problem_answer">
+								<div class="ps_bottom">
+									<h3>${site.sitename}客服：</h3>
+									<p>${comment.reply}</p>
+								</div>
+							</div>
+							</#if>
+							<div class="clear"></div>
+						</div>
+					</li>
+				</#list>
+			</ul>
+			<!-- 好评 -->
+			<ul class="common_list3" style="display:none">
+				<#list commentPage.result as comment> 
+					<#if comment.grade==3>
+					<li <#if !comment_has_next >class="last"</#if>>
+						<div class="problem_pic">
+		        			<#if comment.member_id != 0 && comment.face?exists>
+		        				<#if comment.sex == 0 && comment.face == "">
+		        					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       					<#elseif comment.sex == 1  && comment.face == "">
+		       						<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+			        			<#else>
+			        				<@image src="${comment.face}" width="65"/>
+			        			</#if>
+		       				<#else>
+		       					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       				</#if>
+						</div>
+						<div class="problem_right">
+							<div class="problem_time">
+								<span class="name"> 
+								     <#if comment.member_id != 0>
+						            	${comment.uname!''}
+						            <#else>
+						            	匿名
+						            </#if>
+						         </span>
+			  					<#if comment.levelname?exists>
+			         				<h2>
+			         					<#if comment.levelname?exists>
+											<span class="lv">
+			          							${comment.levelname!''}
+			            					</span>
+			        					</#if>
+			        				</h2>
+			           			</#if>
+								<span class="commom_time"><@dateformat time="${comment.dateline?c}" pattern="yyyy-MM-dd HH:mm"/></span>
+							</div>
+							<p>${comment.content!''}</p>
+							<#if comment.img?exists && comment.img != ''>
+				                        <div class="suolue"><a href="<@imgurl pic='${comment.img}'   />" target="_blank"> <@image src="${comment.img}"  width="150"/> </a></div>
+				            </#if>
+							 <#if comment.replystatus==1>
+							<div class="problem_answer">
+								<div class="pa_top"></div>
+								<div class="ps_bottom">
+									<h3>${site.sitename}客服：</h3>
+									<p>${comment.reply}</p>
+								</div>
+							</div>
+							</#if>
+							<div class="clear"></div>
+						</div>
+					</li>
+					</#if>
+				</#list>
+			</ul>
+			<!-- 中评 -->
+			<ul class="common_list2" style="display:none">
+				<#list commentPage.result as comment> 
+					<#if comment.grade==2>
+					<li <#if !comment_has_next >class="last"</#if>>
+						<div class="problem_pic">
+		        			<#if comment.member_id != 0 && comment.face?exists>
+		        				<#if comment.sex == 0 && comment.face == "">
+		        					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       					<#elseif comment.sex == 1  && comment.face == "">
+		       						<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+			        			<#else>
+			        				<@image src="${comment.face}" width="65"/>
+			        			</#if>
+		       				<#else>
+		       					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       				</#if>
+						</div>
+						<div class="problem_right">
+							<div class="problem_time">
+								<span class="name"> 
+								     <#if comment.member_id != 0>
+						            	${comment.uname!''}
+						            <#else>
+						            	匿名
+						            </#if>
+						         </span>
+			  					<#if comment.levelname?exists>
+			         				<h2>
+			         					<#if comment.levelname?exists>
+											<span class="lv">
+			          							${comment.levelname!''}
+			            					</span>
+			        					</#if>
+			        				</h2>
+			           			</#if>
+								<span class="commom_time"><@dateformat time="${comment.dateline?c}" pattern="yyyy-MM-dd HH:mm"/></span>
+							</div>
+							<p>${comment.content!''}</p>
+							<#if comment.img?exists && comment.img != ''>
+				                        <div class="suolue"><a href="<@imgurl pic='${comment.img}'   />" target="_blank"> <@image src="${comment.img}"  width="150"/> </a></div>
+				            </#if>
+							 <#if comment.replystatus==1>
+							<div class="problem_answer">
+								<div class="pa_top"></div>
+								<div class="ps_bottom">
+									<h3>${site.sitename}客服：</h3>
+									<p>${comment.reply}</p>
+								</div>
+							</div>
+							</#if>
+							<div class="clear"></div>
+						</div>
+					</li>
+					</#if>
+				</#list>
+			</ul>
+			<!-- 差评 -->
+					<ul class="common_list1" style="display:none">
+				<#list commentPage.result as comment> 
+					<#if comment.grade==1>
+					<li <#if !comment_has_next >class="last"</#if>>
+						<div class="problem_pic">
+		        			<#if comment.member_id != 0 && comment.face?exists>
+		        				<#if comment.sex == 0 && comment.face == "">
+		        					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       					<#elseif comment.sex == 1  && comment.face == "">
+		       						<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+			        			<#else>
+			        				<@image src="${comment.face}" width="65"/>
+			        			</#if>
+		       				<#else>
+		       					<@image src="${ctx}/themes/b2b2cv2/images/ntx.jpg" alt="默认头像"/>
+		       				</#if>
+						</div>
+						<div class="problem_right">
+							<div class="problem_time">
+								<span class="name"> 
+								     <#if comment.member_id != 0>
+						            	${comment.uname!''}
+						            <#else>
+						            	匿名
+						            </#if>
+						         </span>
+			  					<#if comment.levelname?exists>
+			         				<h2>
+			         					<#if comment.levelname?exists>
+											<span class="lv">
+			          							${comment.levelname!''}
+			            					</span>
+			        					</#if>
+			        				</h2>
+			           			</#if>
+								<span class="commom_time"><@dateformat time="${comment.dateline?c}" pattern="yyyy-MM-dd HH:mm"/></span>
+							</div>
+							<p>${comment.content!''}</p>
+							<#if comment.img?exists && comment.img != ''>
+				                        <div class="suolue"><a href="<@imgurl pic='${comment.img}'   />" target="_blank"> <@image src="${comment.img}"  width="150"/> </a></div>
+				            </#if>
+							 <#if comment.replystatus==1>
+							<div class="problem_answer">
+								<div class="pa_top"></div>
+								<div class="ps_bottom">
+									<h3>${site.sitename}客服：</h3>
+									<p>${comment.reply}</p>
+								</div>
+							</div>
+							</#if>
+							<div class="clear"></div>
+						</div>
+					</li>
+					</#if>
+				</#list>
+			</ul>
+		<#else>
+			 暂无评论，抢沙发，赢取更多积分。 
+		</#if>
+		</div>
+		<@ajaxpager pageno="${page!'1'}" pagesize="${commentPage.pageSize}" totalcount="${commentPage.totalCount}" />
+	</div>
+	<div class="clear"></div>
+</div>
+<script>
+	$(function(){
+		$(".goods_common_nav ul li").click(function(){
+			var listnum = $(this).attr("type");
+			$(".goods_common_nav ul li").removeClass("selected");
+			$(this).addClass("selected");
+			$(".commonlist_outside ul").hide();
+			$(".common_list"+listnum).show();
+		})
+	})
+</script>

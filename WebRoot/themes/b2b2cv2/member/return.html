@@ -1,0 +1,213 @@
+<#assign  title="退货申请" />
+<#include 'member_header.html' />
+<!--创建“订单详细”标签-->
+<#assign orderDetailTag = newTag("orderDetailTag")>
+<!--调用“订单详细”标签，并传递参数-->
+<#assign orderDetail = orderDetailTag('{"ordersn":"${ordersn}"}')>
+<#--创建“订单货物列表”标签-->
+<#assign orderItemListTag = newTag("orderItemListTag")>
+<#--调用“订单货物列表”标签，并传递参数-->
+<#assign orderItemList = orderItemListTag("{'orderid':${orderDetail.order_id} }")>
+<#--创建"支付列表"标签-->
+<#assign shopPaymentListTag= newTag("shopPaymentListTag") >    
+<#--调用"支付列表"标签-->          
+<#assign paymentList = shopPaymentListTag()>
+<style>
+.order_detail .order_intro{
+	border-right: 0px solid #d8d8d8;
+}
+.order_detail .intro_staus{
+	border-left: 1px solid #d8d8d8;
+}
+</style>
+<div class="user_order">
+	<form id="returnForm">
+	<input type="hidden" name="orderId" value="${orderDetail.order_id}"/>
+	<div class="order_detail">
+		<div class="order_intro">
+			<h1>订单信息</h1>
+			<div class="detail_list">
+				<dl>
+					<dt>收货地址：</dt>
+					<dd>${orderDetail.shipping_area!''}-${orderDetail.ship_addr!''}-${orderDetail.ship_name!''}</dd>
+				</dl>
+				<dl class="online">
+					<dt>订单编号：</dt>
+					<dd>${orderDetail.sn}</dd>
+				</dl>
+				<dl>
+					<dt>付款方式：</dt>
+					<dd>${orderDetail.payment_name!''}</dd>
+				</dl>
+				<dl>
+					<dt>下单时间：</dt>
+					<dd><@dateformat time="${orderDetail.create_time?c}" pattern="yyyy-MM-dd HH:mm"/></dd>
+				</dl>
+			</div>
+		</div>
+		<div class="intro_staus">
+			<div class="orderdetail">
+				退款方式：
+						<select name="refund_way"> 
+							<option value="0">-- 请选择退款方式 --</option>
+							<#list paymentList as payment  >
+								<#if payment.type!="cod">
+									<option value="${payment.name}"> ${payment.name} </option>
+								</#if>
+							</#list>
+						</select>
+			</div>	
+				<ul>
+					<li>
+						退款账号：<input type="text" name="return_account" />
+					</li>
+					<li>
+						退货描述：<textarea name="remark"   style="resize:none;width:90%;height:80px"></textarea>
+					</li>
+					<li>
+						<input type="button" name="btnSubmit" value="申请退货" id="btnSubmit" class="yellow_btn" />
+					</li>
+				</ul>
+			</div>
+		</div>
+	<div class="detail_goodslist">
+		<table cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th></th>
+					<th>商品图片</th>
+					<th>商品名称</th>
+					<th>单价</th>
+					<th>数量</th>
+					<th>退货数量</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list orderItemList as item>		       
+					<tr>
+						<td>
+							<#if item.state==0 >
+								<input type="checkbox" name="gid" value="${item.goods_id}" goods_id="${item.goods_id}" payNum="${item.num}"/>
+							<#else>
+					 		&nbsp;&nbsp;
+							</#if>
+						</td>
+						<td style="width:50px">
+							<a target="_blank" href="../goods-${item.goods_id}.html">
+								<span style="display: block; height: 50px;" class="cart-product-img">
+									<img height="50" src="${item.image!''}"  style="cursor: pointer;" />
+								</span>
+							</a>				
+						</td>
+						<td style="width:300px;"><a target="_blank" href="../goods-${item.goods_id}.html">${item.name}</a></td>
+						<td>${item.price?string.currency}</td>
+						<td>
+							${item.num}
+							<input type="hidden" name="payNum" value="${item.num}"/> 
+							<input type="hidden" name="productId" value="${item.product_id}" />
+							<input type="hidden" name="goodsId" value="${item.goods_id}" />
+					
+							<input type="hidden" name="price" value="${item.price}" />
+						</td>
+						<td><input name="goodsNum"  type="text" value="1" disabled="disabled" id="${item.goods_id}" class="input_text"  style="width:30px" /></td>
+					</tr>
+				</#list>
+			</tbody>
+		</table>
+	</div>
+	</form>
+</div>
+<script type="text/javascript">
+$(function(){
+	//禁止中文输入以及输入法输入
+	 $("input[name='return_account']").keydown(function(e){
+	        var kCode = $.browser.msie ? event.keyCode : e.which;
+	        //判断键值  
+	        if (((kCode > 47) && (kCode < 58)) 
+	            || ((kCode > 95) && (kCode < 106)) 
+	            || (kCode == 8) || (kCode == 39) 
+	            || (kCode == 37)) { 
+	            return true;
+	        } else{ 
+	            return false;  
+	        }
+	    }).focus(function() {
+	        this.style.imeMode='disabled';// 禁用输入法,禁止输入中文字符
+	});
+	$("#btnSubmit").click(function(){
+		$("#btnSubmit").attr({"disabled":"disabled"});
+		if($("input[name='gid']").length==0){
+			$.Loading.message("此订单所有商品均已申请过退货");
+			$("#btnSubmit").removeAttr("disabled");
+			return false;
+		}
+		
+		if($("input[name='gid']").filter(":checked").length==0){
+			$.Loading.message("请选择要退货的商品");
+			$("#btnSubmit").removeAttr("disabled");
+			return false;
+		}
+		var choose=false;
+		$("input[name='gid']:checked").filter(function(index){
+			if($("#"+$(this).attr("goods_id")).val()<=0){
+				$.Loading.message("退货数量不能为0");
+				choose=true;
+			}else if(isNaN($("#"+$(this).attr("goods_id")).val())){
+				$.Loading.message("请输入数字");
+				choose=true;
+			}else if($("#"+$(this).attr("goods_id")).val()>$(this).attr("payNum")){
+				$.Loading.message("退货数量大于购物数量");
+				choose=true;
+			}
+		});
+		if(choose){
+			$("#btnSubmit").removeAttr("disabled");
+			return false;
+		}
+		if($("select[name='refund_way']").val()=="0"){
+			$.Loading.message("请选择支付方式");
+			return false;
+			
+		}
+		if($("input[name='return_account']").val()==""){
+			$.Loading.message("请填写退款账号");
+			$("#btnSubmit").removeAttr("disabled");
+			return false;
+		}
+		var reg = /[\u4E00-\u9FA5\uF900-\uFA2D]/;
+		if(reg.test($("input[name='return_account']").val())){
+			$.Loading.message("请填写正确的快递单号");
+			$("#btnSubmit").removeAttr("disabled");
+			return false;
+		}
+		var options = {
+				url : "${ctx}/api/store/storeSellBack!save.do?ajax=yes",
+				type : "POST",
+				dataType : 'json',
+				success : function(result) {
+					alert(result.message);
+					if(result.result==1){
+						location.href="${ctx}/member/return_list.html"
+					}
+				},
+				error : function(e) {
+					alert("出现错误 ，请重试");
+					$("#btnSubmit").removeAttr("disabled");
+				}
+			};
+			$('#returnForm').ajaxSubmit(options);
+	});
+	$("input[name='gid']").click(function(){
+		var goods_id=$("input[name='gid']").attr("goods_id");
+		if($("#"+goods_id ).attr("disabled")=="disabled"){
+			$("#"+goods_id ).attr("disabled",false);
+		}else{
+			$("#"+goods_id ).attr("disabled",true);
+		}
+	});
+})
+
+
+</script>
+
+<#include '../common/footer.html'/>

@@ -1,0 +1,463 @@
+<div id="checkout_wrapper">
+	<div class="pay_warm">请确认以下信息，然后提交订单</div>
+	<div class="pay_frame">
+		<form class="validate" id="checkoutform">
+			<#-- 创建会员是否有默认地址标签 -->
+			<#assign defaultConsigneeTag= newTag("defaultConsigneeTag")>
+			<#-- 获取是否有默认地址  -->
+			<#assign defAddress = defaultConsigneeTag()!'' >
+			<div class="input" style="display: none;">
+				<input type="hidden"  name="province_id" value="${(defAddress.province_id)!'0'}" >
+				<input type="hidden"  name="city_id" value="${(defAddress.city_id)!'0'}" >
+				<input type="hidden"  name="region_id" value="${(defAddress.region_id)!'0'}" >
+				<input type="hidden"  name="province" value="${(defAddress.province)!'0'}" >
+				<input type="hidden"  name="city" value="${(defAddress.city)!'0'}" >
+				<input type="hidden"  name="region" value="${(defAddress.region)!'0'}" >
+				<input type="hidden"  name="shipZip" value="${(defAddress.zip)!'0'}" >
+				<input type="hidden"  name="shipName" value="${(defAddress.name)!'0'}" >
+				<input type="hidden"  name="shipAddr" value="${(defAddress.addr)!'0'}" >
+				<input type="hidden"  name="shipZip" value="${(defAddress.zip)!'0'}" >
+				<input type="hidden"  name="shipName" value="${(defAddress.name)!'0'}" >
+				<input type="hidden"  name="shipMobile" value="${(defAddress.mobile)!'0'}" >
+				<input type="hidden"  name="shipTel" value="${(defAddress.tel)!'0'}" >
+			</div>
+			
+			<div class="box address">
+				<div class="selected" <#if !defAddress?exists>style="display:none"</#if> >
+					<h1>收货人信息<a href="javascript:;" class="modify_btn">[修改]</a></h1>
+					<#if defAddress?exists>
+						<span>
+							${(defAddress.province)!''}-${defAddress.city!''}-${defAddress.region!''}-${defAddress.addr!''}
+							(收货人：${defAddress.name!''}，电话：${defAddress.tel!''}，邮编：${defAddress.zip!''})
+						</span>
+					</#if>
+				</div>
+				<div class="modify"
+					<#if defAddress?exists>style="display:none"</#if>>
+					<h1>收货人信息</h1>
+					<#-- 创建会员是否登录标签 -->
+					<#assign memberIsLoginTag= newTag("memberIsLoginTag")>
+					<#-- 获取是否登录  -->
+					<#assign isLogin = memberIsLoginTag() >
+					
+					<#if isLogin >
+						<div class="list"> 
+							<#include 'address_list.html' />
+						</div> 
+					</#if>
+					
+					<!-- 创建会员收货地址标签 -->
+					<#assign memberAdressRegionTag= newTag("memberAdressRegionTag")>
+					<!-- 获取收货地址的id -->
+					<#assign memberAdressRegion = memberAdressRegionTag('"addrid":${addrid!0}') >
+					<input type="hidden" id="regionid" value="${memberAdressRegion!0}" >
+					<div class="pay_botton btn">
+						<a href="javascript:void(0);"  onclick="add_address();" class="add_address">新增收货地址</a>
+						
+						<input type="button" class="yellow_btn address_ok" id="saveAddrBtn" value="确认收货人信息"/>
+					</div>
+					
+				</div>
+			</div>
+			
+			<div class="box payment">
+				<div class="selected" style="display: none">
+					<h1>
+						付款方式<a href="javascript:;" class="modify_btn">[修改]</a>
+					</h1>
+				</div>
+				<div class="modify">
+					<h1>付款方式</h1>
+					<div class="list">请先填写收货人信息。</div>
+					<div class="pay_botton btn">
+						<input type="button" class="yellow_btn" id="savePaymentBtn"
+							value="确认付款方式" style="display: none">
+					</div>
+				</div>
+			</div>
+			
+			<input type="hidden" name="typeId" value="0">
+			<div class="send_pucker box">
+				<h1>
+					送货时间：
+					<span class="change_sand">[修改]</span>
+				</h1>
+				<div class="send_selected">
+					<span class="send_ok">任意时间</span>
+				</div>
+				<div class="send_timetools" style="display:none;">
+					<label class="sand_time">
+						<input type="radio"  value="任意日期" name="shipDay" checked="true"/>
+						<p>任意日期</p>
+					</label>
+					<label class="sand_time">
+						<input type="radio"  value="仅工作日" name="shipDay"/>
+						<p>仅工作日</p>
+					</label class="sand_time">
+					<label >
+						<input type="radio"  value="仅休息日" name="shipDay"/>
+						<p>仅休息日</p>
+					</label>
+					<input type="button" value="保存送货时间" class="send_timesave">
+				</div>
+			</div>
+			
+			<!-- <div class="box dlytype" >
+				<div class="selected" style="display:none">
+					<h1>配送方式[<a href="javascript:;" class="modify_btn">修改</a>]</h1>
+				</div>
+				<div class="modify">
+					<h1>配送方式</h1>
+					<div class="list">请先选择支付方式。</div>
+					<div class="pay_botton btn">
+						<input type="button" class="yellow_btn" id="saveDlytypeBtn" value="确认配送方式" style="display:none">
+					</div>
+				</div>
+			</div> -->
+			<!-- 发票 -->
+			<div class="box invoice">
+				<h1>
+					发票信息：
+					<span class="change_invoice">[修改]</span>
+				</h1>
+				<div class="invoice_selected" >
+					<span  name="receiptType" value="" class="receiptTypespan" >暂不需要发票</span>
+					<span  name="receiptContent" value="" class="receiptContentspan" ></span>
+					<span   value="" class="receiptTitlespan" name="receiptTitle"></span>
+					<input type="hidden" value="" name="receipt" class="receiptspan">
+				</div>
+				<div class="invoice_tools" style="display:none;">
+					<dl>
+						<dt>发表抬头：</dt>
+						<dd>
+							<label><input type="radio" name="receiptType" value="1" checked="true"><span>个人</span></label>
+							<label><input type="radio" name="receiptType" value="2" ><span>单位</span></label>
+							<label><input type="text" name="receiptTitle" id="receiptTitle" style="display: none" /></label>
+						</dd>
+					</dl>
+					<dl>
+						<dt>发票内容：</dt>
+						<dd>
+							<select name="receiptContent" class="receiptContent">
+									<option value="办公用品">办公用品</option>
+									<option value="劳保用品">劳保用品</option>
+									<option value="耗材">耗材</option>
+							</select>
+						</dd>
+					</dl>
+					<dl >
+						<dt></dt>
+						<dd style="padding:0px 0px 10px 0px">注：内容不全默认为不索取发票</dd>
+					</dl>
+					<input type="button" class="invoice_save" value="保存发票信息">
+				</div>
+			</div>
+			<!-- 订单备注 -->
+			<div class="remark box">
+				<h1>
+					订单备注
+					<span class="change_remark">[修改]</span>
+				</h1>
+				<div class="remark_selected">
+					<span name="remark" value="" >暂无备注信息</span>
+				</div>
+				<div class="remark_tools" style="display:none;">
+					<label><input type="text" name="remark" value="" class="remark_content"><span>*请勿填写有关支付/收货/发票方面的信息，如有特殊需要请联系客服人员。</span></label>
+					<input type="button" value="保存备注信息" class="remark_ok">
+				</div>
+				<script>
+					$(function(){
+						$(".remark_ok").click(function(){
+							var c_remark = $(".remark_content").val();
+							$(".remark_selected span").attr("val",c_remark);
+							$(".remark_selected span").text(c_remark);
+							$(".change_remark").show();
+							$(".remark").removeClass("relborder");
+							$(".remark_selected").show();
+							$(".remark_tools").hide();
+							if(c_remark==""){
+								$(".remark_selected span").text("暂无备注信息");
+							}
+						})
+						$(".change_remark").click(function(){
+							$(this).hide();
+							$(".remark").addClass("relborder");
+							$(".remark_selected").hide();
+							$(".remark_tools").show();
+						})
+					})
+				</script>
+			</div>
+			<div class="goods_wrapper">
+				<#-- 创建购物车标签 -->
+				<#assign cartTag= newTag("storeCartGoodsTag")>
+				<#--通过购物车标签获取购物项列表 --> 
+				<#assign itemList = cartTag()>
+				<h1>
+					商品清单<a href="${ctx}/cart.html"><span>[返回购物车修改]</span></a>
+				</h1>
+				<table class="checkout_goodslist">
+					<thead>
+						<tr>
+							<th colspan="3">商品</th>
+							<th >单价(元)</th>
+							<th >数量</th>
+							<th >小计(元)</th>
+						</tr>
+					</thead>
+					<tbody>
+				<#if itemList?exists && itemList?size gt 0> 
+				<#list itemList as store >
+					<tr>
+						<th colspan="10">
+							店铺名称:${store.store_name}
+							<input type="hidden" name="storeid" value="${store.store_id}" >
+						</th>
+						
+					</tr>
+					<#list store.goodslist as item >
+						<tr itemid="${item.id}">	
+							<td>
+								<input type="hidden" value="${store.store_id}">&nbsp;
+							</td>
+							<td>
+								<a target="_blank" href="goods.html?goodsid=${item.goods_id}">
+									<span style="display: block; height: 50px;" class="cart-product-img"> 
+										<@image height="50" width="50" src="${item.image_default!''}" style="cursor: pointer;" /> 
+									</span>
+								</a>
+							</td>
+							<td style="text-align:left;font-weight:bold;color:#333">
+								<a target="_blank" href="goods.html?goodsid=${item.goods_id}">${item.name}</a> 
+								<#if item.others?exists> 
+									<#if item.others.specList?exists> 
+										<span>
+											<#list item.others.specList as spec>
+											<#if spec_index!=0>
+											</#if>
+												<strong>${spec.name}:
+													<em style="color: #ED7108">${spec.value}</em>
+												</strong>
+											</#list>
+										</span> 
+									</#if> 
+								</#if>
+							</td>
+							<td>
+								${item.price?string("currency")}
+							</td>
+							<td>
+								${item.num}
+							</td>
+							<td>
+								${item.subtotal?string("currency")}
+							</td>
+						</tr>
+					</#list>
+					<tr class="tfoot">
+						<td style="border-bottom: 0px dashed #bebebe;text-align: right;background:#fff" colspan="9">
+						
+							<!-- 创建店铺优惠劵标签 --> 
+							<#assign storeBonusTag= newTag("storeBonusTag") > 
+							<!-- 查询店铺优惠劵列表 --> 
+							<#assign storeBonus= storeBonusTag("{'store_id':${store.store_id!0},'storeprice':${store.storeprice?string('0.00')}}")!''>
+							<span>优惠劵：</span>
+							<select style="width: 100px;" name="bonusid" class="store_bonus" autocomplete="off"  >
+								<option value="0" selected="selected">不使用优惠劵</option>
+								<#list storeBonus as s>
+								<option value="${s.type_id!0}">${s.type_money}元优惠劵</option>
+								</#list>
+							</select>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<#-- 创建店铺配送方式标签 -->
+							<#assign storeDlytypeTag= newTag("storeDlytypeTag")>
+							<#--通过店铺配送方式标签获取配送方式列表 -->
+							<#assign storeDlytype = storeDlytypeTag('{"storeid":${store.store_id},"regionid":${memberAdressRegion!0},"weight":"${store.weight!0}","originalPrice":"${store.originalPrice}"}')>
+							<span>配送方式：</span>
+							<select name="shippingId" class="store_dlyss" autocomplete="off" > 
+								<#if storeDlytype?size==0>
+									<option value="0">&nbsp;免邮&nbsp;</option>
+								</#if>
+								<#list storeDlytype as s>
+								<option value="${s.type_id!0}">${s.name}&nbsp;&nbsp;&nbsp;&nbsp;${s.dlyPrice}&nbsp;元</option>
+								</#list>
+							</select>
+						</td>
+					</tr>
+					<tr  class="tfoot">
+						<td colspan="6" style="text-align: right;background:#fff;padding-right:20px;">
+							<ul>
+								<li ><span>优惠抵扣：</span><span class="couponprice">${(store.discountprice)?string("currency")}</span></li>
+								<li ><span>店铺总计(含运费)：</span><span class="storeprice">${store.storeprice?string("currency")}</span></li>
+							</ul>
+						</td>
+					</tr>
+					<!-- <tr>
+						<td colspan="3" style="text-align: right;"></td>
+						<td></td>
+						<td></td>
+						<td><b>店铺总计：</b></td>
+						<td class="storeprice"
+							style="font-weight: bold; font-size: 14px;">
+							${store.storeprice?string("currency")}元</td>
+					</tr> -->
+				</#list>
+				</tbody>
+				</#if>
+				</table>
+				<div class="total_wrapper" style="height:auto;"></div>
+			</div>
+			<div class="order_total">
+
+				<div class="button_wrapper btn">
+					<input type="button" value="提交订单" id="createBtn" class="blue_btn enable" />
+				</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div id="dd"></div>
+<script>
+$(function(){
+	<#if defAddress?exists>
+		CheckOut.showModifyUI();
+	</#if>
+	
+	$(".store_bonus").change(function(){
+		getOrderPrice();
+	})
+	
+	$(".store_dlyss").change(function(){
+		getOrderPrice();
+	});
+	
+})
+
+function getOrderPrice(){
+	var shippingids="";
+	var storeids="";
+	var bonusids ="";
+
+	
+	$("select[name='bonusid']").each(function(){
+		bonusids+=$(this).children("option:selected").val()+",";
+	});
+	
+	$("select[name='shippingId']").each(function(){
+		shippingids+=$(this).children("option:selected").val()+",";
+	});
+	
+	$("input[name='storeid']").each(function(){
+		storeids+=$(this).val()+",";
+	});
+	var regionid = $("#regionid").val();
+	var storeprice=$(this).parent().parent().parent().find(".storeprice");
+	
+	$.ajax({
+		url:"api/store/storeOrder!getOrderPrice.do",
+		data: {storeids:storeids,regionid:regionid,shippingids:shippingids,bonusid:bonusids},
+		dataType:"json",
+		success:function(res){
+			if(res.result==1){
+				var storeprices = res.storeprice.split(",");
+				for(var i =0;i<storeprices.length;i++){
+					$(".storeprice").each(function(index,element){
+						if(i==index){
+							$(this).text("￥"+storeprices[i]);
+						}
+					});
+				}
+				var discountprice = res.discountprice.split(",");
+				for(var i =0;i<discountprice.length;i++){
+					$(".couponprice").each(function(index,element){
+						if(i==index){
+							$(this).text("￥"+discountprice[i]);
+						}
+					});
+				}
+				$("#needPay").text("￥"+res.totleprice);
+				$("#discount_Pay").text("￥"+res.totle_discountprice);
+				$("#shippingPay").text("￥"+res.shippingprice);
+			}else{
+				alert(res.message);
+			}
+		},
+		error:function(){
+			alert("糟糕，发生意外错误");
+		}
+	});
+}
+
+function add_address(){
+	$("#dd").empty();
+	$("#dd").append("<div id='address_div'></div>");
+	var html = $("#address_div").load("checkout/new_address.html");
+	var dialog = $.dialog({ 
+		title:"新增收货人地址",
+		width:475,
+		top:100,
+		content:html,
+		lock:true,
+		init:function(){
+	}});
+	//dialog.content("url:checkout/new_address.html");
+}
+
+</script>
+<script>
+	//送货时间
+	$(function(){
+		$(".send_timesave").click(function(){
+			var val=$('input:radio[name="shipDay"]:checked').val();
+			$(".send_selected").show();
+			$(".send_timetools").hide();
+			$(".send_ok").empty();
+			$(".send_ok").text(val);
+			$(".send_pucker").removeClass("relborder");
+			$(".change_sand").show();
+		})
+		$(".change_sand").click(function(){
+			$(".send_pucker").addClass("relborder");
+			$(".send_selected").hide();
+			$(".send_timetools").show();
+			$(this).hide();
+		})
+	})
+</script>
+				<script>
+					$(function(){
+							$(".invoice_save").click(function(){
+								var rType=$('input:radio[name="receiptType"]:checked').val();
+								var rContent= $(".receiptContent").find("option:selected").text(); 
+								var rTitle=$("#receiptTitle").val();
+								$(".invoice_tools").hide();
+								$(".receiptTypespan").attr("value",rType);
+								$(".receiptContentspan").attr("value",rContent);
+								$(".receiptContentspan").text(rContent);
+								$(".receiptTitlespan").attr("value",rTitle);
+								$(".receiptTitlespan").text(rTitle);   
+								$(".invoice_selected").show();
+								$(".invoice").removeClass("relborder");
+								$(".change_invoice").show();
+								if(rType!=""){
+									$(".receiptspan").attr("value","1");
+								}
+								if(rType==1){
+									$(".receiptTypespan").text("个人");
+									$(".receiptTitlespan").attr("value","");
+									$(".receiptTitlespan").text("");   
+								}
+								if(rType==2){
+									$(".receiptTypespan").text("单位");
+								}
+							})
+							$(".change_invoice").click(function(){
+								$(".invoice_selected").hide();
+								$(".invoice_tools").show();
+								$(".invoice").addClass("relborder");
+								$(this).hide();
+							})
+					})
+				</script>
