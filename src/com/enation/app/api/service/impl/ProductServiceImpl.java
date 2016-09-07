@@ -329,6 +329,11 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		this.daoSupport.insert("es_goods", map);
 	}
 
+	@Override
+	public void updateThemeTag(ThemeTag tt) throws Exception {
+		this.daoSupport.update("es_api_theme_tag", tt, "id = "+tt.getId());
+	}
+
 
 	
 

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.struts2.ServletActionContext;
 import org.springframework.context.annotation.Scope;
 
 import com.enation.app.api.action.BaseAction;
@@ -341,7 +342,51 @@ public class AdminProductAction extends BaseAction {
 			out.close();
 		}
 	}
+	
+	public String fetchThemeTag(){
+		try {
+			ThemeTag tt = productService.getThemeTagById(request.getParameter("ttid"));
+			request.setAttribute("themeTag", tt);
+			List<ThemeTag> parentTags = productService.getParentThemeTagList();
+			request.setAttribute("parentTags", parentTags);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "fetchThemeTagSuccess";
+	}
 
+	public void updateThemeTagObj(){
+		try {
+			ThemeTag tt = productService.getThemeTagById(String.valueOf(themeTag.getId()));
+			if (themeTagFile != null && themeTagFile.size() > 0) {
+				File image = themeTagFile.get(0);
+				String imageName = themeTagFileFileName.get(0);
+				if (FileUtil.isAllowUp(imageName)) {
+					String trueUrl = ServletActionContext.getServletContext().getRealPath("/statics/"+tt.getImage());
+					File eFile = new java.io.File(trueUrl);
+					if(eFile.exists()){
+						eFile.delete();
+					}
+					String path = UploadUtil.upload(image, imageName, "themeTag");
+					tt.setImage(path);
+				} else {
+					jsonObject.put("result", "no");
+					jsonObject.put("reason", "上传格式不对！");
+				}
+			}
+			tt.setStatus(1);
+			tt.setCreate_time(new Date().getTime());
+			productService.updateThemeTag(tt);
+			jsonObject.put("result", "yes");
+		} catch (Exception e) {
+			jsonObject.put("result", "no");
+			e.printStackTrace();
+		} finally {
+			out.write(jsonObject.toString());
+			out.close();
+		}
+	}
+	
 	public String goThemeDetails() {
 		try {
 			String themeId = request.getParameter("themeId");

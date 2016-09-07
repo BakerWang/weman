@@ -124,6 +124,7 @@ tr:hover td .updateThemeA{
 							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${ctobj.create_time }"/>
 						</td>
 						<td>
+							<a style="text-decoration: none;" class="b_fr" onclick="updateThemeTag(this,${ctobj.id})" href="javascript:void(0);">修改</a>||
 							<a style="text-decoration: none;" class="b_fr" onclick="updateTheme(this,${ctobj.id})" href="javascript:void(0);">删除</a>
 						</td></tr>
 					</s:iterator>
@@ -154,6 +155,9 @@ tr:hover td .updateThemeA{
             } 
         });
 	});
+	function updateThemeTag(tt,tid){
+		parent.addTab1("修改主题标签","/b2b2cbak/apiAdmin/AdminProductAction_fetchThemeTag.do?ttid="+tid);
+	}
 	function updateTheme(tt,tid){
 		if(confirm("确定要删除吗？")){
 			

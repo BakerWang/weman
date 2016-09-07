@@ -161,4 +161,7 @@ public interface ProductService {
 	void updateProduct(int productId, Map<String, Object> map)throws Exception;
 
 
+	void updateThemeTag(ThemeTag tt)throws Exception;
+
+
 }
