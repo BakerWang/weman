@@ -1,6 +1,7 @@
 package com.enation.app.api.action.admin.action;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,9 @@ public class ShareAction extends BaseAction{
 			if("theme".equals(type)){
 				Theme theme = productService.getThemeDetails(dataId, 0);
 				request.setAttribute("theme", theme);
-				Page page =	productService.getThemeProducts(1, 5 , null);
+				Map<String,String> map = new HashMap<String,String>();
+				map.put("recommendStatus", "1");
+				Page page =	productService.getThemeProducts(1, 5 , map);
 				request.setAttribute("pageObj", page);
 				return "themeSuccess";
 			}else{

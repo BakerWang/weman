@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Scope;
 import com.enation.app.api.action.BaseAction;
 import com.enation.app.api.dto.ThemeProduct;
 import com.enation.app.api.model.Theme;
+import com.enation.app.api.model.ThemeContent;
 import com.enation.app.api.model.ThemeTag;
 import com.enation.app.api.service.ArticleService;
 import com.enation.app.api.service.ProductService;
@@ -429,8 +430,25 @@ public class AdminProductAction extends BaseAction {
 
 	public void deleteTheme() {
 		try {
-			productService.deleTheme(Integer.parseInt(request.getParameter("themeId")));
-			jsonObject.put("result", "yes");
+			Theme theme = productService.getThemeDetails(Integer.parseInt(request.getParameter("themeId")), 0);
+			if(theme!=null){
+				String imagePath = request.getSession().getServletContext().getRealPath("/statics")+"/";
+				if(new File(imagePath+theme.getImage()).exists()){
+					FileUtil.delete(imagePath+theme.getImage());
+				}
+				if(new File(imagePath+theme.getMinorImage()).exists()){
+					FileUtil.delete(imagePath+theme.getMinorImage());
+				}
+				for(ThemeContent tc:theme.getThemeContent()){
+					if("image".equals(tc.getType())){
+						FileUtil.delete(imagePath+tc.getImage());
+					}
+				}
+				productService.deleTheme(Integer.parseInt(request.getParameter("themeId")));
+				jsonObject.put("result", "yes");
+			}else{
+				jsonObject.put("result", "no");
+			}
 		} catch (Exception e) {
 			jsonObject.put("result", "no");
 			e.printStackTrace();
@@ -440,6 +458,28 @@ public class AdminProductAction extends BaseAction {
 		}
 	}
 
+	public void updateThemeStatusObj(){
+		try {
+			int themeId = Integer.parseInt(request.getParameter("themeId"));
+			String status = request.getParameter("status");
+			Map<String,Object> map = new HashMap<String,Object>();
+			String[] statusArray = status.split(",");
+			map.put("indexStatus", Integer.parseInt(statusArray[0]));
+			map.put("findStatus", Integer.parseInt(statusArray[1]));
+			map.put("recommendStatus", Integer.parseInt(statusArray[2]));
+			map.put("status", "1");
+			productService.updateTheme(themeId, map);
+			jsonObject.put("result", "yes");
+		} catch (Exception e) {
+			jsonObject.put("result", "no");
+			e.printStackTrace();
+		} finally {
+			out.write(jsonObject.toString());
+			out.close();
+		}
+	}
+	
+	
 	/**
 	 * 获取商品列表
 	 */

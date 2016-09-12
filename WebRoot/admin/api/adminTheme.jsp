@@ -105,11 +105,16 @@ tr:hover td .updateThemeA{
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
 			<table style="width:100%;font-size: 12px; " cellspacing="0" cellpadding="0" border="0">
-				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>主题商品数</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>删除</td></tr>
+				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>操作</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>删除</td></tr>
 <!-- 				<td>修改</td> -->
 				<s:iterator value="#request.page.result" var="themeObj">
 					<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">${themeObj.theme.title } </td><td><img src="/b2b2cbak/statics/${themeObj.theme.image }" width="80px" height="80px"/></td>
-					<td>${themeObj.theme.product_count }</td><td><input type="text" style="width:50px;" value="${themeObj.theme.love_count }" id="themeLoveCount" /><button onclick="updateLoveCount(${themeObj.theme.id })">修改</button></td>
+					<td>
+						<input type="checkbox" <s:if test="#themeObj.theme.indexStatus==1">checked="checked"</s:if> class="statusArray1">首页页
+						<input type="checkbox" <s:if test="#themeObj.theme.findStatus==1">checked="checked"</s:if> class="statusArray2">发现页
+						<input type="checkbox" <s:if test="#themeObj.theme.recommendStatus==1">checked="checked"</s:if> class="statusArray3">推荐页
+						<button onclick="updateThemeStatus(${themeObj.theme.id},this)">确定修改</button>
+					</td><td><input type="text" style="width:50px;" value="${themeObj.theme.love_count }" id="themeLoveCount" /><button onclick="updateLoveCount(${themeObj.theme.id })">修改</button></td>
 					<td>
 						<s:if test="#themeObj.theme.themetagList.size()>0">
 							<s:iterator value="#themeObj.theme.themetagList" var="tagMap">
@@ -196,6 +201,40 @@ tr:hover td .updateThemeA{
 		    success: function(msg){
 		    	if(msg.result=='yes'){
 		    		alert('修改成功！');
+		    	}else{
+		    		alert('系统错误!');
+		    	}
+		    }
+		})
+	}
+	function updateThemeStatus(tid,tt){
+		var statusStr = '';
+		if($($(tt).parent('td').find('.statusArray1')[0]).attr("checked")){
+			statusStr=statusStr+'1,';
+		}else{
+			statusStr=statusStr+'0,';
+		}
+		if($($(tt).parent('td').find('.statusArray2')[0]).attr("checked")){
+			statusStr=statusStr+'1,';
+		}else{
+			statusStr=statusStr+'0,';
+		}
+		if($($(tt).parent('td').find('.statusArray3')[0]).attr("checked")){
+			statusStr=statusStr+'1';
+		}else{
+			statusStr=statusStr+'0';
+		}
+		$.ajax({
+			type:'POST',
+			url:'/b2b2cbak/apiAdmin/AdminProductAction_updateThemeStatusObj.do',
+			data:{
+				'themeId':tid,
+				'status':statusStr
+			},
+			dataType:'json',
+		    success: function(msg){
+		    	if(msg.result=='yes'){
+		    		alert('设置成功!');
 		    	}else{
 		    		alert('系统错误!');
 		    	}

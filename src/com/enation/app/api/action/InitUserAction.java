@@ -48,12 +48,13 @@ public class InitUserAction extends BaseAction{
 				jsonObject.put("impress", impress);
 				String path = request.getContextPath();
 				String bpath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
-				jsonObject.put("faqUrl", bpath+"/api/faq.html");
-				jsonObject.put("aboutUrl", bpath+"/api/question.html");
-				jsonObject.put("bodyUrl", bpath+"/api/body.html");
-				jsonObject.put("skinUrl", bpath+"/api/skin.html");
+				jsonObject.put("faqUrl", bpath+"/api/faq.html");//常见问题
+				jsonObject.put("aboutUrl", bpath+"/api/question.html");//关于WeMan
+				jsonObject.put("bodyUrl", bpath+"/api/body.html");//身型说明
+				jsonObject.put("skinUrl", bpath+"/api/skin.html");//肤质说明
 				jsonObject.put("loginBackgroundImage", this.getImageUrl("attachment/allDefaultImage/loginBackgroundImage.png"));
 				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImage.png"));
+				jsonObject.put("eulaUrl", bpath+"/api/skin.html");
 			}else{
 				jsonObject.put("result", "FAILED");
 				jsonObject.put("reason", "系统错误！");

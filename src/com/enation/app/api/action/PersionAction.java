@@ -131,7 +131,9 @@ public class PersionAction extends BaseAction{
 		try {
 			int member_id = this.getMemberId(paramObject.getString("accessToken"));
 			persionService.fecthMessageCount(jsonObject, member_id);//我里面的总消息说（赞数，评论数，关注数，系统通知数）
-			Page page =	productService.getThemeProducts(1, 5 , null);
+			Map<String,String> map = new HashMap<String,String>();
+			map.put("recommendStatus", "1");
+			Page page =	productService.getThemeProducts(1, 5 , map);
 			List<ThemeProduct> tps = (List<ThemeProduct>) page.getResult();
 			JSONArray jsonArray = new JSONArray();
 			for(ThemeProduct tp:tps){

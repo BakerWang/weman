@@ -128,6 +128,7 @@ public class ProductAction extends BaseAction{
 			if (typeId != null && !"0".equals(typeId)) {
 				maps.put("typeId", typeId);
 			}
+			maps.put("findStatus", "1");
 			Page page =	productService.getThemeProducts(pageNo, 10 , maps);
 			List<ThemeProduct> tps = (List<ThemeProduct>) page.getResult();
 			JSONArray jsonArray = new JSONArray();
@@ -298,6 +299,7 @@ public class ProductAction extends BaseAction{
 			}
 			Map<String,String> map=new HashMap<String,String>();
 			map.put("themeId", String.valueOf(themeId));
+			map.put("recommendStatus", "1");
 			Page page =	productService.getThemeProducts(1, 5 , map);
 			List<ThemeProduct> tps = (List<ThemeProduct>) page.getResult();
 			JSONArray jsonArray = new JSONArray();
@@ -351,7 +353,7 @@ public class ProductAction extends BaseAction{
 					resObj.put("pmktprice", String.valueOf(obj.get("mktprice")));
 					resObj.put("purl", obj.get("url"));
 					resObj.put("ptitle", obj.get("brief"));
-					if(obj.get("isShowMKPrice")!=null&&(int)obj.get("isShowMKPrice")==-1){
+					if(obj.get("isshowmkprice")!=null&&(int)obj.get("isshowmkprice")==-1){
 						resObj.put("isShowMKPrice", "no");
 					}else{
 						resObj.put("isShowMKPrice", "yes");
@@ -361,7 +363,9 @@ public class ProductAction extends BaseAction{
 				jsonObject.put("productData", resJa);
 				return;
 			}
-			Page page =	productService.getThemeProductsAPP(pageNo, 10 , null);
+			Map<String,String> map = new HashMap<String,String>();
+			map.put("indexStatus", "1");
+			Page page =	productService.getThemeProductsAPP(pageNo, 10 , map);
 			List<Map<String,Object>> tps = (List<Map<String,Object>>) page.getResult();
 			JSONArray jsonArray = new JSONArray();
 			for(Map<String,Object> tp:tps){

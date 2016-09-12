@@ -24,6 +24,10 @@ public class Theme {
 	
 	private int isLove = 0;//是否收藏
 	
+	private int indexStatus =0;//首页是否显示
+	private int findStatus =0;//发现页是否显示
+	private int recommendStatus =0;//推荐是否显示
+	
 	
 	
 	public List<ThemeContent> getThemeContent() {
@@ -117,4 +121,23 @@ public class Theme {
 	public void setMinorImage(String minorImage) {
 		this.minorImage = minorImage;
 	}
+	public int getIndexStatus() {
+		return indexStatus;
+	}
+	public void setIndexStatus(int indexStatus) {
+		this.indexStatus = indexStatus;
+	}
+	public int getFindStatus() {
+		return findStatus;
+	}
+	public void setFindStatus(int findStatus) {
+		this.findStatus = findStatus;
+	}
+	public int getRecommendStatus() {
+		return recommendStatus;
+	}
+	public void setRecommendStatus(int recommendStatus) {
+		this.recommendStatus = recommendStatus;
+	}
+	
 }

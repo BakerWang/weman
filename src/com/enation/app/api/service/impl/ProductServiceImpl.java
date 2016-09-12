@@ -36,8 +36,9 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	private ThemeProductDao themeProductDao;
 	
 	public Page getProductList(int pageNo,int pageSize,Map<String,String> map) {
-		Page page = storeGoodsManager.b2b2cGoodsList(pageNo,pageSize,map);
-		return page;
+		String sql ="select g.* from es_goods g where g.disabled=0 and g.market_enable=1 order by g.create_time desc";
+		//Page page = storeGoodsManager.b2b2cGoodsList(pageNo,pageSize,map);
+		return this.daoSupport.queryForPage(sql, pageNo, pageSize);
 	}
 
 	@Override
@@ -55,7 +56,13 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		String sql="select at.id as id,at.image as image,at.title as title,at.details as details,eatt.image as tagImage "
 				+ " from es_api_theme at "
 				+ " left join es_api_theme_tag eatt on eatt.id = at.theme_tag_id "
-				+ " where at.status = '1'  order by at.id desc ";
+				+ " where at.status = '1' ";
+		if(map!=null){
+			if(map.containsKey("indexStatus")){
+				sql = sql +" and at.indexStatus = 1 ";
+			}
+		}
+		sql = sql +" order by at.id desc";
 		List<Map<String,Object>> themeList = this.daoSupport.queryForListPage(sql, pageNo, pageSize);
 		String countSql = "SELECT COUNT(*) from es_api_theme where status =1 ";
 		int totalCount = this.daoSupport.queryForInt(countSql);
@@ -65,14 +72,23 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	 * 后台主题列表
 	 * @param pageNo
 	 * @param pageSize
-	 * @param map
+	 * @param map    
 	 * @return
 	 */
 	public Page getThemeProducts(int pageNo, int pageSize, Map<String, String> map) {
-		String sql="select at.id as id,at.minorImage as minorImage,at.image as image,at.title as title,at.details as details "
+		String sql="select at.id as id,at.minorImage as minorImage,at.image as image,at.title as title,at.details as details,at.indexStatus as indexStatus,at.findStatus as findStatus,at.recommendStatus as recommendStatus "
 				+ " from es_api_theme at "
 				+ " where at.status = '1' ";
 		if(map!=null){
+			if(map.containsKey("indexStatus")){
+				sql = sql +" and at.indexStatus = 1 ";
+			}
+			if(map.containsKey("findStatus")){
+				sql = sql +" and at.findStatus = 1 ";
+			}
+			if(map.containsKey("recommendStatus")){
+				sql = sql +" and at.recommendStatus = 1 ";
+			}
 			if(map.containsKey("themeId")){
 				sql = sql +" and at.id != "+map.get("themeId");
 			}
@@ -106,6 +122,9 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			thm.setDetails((String)resObj.get("details"));
 			thm.setImage((String)resObj.get("image"));
 			thm.setMinorImage((String)resObj.get("minorImage"));
+			thm.setIndexStatus((int)resObj.get("indexStatus"));
+			thm.setFindStatus((int)resObj.get("findStatus"));
+			thm.setRecommendStatus((int)resObj.get("recommendStatus"));
 			tps.setTheme(thm);
 			themeProducts.add(tps);
 		}
@@ -158,6 +177,9 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		theme.setProduct_count(0);
 		theme.setStatus("1");
 		theme.setCreate_time(new Date().getTime());
+		theme.setIndexStatus(-1);
+		theme.setFindStatus(-1);
+		theme.setRecommendStatus(1);
 		this.daoSupport.insert("es_api_theme", theme);
 		theme.setId(this.daoSupport.getLastId("es_api_theme"));
 		//保存主题内容
