@@ -105,7 +105,7 @@ tr:hover td .updateThemeA{
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
 			<table style="width:100%;font-size: 12px; " cellspacing="0" cellpadding="0" border="0">
-				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>操作</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>删除</td></tr>
+				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>操作</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>登录用户点击次数</td><td>点击次数</td><td>删除</td></tr>
 <!-- 				<td>修改</td> -->
 				<s:iterator value="#request.page.result" var="themeObj">
 					<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">${themeObj.theme.title } </td><td><img src="/b2b2cbak/statics/${themeObj.theme.image }" width="80px" height="80px"/></td>
@@ -158,6 +158,12 @@ tr:hover td .updateThemeA{
 <!-- 					<td style="text-align: center;"> -->
 <%-- 						<a class="updateThemeA" onclick='parent.addTab1("主题修改","/b2b2cbak/apiAdmin/AdminProductAction_goThemeDetails.do?themeId=${themeObj.theme.id}");' href="javascript:void(0);" title="修改" ></a> --%>
 <!-- 					</td> -->
+					<td>
+						<a href="javascript:void(0)" onclick="parent.addTab1('用户点击主题详情','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId='+${themeObj.theme.id})">${themeObj.theme.loginClickCount }</a>
+					</td>
+					<td>
+						${themeObj.theme.clickCount }
+					</td>
 					<td>
 						<a style="text-decoration: none;" class="b_fr" onclick="updateTheme(this,${themeObj.theme.id})" href="javascript:void(0);">删除</a>
 					</td></tr>

@@ -164,4 +164,14 @@ public interface ProductService {
 	void updateThemeTag(ThemeTag tt)throws Exception;
 
 
+	/**
+	 * 查看用户点击主题详情
+	 * @param startTime
+	 * @param endTime
+	 * @param dataId
+	 * @param string
+	 */
+	Page userThemeCount(Long startTime, Long endTime, int dataId, String string,Page page);
+
+
 }

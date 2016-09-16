@@ -21,6 +21,8 @@ public class Theme {
 	private Map<Integer,Integer> themetagList;
 	private String tagsImage;//主题tag的图片列表
 	private List<ThemeContent> themeContent;
+	private int clickCount;//未登录用户点击数
+	private int loginClickCount;//登录用户的点击数
 	
 	private int isLove = 0;//是否收藏
 	
@@ -30,6 +32,18 @@ public class Theme {
 	
 	
 	
+	public int getLoginClickCount() {
+		return loginClickCount;
+	}
+	public void setLoginClickCount(int loginClickCount) {
+		this.loginClickCount = loginClickCount;
+	}
+	public int getClickCount() {
+		return clickCount;
+	}
+	public void setClickCount(int clickCount) {
+		this.clickCount = clickCount;
+	}
 	public List<ThemeContent> getThemeContent() {
 		return themeContent;
 	}

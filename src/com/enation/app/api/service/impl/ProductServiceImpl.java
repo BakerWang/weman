@@ -76,7 +76,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	 * @return
 	 */
 	public Page getThemeProducts(int pageNo, int pageSize, Map<String, String> map) {
-		String sql="select at.id as id,at.minorImage as minorImage,at.image as image,at.title as title,at.details as details,at.indexStatus as indexStatus,at.findStatus as findStatus,at.recommendStatus as recommendStatus "
+		String sql="select at.id as id,at.minorImage as minorImage,at.image as image,at.title as title,at.details as details,at.indexStatus as indexStatus,at.findStatus as findStatus,at.recommendStatus as recommendStatus,at.loginClickCount as loginClickCount,at.clickCount as clickCount,at.create_time as createTime "
 				+ " from es_api_theme at "
 				+ " where at.status = '1' ";
 		if(map!=null){
@@ -125,6 +125,9 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			thm.setIndexStatus((int)resObj.get("indexStatus"));
 			thm.setFindStatus((int)resObj.get("findStatus"));
 			thm.setRecommendStatus((int)resObj.get("recommendStatus"));
+			thm.setClickCount((int)resObj.get("clickCount"));
+			thm.setLoginClickCount((int)resObj.get("loginClickCount"));
+			thm.setCreate_time((Long)resObj.get("createTime"));
 			tps.setTheme(thm);
 			themeProducts.add(tps);
 		}
@@ -180,6 +183,8 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		theme.setIndexStatus(-1);
 		theme.setFindStatus(-1);
 		theme.setRecommendStatus(1);
+		theme.setClickCount(0);
+		theme.setLove_count(0);
 		this.daoSupport.insert("es_api_theme", theme);
 		theme.setId(this.daoSupport.getLastId("es_api_theme"));
 		//保存主题内容
@@ -322,6 +327,28 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 				+ " where eatc.status != '-1' and theme_id = ?";
 		List<ThemeContent> themeContent = this.baseDaoSupport.queryForList(contentSql, ThemeContent.class, themeId);
 		theme.setThemeContent(themeContent);
+		if(memberId!=0){
+			String clickSql="update es_api_theme eat set eat.loginClickCount = eat.loginClickCount+1 where eat.id = ?";
+			this.daoSupport.execute(clickSql, theme.getId());
+			String isExistsSql ="select count(*) from es_api_user_view eauv where eauv.type = 'clickTheme' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
+			int count = this.daoSupport.queryForInt(isExistsSql, theme.getId(),memberId);
+			if(count>0){
+				String updateUserViewSql = "update es_api_user_view eauv set eauv.viewCount = eauv.viewCount+1 where eauv.type = 'clickTheme' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
+				this.daoSupport.execute(updateUserViewSql, theme.getId(),memberId);
+			}else{
+				Map<String,Object> userView = new HashMap<String,Object>();
+				userView.put("viewUserId", memberId);
+				userView.put("dataId", theme.getId());
+				userView.put("type", "clickTheme");
+				userView.put("status", "1");
+				userView.put("viewCount", "1");
+				userView.put("create_time", new Date().getTime());
+				this.daoSupport.insert("es_api_user_view", userView);
+			}
+		}else{
+			String clickSql="update es_api_theme eat set eat.clickCount = eat.clickCount+1 where eat.id = ?";
+			this.daoSupport.execute(clickSql, theme.getId());
+		}
 		return theme;
 	}
 
@@ -354,6 +381,14 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	@Override
 	public void updateThemeTag(ThemeTag tt) throws Exception {
 		this.daoSupport.update("es_api_theme_tag", tt, "id = "+tt.getId());
+	}
+
+	@Override
+	public Page userThemeCount(Long startTime, Long endTime, int dataId, String type,Page page) {
+		String sql ="select em.uname as username,eauv.viewCount as viewCount,eauv.dataId as dataId from es_api_user_view eauv "
+				+ " left join es_member em on em.member_id = eauv.viewUserId "
+				+ " where eauv.type = ? and eauv.dataId = ? and eauv.create_time >= ? and eauv.create_time <= ?";
+		return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), type,dataId,startTime,endTime);
 	}
 
 

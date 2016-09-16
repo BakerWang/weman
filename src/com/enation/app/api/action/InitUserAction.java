@@ -53,8 +53,8 @@ public class InitUserAction extends BaseAction{
 				jsonObject.put("bodyUrl", bpath+"/api/body.html");//身型说明
 				jsonObject.put("skinUrl", bpath+"/api/skin.html");//肤质说明
 				jsonObject.put("loginBackgroundImage", this.getImageUrl("attachment/allDefaultImage/loginBackgroundImage.png"));
-				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImage.png"));
-				jsonObject.put("eulaUrl", bpath+"/api/skin.html");
+				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImage.gif"));
+				jsonObject.put("eulaUrl", bpath+"/api/eula.html");
 			}else{
 				jsonObject.put("result", "FAILED");
 				jsonObject.put("reason", "系统错误！");

@@ -109,6 +109,20 @@ boby{
 <!-- 			</div> -->
 <!-- 		</div> -->
 	</div>
+	<div style="margin: 0 auto;width:320px;" id="bottomDiv">
+		<div style="height:60px;">
+		</div>
+		<header  id="appDiv" style="position: fixed; bottom: 0px; width: 320px; background-color: #383838;height: 60px;">
+			<div style="float: left; height: 44px;left: 6px;position: absolute;top: 8px;width: 44px;"><img alt="" src="../admin/api/image/logo64.png"></div>
+			<div style="color: #fff;font-size: 16px;line-height: 18px;padding: 13px 55px 0;text-align: left;">
+				<p>第一个同志专属电商APP</p>
+				<p>WeMan我们</p>
+			</div>
+			<!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.xymens.app" class="btn">点击下载</a>-->
+	           <a style="  background-color: #f5a415;border-radius: 3px; color: rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="javascript:;">下载APP</a>
+	           <a style="z-index: 8" class="close" href="javascript:;"></a>
+		</header>
+	</div>
 </body>
 <script type="text/javascript">
 var hh=document.documentElement.clientWidth;

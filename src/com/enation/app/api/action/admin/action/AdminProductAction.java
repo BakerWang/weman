@@ -1,6 +1,7 @@
 package com.enation.app.api.action.admin.action;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +40,25 @@ public class AdminProductAction extends BaseAction {
 	@Resource
 	private ArticleService articleService;
 
+	
+	
+	public String userThemeCount(){
+		try {
+			String stime = request.getParameter("startTime")==null?"2016-09-01":request.getParameter("startTime");
+			String etime = request.getParameter("endTime")==null?"2020-09-01":request.getParameter("endTime");
+			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
+			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
+			int dataId = Integer.parseInt(request.getParameter("themeId"));
+			page.setPageSize(20);
+			Page respage = productService.userThemeCount(startTime,endTime,dataId,"clickTheme",page);
+			request.setAttribute("resPage", respage);
+			request.setAttribute("dataId", dataId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "userThemeCountSuccess";
+	}
+	
 	/**
 	 * 到添加商品页面
 	 * @return
@@ -226,7 +246,6 @@ public class AdminProductAction extends BaseAction {
 					String saveName2 = uploadImage(themeFile2, imageName, "theme");
 					theme.setImage(saveName);
 					theme.setMinorImage(saveName2);
-					System.out.println(contentArray);
 					JSONArray ja = JSONArray.fromObject(contentArray);
 					List<Map<String,Object>> contentMaps = new ArrayList<Map<String,Object>>();
 					for (int i = 0; i < ja.size(); i++) {

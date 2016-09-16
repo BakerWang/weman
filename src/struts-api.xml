@@ -45,6 +45,7 @@
 			<result name="goThemeDetailsSuccess">/admin/api/updateTheme.jsp</result>
 			<result name="addProductJspSuccess">/admin/api/addGoods.jsp</result>
 			<result name="fetchThemeTagSuccess">/admin/api/updateThemeTag.jsp</result>
+			<result name="userThemeCountSuccess">/admin/api/userThemeCount.jsp</result>
 		</action>
 		<action name="AdminBannerAction_*" class="com.enation.app.api.action.admin.action.AdminBannerAction" method="{1}">
 			<result name="bannerListSuccess">/admin/api/bannerList.jsp</result>

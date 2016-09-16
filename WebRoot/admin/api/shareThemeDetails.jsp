@@ -50,7 +50,7 @@ a {
 <body>
 <body style="overflow-x: hidden;margin:0px;padding:0px;">
 	<div id="secDiv" style="width:320px;margin:0 auto;">
-		<div style="margin:0px;padding:0px;margin-top:2px;">
+		<div style="margin:0px;padding:0px;">
 			<img src="http://183.195.242.14:8089/b2b2cbak/statics/${theme.minorImage }"/>
 		</div>
 		<section style="margin: 0 auto;position: relative;width:100%;" >
@@ -107,8 +107,8 @@ a {
 	<div style="width:320px;margin:0 auto;" id="moreThemeDiv">
 		<s:iterator value="#request.pageObj.result" var="themeObj">
 			<a href="../apiAdmin/ShareAction_getDataDetails.do?type=theme&dataId=${themeObj.theme.id }">
-				<div style="padding:5px;height:70px;width:100%;">
-					<div style="float:left;"><img src="http://183.195.242.14:8089/b2b2cbak/statics/${themeObj.theme.minorImage }" style="width:100px;height:70px"/></div>
+				<div style="padding-top:5px;padding-bottom:5px;height:70px;width:100%;">
+					<div style="float:left;margin-left:5px;"><img src="http://183.195.242.14:8089/b2b2cbak/statics/${themeObj.theme.minorImage }" style="width:100px;height:70px"/></div>
 					<div style="float:left;margin-left:3px;width:67%;">
 						<div style="margin-top:7px;font-size:15px;color: black;">${themeObj.theme.title }</div>
 						<div style="margin-top:4px;font-size:14px;color:rgb(193,193,193);">${themeObj.theme.details }</div>
@@ -121,13 +121,13 @@ a {
 		<div style="height:60px;">
 		</div>
 		<header  id="appDiv" style="position: fixed; bottom: 0px; width: 320px; background-color: #383838;height: 60px;">
-			<div style="float: left; height: 44px;left: 6px;position: absolute;top: 8px;width: 44px;"><img alt="" src="http://m.xymens.com/Templates/Default/assets/sub/img/logo64.png"></div>
+			<div style="float: left; height: 44px;left: 6px;position: absolute;top: 8px;width: 44px;"><img alt="" src="../admin/api/image/logo64.png"></div>
 			<div style="color: #fff;font-size: 16px;line-height: 18px;padding: 13px 55px 0;text-align: left;">
 				<p>第一个同志专属电商APP</p>
 				<p>WeMan我们</p>
 			</div>
 			<!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.xymens.app" class="btn">点击下载</a>-->
-	           <a style="  background-color: #f5a415;border-radius: 3px; color: #fff; font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="javascript:;">下载APP</a>
+	           <a style="  background-color: #f5a415;border-radius: 3px; color: rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="javascript:;">下载APP</a>
 	           <a style="z-index: 8" class="close" href="javascript:;"></a>
 		</header>
 	</div>

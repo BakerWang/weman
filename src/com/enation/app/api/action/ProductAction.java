@@ -243,6 +243,10 @@ public class ProductAction extends BaseAction{
 			jsonObject.put("themeTile", theme.getTitle());
 			jsonObject.put("themeDate", theme.getShowDate());
 			jsonObject.put("themeDetails", theme.getDetails());
+			jsonObject.put("themeTitleSize", "18");
+			jsonObject.put("themeContentSize", "16");
+			jsonObject.put("themeFontDistance", "1");//字间距
+			jsonObject.put("themeCapableDistance", "8");//行间距
 			jsonObject.put("themeCollectCount", theme.getLove_count());
 			if(theme.getIsLove()==0){
 				jsonObject.put("isLove", "no");

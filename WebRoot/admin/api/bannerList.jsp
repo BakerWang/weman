@@ -111,7 +111,7 @@ tr:hover td .updateThemeA{
 				<s:iterator value="#request.page.result" var="bannerObj">
 					<tr class="divTr" style="color:red;<c:if test="${now.getTime() > bannerObj.start_time && now.getTime()<bannerObj.end_time }">color:black;</c:if><c:if test="${now.getTime() < bannerObj.start_time }">color:royalblue;</c:if>" height="100px" >
 					<td style="border-left: 1px solid #ccc;">${bannerObj.id } </td><td>${bannerObj.title }</td><td><img src="/b2b2cbak/statics/${bannerObj.image }" width="80px" height="80px"/></td>
-					<td>${bannerObj.details }</td><td>${bannerObj.category }</td><td>${bannerObj.type }</td>
+					<td style="max-width: 260px;">${bannerObj.details }</td><td>${bannerObj.category }</td><td>${bannerObj.type }</td>
 					<td>
 						<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${bannerObj.start_time }"/>
 						||
