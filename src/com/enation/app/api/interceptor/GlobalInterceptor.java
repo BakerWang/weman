@@ -31,7 +31,7 @@ public class GlobalInterceptor implements Interceptor{
 	public String intercept(ActionInvocation invocation) throws Exception {
 		HttpServletRequest request= (HttpServletRequest) invocation.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
 	    HttpServletResponse response= (HttpServletResponse) invocation.getInvocationContext().get(StrutsStatics.HTTP_RESPONSE);
-	    Logger.getLogger(getClass()).error("访问的方法："+request.getRequestURI());
+	    //Logger.getLogger(getClass()).error("访问的方法："+request.getRequestURI());
 	    JSONObject jsonObject = new JSONObject();
 	    if(request.getContentType().contains("form-data")){
 	    	for(Object key:request.getParameterMap().keySet()){
@@ -40,7 +40,7 @@ public class GlobalInterceptor implements Interceptor{
 	    	response.setCharacterEncoding("UTF-8");  
 			response.setContentType("application/json; charset=utf-8");
 	    	request.setAttribute("params", jsonObject);
-	    	Logger.getLogger(getClass()).error("参数："+jsonObject.toString());
+	    	Logger.getLogger(getClass()).error("form-data参数："+jsonObject.toString());
 	    	try {
 //	    		String accessToken = null;
 //	    		JSONObject obj = new JSONObject();
@@ -69,7 +69,7 @@ public class GlobalInterceptor implements Interceptor{
 			response.setContentType("application/json; charset=utf-8");
 			String loginType = null;
 			String accessToken = null; 
-			Logger.getLogger(getClass()).error("参数："+jsonObject.toString());
+			Logger.getLogger(getClass()).error("application-json参数："+jsonObject.toString());
 			if(jsonObject.has("loginType")){
 				loginType = (String) jsonObject.get("loginType");
 			}

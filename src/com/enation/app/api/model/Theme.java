@@ -11,13 +11,17 @@ public class Theme {
 	private String title;
 	private String image;
 	private String minorImage;//主题副图
+	private String productPosition;//主题商品描述的位置
+	private String detailsPosition;//主题内容的位置
 	private String details;
 	private String showDate;
 	private int love_count;
 	private int product_count;
+	private String contentStyle;//主题的风格显示
 	private String status;//1是正常  -1是删除
 	private int theme_tag_id;
 	private Long create_time;
+	private Long startTime;
 	private Map<Integer,Integer> themetagList;
 	private String tagsImage;//主题tag的图片列表
 	private List<ThemeContent> themeContent;
@@ -29,9 +33,16 @@ public class Theme {
 	private int indexStatus =0;//首页是否显示
 	private int findStatus =0;//发现页是否显示
 	private int recommendStatus =0;//推荐是否显示
+	private int bannerStatus = 0;//banner页是否显示此主题
 	
 	
 	
+	public String getContentStyle() {
+		return contentStyle;
+	}
+	public void setContentStyle(String contentStyle) {
+		this.contentStyle = contentStyle;
+	}
 	public int getLoginClickCount() {
 		return loginClickCount;
 	}
@@ -153,5 +164,30 @@ public class Theme {
 	public void setRecommendStatus(int recommendStatus) {
 		this.recommendStatus = recommendStatus;
 	}
+	public String getDetailsPosition() {
+		return detailsPosition;
+	}
+	public void setDetailsPosition(String detailsPosition) {
+		this.detailsPosition = detailsPosition;
+	}
+	public String getProductPosition() {
+		return productPosition;
+	}
+	public void setProductPosition(String productPosition) {
+		this.productPosition = productPosition;
+	}
+	public Long getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(Long startTime) {
+		this.startTime = startTime;
+	}
+	public int getBannerStatus() {
+		return bannerStatus;
+	}
+	public void setBannerStatus(int bannerStatus) {
+		this.bannerStatus = bannerStatus;
+	}
+
 	
 }

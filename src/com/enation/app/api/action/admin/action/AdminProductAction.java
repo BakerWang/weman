@@ -69,6 +69,9 @@ public class AdminProductAction extends BaseAction {
 	
 	private File productImage;
 	private String productImageFileName;
+	/**
+	 * 添加商品
+	 */
 	public void saveProduct(){
 		try {
 			String title = request.getParameter("title");
@@ -77,6 +80,9 @@ public class AdminProductAction extends BaseAction {
 			String details = request.getParameter("details");
 			String price = request.getParameter("price");
 			String mkprice=  request.getParameter("mkprice");
+			String productOrigin = request.getParameter("productOrigin");
+			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("startTime")).getTime();
+			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("endTime")).getTime();
 			int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
 			int productBrand = Integer.parseInt(request.getParameter("productBrand"));
 			int isShowMKPrice = Integer.parseInt(request.getParameter("isShowMKPrice"));
@@ -84,6 +90,8 @@ public class AdminProductAction extends BaseAction {
 				if (FileUtil.isAllowUp(productImageFileName)) {
 					String saveName = uploadImage(productImage,productImageFileName, "productImage");
 					Map<String,Object> map = new HashMap<String,Object>();
+					map.put("startTime", startTime);
+					map.put("endTime", endTime);
 					map.put("name", title);
 					map.put("brief", title2);
 					map.put("url", url);
@@ -94,10 +102,69 @@ public class AdminProductAction extends BaseAction {
 					map.put("original", saveName);
 					map.put("price", price);
 					map.put("mktprice", mkprice);
+					map.put("productOrigin", productOrigin);
 					productService.addProduct(map);
 				}
 			}
 			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			out.write(jsonObject.toString());
+			out.close();
+		}
+	}
+	/**
+	 * 跳转到商品修改的详情页面
+	 * @return
+	 */
+	public String goProductDetails(){
+		try {
+			Map<String,Object> goods = productService.getProductDetails(Integer.parseInt(request.getParameter("pid")));
+			request.setAttribute("product", goods);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "goProductDetailsSuccess";
+	}
+	/**
+	 * 修改商品
+	 */
+	public void updateProduct(){
+		try {
+			String title = request.getParameter("title");
+			String title2 = request.getParameter("title2");
+			String url = request.getParameter("url");
+			String details = request.getParameter("details");
+			String price = request.getParameter("price");
+			String mkprice=  request.getParameter("mkprice");
+			String productOrigin = request.getParameter("productOrigin");
+			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("startTime")).getTime();
+			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("endTime")).getTime();
+//			int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
+//			int productBrand = Integer.parseInt(request.getParameter("productBrand"));
+			int isShowMKPrice = Integer.parseInt(request.getParameter("isShowMKPrice"));
+			Map<String,Object> map = new HashMap<String,Object>();
+			if(productImage!=null&&productImageFileName!=null&&!"".equals(productImageFileName)){
+				if (FileUtil.isAllowUp(productImageFileName)) {
+					String saveName = uploadImage(productImage,productImageFileName, "productImage");
+					map.put("original", saveName);
+				}
+			}
+			map.put("startTime", startTime);
+			map.put("endTime", endTime);
+			map.put("name", title);
+			map.put("brief", title2);
+			map.put("url", url);
+			map.put("intro", details);
+//			map.put("cat_id", productCategory2);
+//			map.put("brand_id", productBrand);
+			map.put("isShowMKPrice", isShowMKPrice);
+			map.put("price", price);
+			map.put("mktprice", mkprice);
+			map.put("productOrigin", productOrigin);
+			int productId = Integer.parseInt(request.getParameter("productId"));
+			productService.updateProduct(productId, map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -115,7 +182,25 @@ public class AdminProductAction extends BaseAction {
 			int productId = Integer.parseInt(request.getParameter("productId"));
 			int mkstatus = Integer.parseInt(request.getParameter("mkstatus"));
 			Map<String,Object> map = new HashMap<String,Object>();
-			map.put("disabled", mkstatus);
+			map.put("market_enable", mkstatus);
+			productService.updateProduct(productId,map);
+			jsonObject.put("result", "yes");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			out.write(jsonObject.toString());
+			out.close();
+		}
+	}
+	
+	/**
+	 * 修改是否上架
+	 */
+	public void updateProductOrigin(){
+		try{
+			int productId = Integer.parseInt(request.getParameter("productId"));
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("productOrigin", request.getParameter("productOrigin"));
 			productService.updateProduct(productId,map);
 			jsonObject.put("result", "yes");
 		} catch (Exception e) {
@@ -188,7 +273,7 @@ public class AdminProductAction extends BaseAction {
 	 */
 	public String getThemeList() {
 		try {
-			String pageNo = request.getParameter("page");
+			String pageNo = request.getParameter("pageNo");
 			if (pageNo == null || "".equals(pageNo)) {
 				pageNo = "1";
 			}
@@ -200,7 +285,7 @@ public class AdminProductAction extends BaseAction {
 			}
 			Page page = productService.getThemeProducts(Integer.parseInt(pageNo), 10, maps);
 			request.setAttribute("page", page);
-
+			request.setAttribute("pageNo", pageNo);
 			List<ThemeTag> parentTags = productService.getParentThemeTagList();
 			request.setAttribute("parentTags", parentTags);
 			List<ThemeTag> childrenTags = productService.getChildrenThemeTagList();
@@ -211,6 +296,20 @@ public class AdminProductAction extends BaseAction {
 		return "getThemeListSuccess";
 	}
 
+	
+	/**
+	 * 获取主题详情
+	 */
+	public String getThemeDetails(){
+		try {
+			Theme theme = productService.getThemeDetails(Integer.parseInt(request.getParameter("themeId")), 0);
+			request.setAttribute("theme", theme);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "goThemeDetailsSuccess";
+	}
+	
 	/**
 	 * 跳转到新增主题页面
 	 * 
@@ -246,6 +345,7 @@ public class AdminProductAction extends BaseAction {
 					String saveName2 = uploadImage(themeFile2, imageName, "theme");
 					theme.setImage(saveName);
 					theme.setMinorImage(saveName2);
+					theme.setStartTime(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(request.getParameter("startTime")).getTime());
 					JSONArray ja = JSONArray.fromObject(contentArray);
 					List<Map<String,Object>> contentMaps = new ArrayList<Map<String,Object>>();
 					for (int i = 0; i < ja.size(); i++) {
@@ -320,6 +420,67 @@ public class AdminProductAction extends BaseAction {
 		}
 	}
 
+	/**
+	 * 修改主题的内容
+	 */
+	public void updateThemeContent(){
+		try {
+			String fontSize = request.getParameter("fontSize");
+			String center = request.getParameter("center");
+			String content = request.getParameter("content");
+			String image = request.getParameter("image");
+			String type = request.getParameter("type");
+			Map<String,Object> map = new HashMap<String,Object>();
+			if(type!=null&&"image".equals(type)){
+				int tcid = Integer.parseInt(request.getParameter("tcid"));
+				String imagePath = request.getSession().getServletContext().getRealPath("/statics")+"/"+image;
+				if(new File(imagePath).exists()){
+					File oldFile = new File(imagePath);
+					String newFilePath = imagePath.replace("temp", "theme");
+					FileUtil.createFile(oldFile, newFilePath);
+					FileUtil.delete(imagePath);
+					map.put("image", image.replace("temp", "theme"));
+				}
+				productService.updateThemeContent(tcid,map);
+			}else if(type!=null&&"text".equals(type)){
+				int tcid = Integer.parseInt(request.getParameter("tcid"));
+				map.put("fontsize", fontSize);
+				map.put("center", center);
+				map.put("content", content);
+				productService.updateThemeContent(tcid,map);
+			}else if(type!=null&&"theme".equals(type)){
+				String title = request.getParameter("title");
+				int themeId = Integer.parseInt(request.getParameter("themeId"));
+				map.put("title", title);
+				map.put("details", request.getParameter("details"));
+				map.put("productPosition", request.getParameter("productPosition"));
+				map.put("detailsPosition", request.getParameter("detailsPosition"));
+				map.put("showDate", request.getParameter("showDate"));
+				map.put("startTime", new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(request.getParameter("startTime")).getTime());
+				if (themeFile != null && themeFile2 != null) {
+					String imageName = themeFileFileName;
+					if (FileUtil.isAllowUp(imageName)) {
+						String saveName = uploadImage(themeFile, imageName, "theme");
+						String saveName2 = uploadImage(themeFile2, imageName, "theme");
+						map.put("image", saveName);
+						map.put("minorImage", saveName2);
+					}
+				}
+				productService.updateTheme(themeId, map);
+			}else{
+				int tcid = Integer.parseInt(request.getParameter("tcid"));
+				productService.deleThemeContent(tcid);
+			}
+			
+			jsonObject.put("result", "yes");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			out.write(jsonObject.toString());
+			out.close();
+		}
+	}
+	
 	
 	
 	public String getContentArray() {
@@ -477,6 +638,7 @@ public class AdminProductAction extends BaseAction {
 		}
 	}
 
+	
 	public void updateThemeStatusObj(){
 		try {
 			int themeId = Integer.parseInt(request.getParameter("themeId"));
@@ -509,9 +671,10 @@ public class AdminProductAction extends BaseAction {
 			String cat_id = request.getParameter("cat_id");
 			String search_type = request.getParameter("search_type");
 			pageNo = (pageNo == null || pageNo.equals("")) ? "1" : pageNo;
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("namekeyword", namekeyword);
 			map.put("cat_id", cat_id);
+			map.put("disabled", 10);
 			map.put("search_type", search_type);
 			Page page = productService.getProductList(Integer.parseInt(pageNo), 10, map);
 			jsonObject.put("totalCount", page.getTotalCount());
@@ -523,7 +686,7 @@ public class AdminProductAction extends BaseAction {
 				resObj.put("pid", obj.get("goods_id"));
 				resObj.put("pname", obj.get("name"));
 				resObj.put("pprice", obj.get("price"));
-				resObj.put("pimage", obj.get("small"));
+				resObj.put("pimage", obj.get("original"));
 				resObj.put("purl", obj.get("url"));
 				resObj.put("pcreateTime", obj.get("create_time"));
 				resObj.put("pviewCount", obj.get("view_count"));
@@ -563,6 +726,7 @@ public class AdminProductAction extends BaseAction {
 				resObj.put("pimage", obj.get("image"));
 				resObj.put("pcreateTime", obj.get("create_time"));
 				resObj.put("pviewCount", obj.get("love_count"));
+				resObj.put("pthemeContentStyle", obj.get("contentStyle"));
 				resJa.add(resObj);
 			}
 			jsonObject.put("result", "yes");

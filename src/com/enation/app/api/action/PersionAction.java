@@ -142,6 +142,7 @@ public class PersionAction extends BaseAction{
 				theme.put("themeImage", this.getImageUrl(tp.getTheme().getImage()));
 				theme.put("themeTitle", tp.getTheme().getTitle());
 				theme.put("themeDetails", tp.getTheme().getDetails());
+				theme.put("contentStyle", tp.getTheme().getContentStyle());
 				theme.put("tags", tp.getTheme().getTagsImage());
 				jsonArray.add(theme);
 			}
@@ -437,6 +438,7 @@ public class PersionAction extends BaseAction{
 					obj.put("themeImage", this.getImageUrl((String)map.get("themeImage")));
 					obj.put("themeTitle", map.get("themeTitle"));
 					obj.put("themeDetails", map.get("themeDetails"));
+					obj.put("contentStyle", map.get("contentStyle"));
 				}else if(type==3){
 					obj.put("pid", String.valueOf(map.get("goods_id")));
 					obj.put("pname", map.get("name"));
@@ -445,6 +447,7 @@ public class PersionAction extends BaseAction{
 					obj.put("pmktprice", String.valueOf(map.get("mktprice")));
 					obj.put("ptitle", map.get("brief"));
 					obj.put("purl", String.valueOf(map.get("url")));
+					obj.put("productOrigin", map.get("productOrigin"));
 					if(map.get("isShowMKPrice")!=null&&(int)map.get("isShowMKPrice")==-1){
 						obj.put("isShowMKPrice", "no");
 					}else{

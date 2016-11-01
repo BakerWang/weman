@@ -27,18 +27,35 @@ boby{
 	box-sizing: border-box;
 	font-family: Helvetica,Arial,"Lucida Grande",sans-serif;
 }
+#appDiv img {
+    display: block;
+    width: 100%;
+    border: 0 none;
+}
+p {
+    hyphens: auto;
+    word-break: break-all;
+    font-size: 100%;
+    margin: 0;
+    padding: 0;
+}
+a {
+    color: inherit;
+    outline: medium none;
+    text-decoration: none;
+}
 </style>
 <script src="../adminthemes/new/js/jquery-1.8.3.min.js" type="text/javascript"></script>
 </head>
 <body style="overflow-x: hidden;margin:0px;padding:0px;">
 	<div id="secDiv" style="width:320px;margin:0 auto;position: relative;">
 		<div style="width:100%;height:500px;position: relative;overflow: hidden;">
-			<img width="100%" height="500px" src="http://183.195.242.14:8089/b2b2cbak/statics/${article.image}" id="bImage" style="position: absolute;z-index: 0;top:0px;left:0px;" />
+			<img width="100%" height="500px" src="http://www.weman.cc:8089/b2b2cbak/statics/${article.image}" id="bImage" style="position: absolute;z-index: 0;top:0px;left:0px;" />
 			<div style="width:120px;height: 500px;float: left;background: white;opacity: 0.9;-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0.9);filter: alpha(opacity = 0.9);">
 				<div style="margin-top:27px;height:180px;">
 					<div style="float:left;width:3px;background: red;height:120px;"></div>
 					<div style="float:left;width:117px;">
-						<div style="width:50px;margin:0 auto;"><img src="http://183.195.242.14:8089/b2b2cbak/statics/${article.userPhoto }" width="50px" style="border-radius: 25px;" /></div>
+						<div style="width:50px;margin:0 auto;"><img src="http://www.weman.cc:8089/b2b2cbak/statics/${article.userPhoto }" width="50px" style="border-radius: 25px;" /></div>
 						<div style="width:8px;height:1px;background: black;margin:0 auto;margin-top:15px;"></div>
 						<div style="text-align: center;font-size: 16px;margin-top:10px;">${article.userName }</div>
 						<div style="font-size:13px;text-align: center;margin-top:7px;">${userAttr }</div>
@@ -70,20 +87,20 @@ boby{
 		</div>
 		<div style="width:100%;overflow: hidden;">
 			<div style="float:right;margin-right:15px;">
-				<img src="../admin/api/image/comment.png" width="12px"/>&nbsp;${article.commentCount }
+				<img src="../admin/api/image/comment.png" style="width:12px;" width="12px"/>&nbsp;${article.commentCount }
 			</div>
 			<div style="float:right;margin-right:15px;">
-				<img src="../admin/api/image/look.png" width="12px"/>&nbsp;${article.viewCount }
+				<img src="../admin/api/image/look.png" style="width:12px;"  width="12px"/>&nbsp;${article.viewCount }
 			</div>
 			<div style="float:right;margin-right:15px;">
-				<img src="../admin/api/image/like.png" width="12px"/>&nbsp;${article.loveCount }
+				<img src="../admin/api/image/like.png" style="width:12px;"  width="12px"/>&nbsp;${article.loveCount }
 			</div>
 		</div>
 <!-- 		<div style="width:100%;height:1px;background: rgb(193,193,193);margin-top:3px;"></div> -->
 <!-- 		<div style="margin-top:3px;padding:8px;position: relative;"> -->
 <%-- 			<s:iterator value="#request.article.loveUserList" var="loveUser" status="statu"> --%>
 <%-- 				<s:if test="#statu.index==0"><img src="../admin/api/image/win.png" width="34px" style="position: absolute;z-index:2;top:-15px;left:12px;" /></s:if> --%>
-<%-- 				<img src="http://183.195.242.14:8089/b2b2cbak/statics/${loveUser.photo }" width="36px" height="36px" style="border-radius: 18px;margin-left:3px;"/> --%>
+<%-- 				<img src="http://www.weman.cc:8089/b2b2cbak/statics/${loveUser.photo }" width="36px" height="36px" style="border-radius: 18px;margin-left:3px;"/> --%>
 <%-- 			</s:iterator> --%>
 <!-- 		</div> -->
 <!-- 		<div style="width:100%;height:16px;background: rgb(215,215,215);"></div> -->
@@ -115,19 +132,21 @@ boby{
 		<header  id="appDiv" style="position: fixed; bottom: 0px; width: 320px; background-color: #383838;height: 60px;">
 			<div style="float: left; height: 44px;left: 6px;position: absolute;top: 8px;width: 44px;"><img alt="" src="../admin/api/image/logo64.png"></div>
 			<div style="color: #fff;font-size: 16px;line-height: 18px;padding: 13px 55px 0;text-align: left;">
-				<p>第一个同志专属电商APP</p>
 				<p>WeMan我们</p>
+				<p>1st为同志精选的型男好物平台</p>
 			</div>
 			<!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.xymens.app" class="btn">点击下载</a>-->
-	           <a style="  background-color: #f5a415;border-radius: 3px; color: rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="javascript:;">下载APP</a>
+	           <a style="  background-color: black;border-radius: 3px; color: white;border:1px solid rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="https://itunes.apple.com/cn/app/id1122061713">下载APP</a>
 	           <a style="z-index: 8" class="close" href="javascript:;"></a>
 		</header>
 	</div>
 </body>
 <script type="text/javascript">
 var hh=document.documentElement.clientWidth;
-if(hh<700){
+if(hh<1000){
 	$('#secDiv').width(parseInt(hh));
+	$('#appDiv').width(parseInt(hh));
+	$('#bottomDiv').width(parseInt(hh));
 }
 $('#bImage').animate({'margin-left':"120px"},3500);
 setTimeout(function(){

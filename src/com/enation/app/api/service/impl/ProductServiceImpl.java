@@ -20,6 +20,7 @@ import com.enation.app.api.model.ThemeContent;
 import com.enation.app.api.model.ThemeTag;
 import com.enation.app.api.service.ProductService;
 import com.enation.app.b2b2c.core.service.goods.IStoreGoodsManager;
+import com.enation.app.shop.component.gallery.model.GoodsGallery;
 import com.enation.app.shop.core.model.Goods;
 import com.enation.eop.sdk.database.BaseSupport;
 import com.enation.framework.database.Page;
@@ -35,9 +36,22 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	@Resource
 	private ThemeProductDao themeProductDao;
 	
-	public Page getProductList(int pageNo,int pageSize,Map<String,String> map) {
-		String sql ="select g.* from es_goods g where g.disabled=0 and g.market_enable=1 order by g.create_time desc";
+	public Page getProductList(int pageNo,int pageSize,Map<String,Object> map) {
+		String sql ="select g.* from es_goods g where g.market_enable=1 ";
 		//Page page = storeGoodsManager.b2b2cGoodsList(pageNo,pageSize,map);
+		int disabled=(map.get("disabled")==null)?0:(int)map.get("disabled");
+		if(disabled != 10){
+			sql = sql + "  and g.disabled="+disabled;
+		}
+		String keyword=(String) ((map.get("namekeyword")==null)||("null").equals(map.get("namekeyword"))?"":map.get("namekeyword"));
+		if(!StringUtil.isEmpty(keyword)){
+			sql = sql + "  and ((g.name like '%"+keyword+"%') or ( g.sn like '%"+keyword+"%'))";
+		}
+		Long time=(long) (map.get("time")==null?0L:(Long)map.get("time"));
+		if(time!=0){
+			sql = sql + " and g.startTime <"+time+" and g.endTime >"+time;
+		}
+		sql = sql +" order by g.startTime desc";
 		return this.daoSupport.queryForPage(sql, pageNo, pageSize);
 	}
 
@@ -53,19 +67,19 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	 * @return
 	 */
 	public Page getThemeProductsAPP(int pageNo, int pageSize, Map<String, String> map) {
-		String sql="select at.id as id,at.image as image,at.title as title,at.details as details,eatt.image as tagImage "
+		String sql="select at.id as id,at.contentStyle as contentStyle,at.image as image,at.title as title,at.details as details,eatt.image as tagImage "
 				+ " from es_api_theme at "
 				+ " left join es_api_theme_tag eatt on eatt.id = at.theme_tag_id "
-				+ " where at.status = '1' ";
+				+ " where at.status = '1' and at.startTime < ?";
 		if(map!=null){
 			if(map.containsKey("indexStatus")){
 				sql = sql +" and at.indexStatus = 1 ";
 			}
 		}
-		sql = sql +" order by at.id desc";
-		List<Map<String,Object>> themeList = this.daoSupport.queryForListPage(sql, pageNo, pageSize);
-		String countSql = "SELECT COUNT(*) from es_api_theme where status =1 ";
-		int totalCount = this.daoSupport.queryForInt(countSql);
+		sql = sql +" order by at.startTime desc";
+		List<Map<String,Object>> themeList = this.daoSupport.queryForListPage(sql, pageNo, pageSize,new Date().getTime());
+		String countSql = "SELECT COUNT(*) from es_api_theme where status =1 and startTime < ?";
+		int totalCount = this.daoSupport.queryForInt(countSql,new Date().getTime());
 		return new Page(0, totalCount, pageSize, themeList);
 	}
 	/**
@@ -76,18 +90,21 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	 * @return
 	 */
 	public Page getThemeProducts(int pageNo, int pageSize, Map<String, String> map) {
-		String sql="select at.id as id,at.minorImage as minorImage,at.image as image,at.title as title,at.details as details,at.indexStatus as indexStatus,at.findStatus as findStatus,at.recommendStatus as recommendStatus,at.loginClickCount as loginClickCount,at.clickCount as clickCount,at.create_time as createTime "
+		String sql="select at.id as id,at.minorImage as minorImage,at.contentStyle as contentStyle,at.image as image,at.title as title,at.details as details,at.indexStatus as indexStatus,at.findStatus as findStatus,at.recommendStatus as recommendStatus,at.loginClickCount as loginClickCount,at.clickCount as clickCount,at.create_time as createTime "
 				+ " from es_api_theme at "
 				+ " where at.status = '1' ";
 		if(map!=null){
 			if(map.containsKey("indexStatus")){
-				sql = sql +" and at.indexStatus = 1 ";
+				sql = sql +" and at.indexStatus = 1 and at.startTime < "+new Date().getTime();
 			}
 			if(map.containsKey("findStatus")){
-				sql = sql +" and at.findStatus = 1 ";
+				sql = sql +" and at.findStatus = 1 and at.startTime < "+new Date().getTime();
+			}
+			if(map.containsKey("bannerStatus")){
+				sql = sql +" and at.bannerStatus = 1 ";
 			}
 			if(map.containsKey("recommendStatus")){
-				sql = sql +" and at.recommendStatus = 1 ";
+				sql = sql +" and at.recommendStatus = 1 and at.startTime < "+new Date().getTime();
 			}
 			if(map.containsKey("themeId")){
 				sql = sql +" and at.id != "+map.get("themeId");
@@ -104,7 +121,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 				}
 			}
 		}
-		sql = sql+" order by at.id desc";
+		sql = sql+" order by at.startTime desc";
 		List<Map> themeList = this.daoSupport.queryForListPage(sql, pageNo, pageSize);
 		String themeIdsStr = "";
 		List<ThemeProduct> themeProducts = new ArrayList<ThemeProduct>();
@@ -128,6 +145,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			thm.setClickCount((int)resObj.get("clickCount"));
 			thm.setLoginClickCount((int)resObj.get("loginClickCount"));
 			thm.setCreate_time((Long)resObj.get("createTime"));
+			thm.setContentStyle((String)resObj.get("contentStyle"));
 			tps.setTheme(thm);
 			themeProducts.add(tps);
 		}
@@ -161,7 +179,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		String countSql = "SELECT COUNT(*) from es_api_theme where status =1 ";
 		int totalCount = this.daoSupport.queryForInt(countSql);
 		
-		return new Page(0, totalCount, pageSize, themeProducts);
+		return new Page(pageNo, totalCount, pageSize, themeProducts);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED) 
@@ -276,16 +294,20 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			themetag.put("create_time", new Date().getTime());
 			this.daoSupport.insert("es_api_theme_themetag", themetag);
 		}else{
-			Map<String, Object> themetag = new HashMap<String,Object>();
-			themetag.put("themetagvalueid", valueId);
-			themetag.put("create_time", new Date().getTime());
-			this.daoSupport.update("es_api_theme_themetag", themetag, "themeid = "+themeId +" and themetagkeyid =" + keyId);
+			if(valueId==0){
+				this.daoSupport.execute("delete from es_api_theme_themetag where themeid = ? and themetagkeyid = ?", themeId,keyId);//
+			}else{
+				Map<String, Object> themetag = new HashMap<String,Object>();
+				themetag.put("themetagvalueid", valueId);
+				themetag.put("create_time", new Date().getTime());
+				this.daoSupport.update("es_api_theme_themetag", themetag, "themeid = "+themeId +" and themetagkeyid =" + keyId);
+			}
 		}
 		String tagSql = "select eatt.name as tagname from es_api_theme_tag eatt where eatt.id = ? and eatt.status = 1";
 		List<Map<String, Object>> restag = this.daoSupport.queryForList(tagSql, keyId);
 		if(restag!=null&&restag.size()>0){
 			String tagname = (String)restag.get(0).get("tagname");
-			if("身型".equals(tagname)){
+			if("身型".equals(tagname)||"肤质".equals(tagname)){
 				Map<String,Object> tagupdate= new HashMap<String,Object>();
 				tagupdate.put("theme_tag_id", valueId);
 				this.daoSupport.update("es_api_theme", tagupdate, "id = "+themeId);
@@ -315,7 +337,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		if(theme == null){
 			throw new Exception("主题id错误!");
 		}
-		String contentSql="select eatc.*,eg.name as productName,eg.original as productImage,eatc.status as status,eg.price as productPrice,eg.mktprice as productMkPrice,eg.intro as intro,eg.url as url ";
+		String contentSql="select eatc.*,eg.name as productName,eg.original as productImage,eg.productOrigin as productOrigin,eatc.status as status,eg.price as productPrice,eg.mktprice as productMkPrice,eg.intro as intro,eg.url as url ";
 		if(memberId!=0){
 			contentSql = contentSql +",(select count(*) from wh_api_action waa where waa.status != -1 and waa.type = 3 and member_id = "+memberId+" and data_id = eg.goods_id) as isCollect";
 		}
@@ -371,7 +393,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		map.put("create_time", new Date().getTime());
 		map.put("last_modify", new Date().getTime());
 		map.put("goods_type", "normal");
-		map.put("market_enable", 1);
+		map.put("market_enable", 0);
 		map.put("store_name", "WeMan我们");
 		map.put("store_id", 1);
 		map.put("disabled", 0);
@@ -385,10 +407,94 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 
 	@Override
 	public Page userThemeCount(Long startTime, Long endTime, int dataId, String type,Page page) {
-		String sql ="select em.uname as username,eauv.viewCount as viewCount,eauv.dataId as dataId from es_api_user_view eauv "
+		String sql ="select em.uname as username,eauv.viewCount as viewCount,eat.title as title from es_api_user_view eauv "
+				+ " left join es_api_theme eat on eat.id = eauv.dataId "
 				+ " left join es_member em on em.member_id = eauv.viewUserId "
-				+ " where eauv.type = ? and eauv.dataId = ? and eauv.create_time >= ? and eauv.create_time <= ?";
+				+ " where eauv.type = ? and eauv.dataId = ? and eauv.create_time > ? and eauv.create_time <= ?";
 		return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), type,dataId,startTime,endTime);
+	}
+
+	/**
+	 * b2c的获取商品详情
+	 * @param productId
+	 * @param jsonObject
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public JSONObject getProductDetails(int productId, JSONObject jsonObject) throws Exception {
+		String sql ="select eg.name as prodcutName, eg.intro as productIntro,eg.price as productPrice,eg.mktprice as productMktPrice,eg.specs as productSpecs,eg.buy_count as productBuyCount,eg.view_count as prodcutViewCount,eg.original as productImage,eg.enable_store as productCount,"
+				+ " eb.name as brandName,eb.logo as brandImage,egc.name as catName,egc.image as catImage "
+				+ " from es_goods eg left join es_brand eb on eb.brand_id = eg.brand_id left join es_goods_cat egc on egc.cat_id = eg.cat_id "
+				+ " where eg.goods_id = ? and eg.productOrigin = 'weman' and eg.disabled = 0 and eg.market_enable = 1 ";
+		List<Map<String,Object>> pmapList = this.daoSupport.queryForList(sql, productId);
+		if(pmapList!=null&&pmapList.size()>0){
+			Map<String,Object> pmap = pmapList.get(0);
+			String updateUserViewSql = "update es_goods eg set eg.view_count = eg.view_count+1 where eg.goods_id = ?";
+			this.daoSupport.execute(updateUserViewSql, productId);
+			List<Map<String,Object>> result = this.baseDaoSupport.queryForList("select gg.original as pimage from goods_gallery gg where gg.goods_id = ?", productId);
+			if(result!=null&&result.size()>0){
+				String images = "";
+				for(Map<String,Object> map :result){
+					images = images+map.get("pimage")+",";
+				}
+				images=images.substring(0, images.lastIndexOf(","));
+				jsonObject.put("productImages", images);
+			}
+			List<Map<String,Object>> list= this.daoSupport.queryForList("select * from es_product_store where goodsid=?", productId);
+			Map<Integer,Integer> gcount = new HashMap<Integer,Integer>();
+			if(list!=null){
+				for(Map<String,Object> map:list){
+					gcount.put((int)map.get("productid"), (int)map.get("enable_store"));
+				}
+			}
+			jsonObject.put("productId", productId);
+			jsonObject.put("productName", pmap.get("productName"));
+			jsonObject.put("productIntro", pmap.get("productIntro"));
+			jsonObject.put("productBuyCount", pmap.get("productBuyCount"));
+			jsonObject.put("prodcutViewCount", pmap.get("prodcutViewCount"));
+			jsonObject.put("productImage", pmap.get("productImage"));
+			jsonObject.put("productCount", pmap.get("productCount"));
+			JSONArray productSpecs  = JSONArray.fromObject((String)pmap.get("productSpecs"));
+			JSONArray productSpecJa = new JSONArray();
+			for(int i=0;i<productSpecs.size();i++){
+				JSONObject productSpec = JSONObject.fromObject(productSpecs.get(i));
+				JSONObject spec = new JSONObject();
+				spec.put("entityId", productSpec.get("product_id"));
+				spec.put("specPrice", productSpec.get("price"));
+				spec.put("specSn", productSpec.get("sn"));
+				spec.put("specWeight", productSpec.get("weight"));
+				spec.put("specStr", productSpec.get("specs"));
+				spec.put("specId", productSpec.get("specsvIdJson"));
+				spec.put("specCount", gcount.get(productSpec.get("product_id")));
+				productSpecJa.add(spec);
+			}
+			jsonObject.put("productSpecs", productSpecJa);
+			jsonObject.put("productPrice", pmap.get("productPrice"));
+			jsonObject.put("productMktPrice", pmap.get("productMktPrice"));
+			jsonObject.put("productBrandName", pmap.get("brandName"));
+			jsonObject.put("productBrandImage", pmap.get("brandImage"));
+			jsonObject.put("productCatName", pmap.get("catName"));
+			jsonObject.put("productCatImage", pmap.get("catImage"));
+		}
+		return jsonObject;
+	}
+
+	@Override
+	public void updateThemeContent(int tcid, Map<String, Object> map) throws Exception {
+		this.daoSupport.update("es_api_theme_content", map, "id = "+tcid);
+		
+	}
+
+	@Override
+	public void deleThemeContent(int tcid) throws Exception {
+		this.daoSupport.execute("delete from es_api_theme_content where id = ?", tcid);//删除
+	}
+
+	@Override
+	public Map<String,Object> getProductDetails(int pid) throws Exception {
+		String sql = "select * from es_goods eg where eg.goods_id = ?";
+		return this.daoSupport.queryForMap(sql,pid);
 	}
 
 

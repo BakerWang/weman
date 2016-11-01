@@ -52,9 +52,23 @@ public class InitUserAction extends BaseAction{
 				jsonObject.put("aboutUrl", bpath+"/api/question.html");//关于WeMan
 				jsonObject.put("bodyUrl", bpath+"/api/body.html");//身型说明
 				jsonObject.put("skinUrl", bpath+"/api/skin.html");//肤质说明
-				jsonObject.put("loginBackgroundImage", this.getImageUrl("attachment/allDefaultImage/loginBackgroundImage.png"));
-				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImage.gif"));
+				jsonObject.put("loginBackgroundImage", this.getImageUrl("attachment/allDefaultImage/loginBackgroundImage.png"));//登录背景图
+				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImage.gif"));//启动图
 				jsonObject.put("eulaUrl", bpath+"/api/eula.html");
+				jsonObject.put("fontColor", "c2c2c2");
+				jsonObject.put("fontColor2", "ff6251");
+				jsonObject.put("index", "首页");
+				jsonObject.put("indexImage", this.getImageUrl("attachment/allDefaultImage/shouyehui.png"));
+				jsonObject.put("indexImage2", this.getImageUrl("attachment/allDefaultImage/shouyehong.png"));
+				jsonObject.put("find", "发现");
+				jsonObject.put("findImage", this.getImageUrl("attachment/allDefaultImage/faxianhui.png"));
+				jsonObject.put("findImage2", this.getImageUrl("attachment/allDefaultImage/faxianhong.png"));
+				jsonObject.put("show", "SHOW");
+				jsonObject.put("showImage", this.getImageUrl("attachment/allDefaultImage/SHOWhui.png"));
+				jsonObject.put("showImage2", this.getImageUrl("attachment/allDefaultImage/SHOWhong.png"));
+				jsonObject.put("me", "我");
+				jsonObject.put("meImage", this.getImageUrl("attachment/allDefaultImage/wohui.png"));
+				jsonObject.put("meImage2", this.getImageUrl("attachment/allDefaultImage/wohong.png"));
 			}else{
 				jsonObject.put("result", "FAILED");
 				jsonObject.put("reason", "系统错误！");

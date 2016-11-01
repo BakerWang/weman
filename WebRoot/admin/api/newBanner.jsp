@@ -98,6 +98,7 @@ a {
 			<tr height="38px"><td class="spanFront">banner类型 : </td><td>
 				<select name="phoneBanner.type" onchange="BannerDetailsSel(this)" id="typeSel">
 					<option value="跳至HTML5">跳至HTML5</option>
+					<option value="主题列表页">主题列表页</option>
 					<option value="主题详情页">主题详情页</option>
 					<option value="商品详情页">商品详情页</option>
 					<option value="静态图">静态图</option>
@@ -107,6 +108,7 @@ a {
 			</td></tr>
 			<tr height="38px"><td class="spanFront">主题内容: </td>
 			<td>
+				<input type="hidden" value="0" name="phoneBanner.themeContentStyle" id="themeContentStyle"/>
 				<input id="bannerTypeHtml" class="inputFront bannerDetails" name="phoneBanner.details" />
 				<div id="bannerTypeThemeAndProduct" class="bannerDetails" style="display:none;float:left;">
 					<div style="float:left;overflow: hidden;display:none;border:1px solid blue;padding:3px; margin-right: 5px;" id="productIds"></div>
@@ -199,7 +201,7 @@ a {
 		    			var pd=msg.productList[i];
 		    			divhtml=divhtml+'<tr class="datagrid-header"><td  style="border-left: 1px solid #ccc;text-aglin:left;"><a target="_blank" href="../goods-${goods.goods_id }.html">'+pd.pname+'</a></td><td>'+pd.pprice+'</td>';
 		    			divhtml=divhtml+'<td><img src="'+pd.pimage+'" width="50px" height="50px"/> </td><td>'+pd.pviewCount+'</td>';
-		    			divhtml=divhtml+'<td><a class="b_fr" pname="'+pd.pname+'" onclick="addProductForBanner('+pd.pid+',this)" href="javascript:void(0);">添加</a></td>';
+		    			divhtml=divhtml+'<td><a class="b_fr" pname="'+pd.pname+'" onclick="addProductForBanner('+pd.pid+',0,this)" href="javascript:void(0);">添加</a></td>';
 		    		}
 		    		$('#productAll').html('');
 		    		$('#productAll').prepend(divhtml);
@@ -243,7 +245,7 @@ a {
 		    			var pd=msg.productList[i];
 		    			divhtml=divhtml+'<tr class="datagrid-header"><td  style="border-left: 1px solid #ccc;text-aglin:left;"><a target="_blank" href="../goods-${goods.goods_id }.html">'+pd.pname+'</a></td><td>'+pd.pprice+'</td>';
 		    			divhtml=divhtml+'<td><img src="/b2b2cbak/statics/'+pd.pimage+'" width="50px" height="50px"/> </td><td>'+pd.pviewCount+'</td>';
-		    			divhtml=divhtml+'<td><a class="b_fr" pname="'+pd.pname+'" onclick="addProductForBanner('+pd.pid+',this)" href="javascript:void(0);">添加</a></td>';
+		    			divhtml=divhtml+'<td><a class="b_fr" pname="'+pd.pname+'" onclick="addProductForBanner('+pd.pid+','+pd.pthemeContentStyle+',this)" href="javascript:void(0);">添加</a></td>';
 		    		}
 		    		$('#productAll').html('');
 		    		$('#productAll').prepend(divhtml);
@@ -288,10 +290,11 @@ a {
 		'scrolling'         :'no',
 		'autoScale'			: true
 	});
-	function addProductForBanner(pid,tt){
+	function addProductForBanner(pid,themeContentStyle,tt){
 		$('#productIds').show();
 		$('#productIds').html($(tt).attr('pname'));
 		$('#bannerTypeHtml').val(pid);
+		$('#themeContentStyle').val(themeContentStyle);
 		$.fancybox.close();
 	}
 	function submitForm() {

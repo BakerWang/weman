@@ -91,7 +91,8 @@ a {
 			<tr height="38px"><td class="spanFront">推送内容 : </td><td>
 				<select name="type"  onchange="BannerDetailsSel(this)" id="type">
 					<option value="web">网页</option>
-					<option value="theme">主题详情页</option>
+					<option value="themeDefault">主题详情页(默认样式)</option>
+					<option value="themeTopic">主题详情页(专题样式)</option>
 					<option value="product">商品详情页</option>
 					<option value="systemMsg">消息列表</option>
 				</select>

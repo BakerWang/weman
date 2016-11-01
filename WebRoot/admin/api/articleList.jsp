@@ -98,16 +98,19 @@ tr:hover td .updateThemeA{
 <%-- 		<span style="float:left;height:28px;"> --%>
 <!-- 			<a href="javascript:void(0)" class="b_fr" onclick="parent.addTab1('banner添加','/b2b2cbak/apiAdmin/AdminBannerAction_newBanner.do')">新建</a> -->
 <%-- 		</span> --%>
-		<span style="float: right;height:28px;"> ${adminSearchForm.type }
-			<select id="articleFormStatus"style="height:30px;margin-right:5px;">
-				<option value="111">所有</option>
-				<option value="0">待审核</option>
-				<option value="2">通过</option>
-				<option value="-2">未通过</option>
-			</select>
-			<input id="searchKeyword" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
-			<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a>
-		</span>
+		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminArticleAction_articleList.do" id="searchForm" method="post">
+			<span style="float: right;height:28px;"> ${adminSearchForm.type }
+				<select id="articleFormStatus"style="height:30px;margin-right:5px;">
+					<option value="111">所有</option>
+					<option value="0">待审核</option>
+					<option value="2">通过</option>
+					<option value="-2">未通过</option>
+				</select>
+				<input type="hidden" value="1" id="pageSize" name="pageSize" />
+				<input id="searchKeyword" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
+				<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a>
+			</span>
+		</form>
 	</div>
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
@@ -137,7 +140,7 @@ tr:hover td .updateThemeA{
 	</div>
 </div>
 <div class="pagelist">
-	<div style="line-height:46px;height:46px;width:150px;float:left"><span>共 ${page.totalPageCount} 页/${page.totalCount}条记录 </span></div>
+	<div style="line-height:46px;height:46px;width:150px;float:left"><span>共 ${page.totalCount} 页/${page.totalCount}条记录 </span></div>
 	<div id="adminUserManagePagination" class="pagination" style="float:left;margin-top:15px"></div>
 </div>
 <script type="text/javascript">
@@ -149,12 +152,14 @@ tr:hover td .updateThemeA{
             'num_edge_entries'    : 2,  
             'prev_text'           : "上一页",  
             'next_text'           : "下一页",  
-            'current_page'        :'${page.currentPageNo-1}',
+            'current_page'        :'${pageSize-1}',
             'callback'            : function(page_id,jq){
+            	
 //            		var type = "${type}";
-//            		var page = parseInt(page_id)+1;
-//            		$("#searchForm").find("input[name='page.pages']").val(page);
-//            		$("#searchForm").submit();
+           		var page = parseInt(page_id)+1;
+           		$('#pageSize').val(page);
+           		console.log($('#pageSize').val())
+           		$("#searchForm").submit();
             } 
         });
 	});
@@ -199,7 +204,7 @@ tr:hover td .updateThemeA{
 	function searchGoods(){
 		var kw = $('#searchKeyword').val();
 		var status = $('#articleFormStatus').val();
-		var url = '/b2b2cbak/apiAdmin/AdminArticleAction_articleList.do?page.pageSize=1';
+		var url = '/b2b2cbak/apiAdmin/AdminArticleAction_articleList.do?page.currentPageNo=1';
 		if(kw!=null&&kw!=''){
 			url = url+'&adminSearchForm.title='+kw;
 		}

@@ -237,6 +237,16 @@
 		};
 		base(url,dataParam);
 	}
+	function getBannerThemeList(){
+		var page = $('#bannerThemeListPage').val();
+		var url = "ProductAction_getBannerThemeList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"page":page
+		};
+		base(url,dataParam);
+	}
 	
 	function getThemeDetails(){
 		var themeId=$('#themeIdA').val();
@@ -402,7 +412,7 @@
 	function bindClientId(){
 		var url = "InitUserAction_accessClientId.do";
 		var dataParam = {
-				"loginType":"global",
+				"accessToken":"7700513c37ba548f21fecd2f8c979ac6",
 				"clientType":"iphone",
 				"version":"1.0",
 				"deviceToken":$('#deviceToken').val(),
@@ -494,6 +504,17 @@
 			$('#persionUserId2').show();
 		}
 	}
+	//B2C电商接口
+	function getProductDetails(){
+		var url = "ProductAction_getProductDetails.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"productId":$('#productDetailsId').val()
+		};
+		base(url,dataParam); 
+	}
 </script>
 </head>
 <body>
@@ -501,12 +522,15 @@
 	<h4>&nbsp;&nbsp;&nbsp;&nbsp;1.全局接口用"loginType":"global",如果用户登录过后用"accessToken":"abc"</h4>
 	<h4>&nbsp;&nbsp;&nbsp;&nbsp;2.每个接口都有"clientType":"iphone","version":"1.0"</h4>
 </h2>
-	 <br/>
+	 <h2>b2c电商接口测试</h2><br/>
+	<input type="text" id="productDetailsId" value="60"/><input type="button" onclick="getProductDetails()" value="商品详情页"/><br/>
+	<br/><br/>
 	测试接口<br/>
 	<input type="button" onclick="installDb()" value="安装API相关DB"/><br/>
 	
 	<input type="text" id="username" value="1234"/><input type="button" onclick="getAccessToken()" value="获取此用户的accessToken"/><br/>
-	<input type="text" id="deviceToken" value="EB33EDD6B748400A8454F32B10E3F1B9EB33EDD6B748400A8454F32B10E3F1B9"/><input type="text" id="clientId" value="123"/><input type="button" onclick="bindClientId()" value="绑定个推的clientId(唯一标示)"/><br/>
+	<input type="text" id="deviceToken" value="539869a1fb302e382c44a3b74cc005f39f09051046a6a03be32727a90a8843ab"/>
+	<input type="text" id="clientId" value="6a4fb9eaaa98824d3272b148ecd60632"/><input type="button" onclick="bindClientId()" value="绑定个推的clientId(唯一标示)"/><br/>
 	
 	
 	<h2>登录注册接口测试</h2><br/>
@@ -535,6 +559,7 @@
 	<h2>商品接口测试</h2><br/>
 <!-- 	<input type="button" onclick="getProductList()" value="获取商品列表"/><br/> -->
 	页数：<input value="1" id="themeListPage" /><input type="button" onclick="getThemeList()" value="获取主题列表"/><br/>
+	页数：<input value="1" id="bannerThemeListPage" /><input type="button" onclick="getBannerThemeList()" value="获取banner主题列表"/><br/>
 	主题id：<input value="30" id="themeIdA" /><input type="button" onclick="getThemeDetails()" value="获取主题详情"/><br/>
 	<h2>个人主页接口测试</h2><br/>
 	<input type="button" onclick="saveFAQ()" value="意见反馈"/>(图片是originalFAQ 是list 多个图片 )<br/>
@@ -549,5 +574,6 @@
 	<h2>发现接口测试</h2><br/>
 	<input type="button" onclick="getFindList()" value="发现接口"/><br/>
 	<input type="text" id="typeId" value="9"/><input type="button" onclick="getFindThemeList()" value="点击发现获取主题列表接口"/><br/>
+	<br/><br/><br/><br/>
 </body>
 </html>

@@ -13,7 +13,7 @@ public class DeviceToken implements java.io.Serializable{
 	
 	private Integer id;
 	private Integer member_id;	//会员Id
-	private String token;//苹果的设备id、安卓的设备id
+	private String deviceToken;//苹果的设备id、安卓的设备id
 	private String tokenType = TOKENTYPE_IPHONE;
 	private String clientId ;//个推的唯一标示
 	private Long create_time;
@@ -30,9 +30,9 @@ public class DeviceToken implements java.io.Serializable{
 	 * @param token
 	 * @param u
 	 */
-	public DeviceToken(String token,Integer member_id){
+	public DeviceToken(String deviceToken,Integer member_id){
 		this.member_id = member_id;
-		this.token = token;
+		this.deviceToken = deviceToken;
 		this.tokenType = TOKENTYPE_IPHONE;
 	}
 	
@@ -52,13 +52,14 @@ public class DeviceToken implements java.io.Serializable{
 	public void setMember_id(Integer member_id) {
 		this.member_id = member_id;
 	}
+	public String getDeviceToken() {
+		return deviceToken;
+	}
 
-	public String getToken() {
-		return token;
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
 	}
-	public void setToken(String token) {
-		this.token = token;
-	}
+
 	public String getTokenType() {
 		return tokenType;
 	}

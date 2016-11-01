@@ -2,8 +2,10 @@
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="s" uri="/struts-tags"%>
 <%@taglib prefix="cc" uri="/tcardztaglib"%>
-<script src="../adminthemes/new/js/jquery-1.8.3.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="/b2b2cbak/statics/js/common-min2.js"></script>
+<link rel="stylesheet" type="text/css" href="/b2b2cbak/adminthemes/new/js/easy-ui/themes/gray/easyui.css"/>    
+<script type="text/javascript" src="/b2b2cbak/adminthemes/new/js/easy-ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/b2b2cbak/adminthemes/new/js/easy-ui/easyui-lang-zh_CN.js"></script>
 <style type="text/css">
 body {
 	font-size: 14px;
@@ -51,6 +53,9 @@ body {
 	<div style="background-color: white; padding: 15px 0 8px 10px; margin: 0px; position: relative; overflow: hidden;">
 		<form id="addForm" enctype="multipart/form-data" method="post" style="width: 40%; float: left;">
 			 <table>
+			 	<tr><td>商品来源：</td><td><select name="productOrigin"><option value="taobao">淘宝</option><option value="tmall">天猫</option><option value="jingdong">京东</option><option value="yamaxun">亚马逊</option><option value="wemantb">weman专场</option> </select> </td></tr>
+			 	<tr><td>上架时间：</td><td><input class="easyui-datebox" name="startTime" style="width: 150px;height: 28px;" value="" id="start_time" data-options="buttons:buttons" /></td></tr>
+			 	<tr><td>下架时间：</td><td><input class="easyui-datebox" name="endTime" style="width: 150px;height: 28px;" value="" id="end_time" data-options="buttons:buttons" /></td></tr>
 			 	<tr><td>商品名字：</td><td><input name="title" style="width:350px;" /></td></tr>
 			 	<tr><td>商品标题：</td><td><input name="title2" style="width:350px;" /></td></tr>
 			 	<tr><td>购买地址：</td><td><input name="url" style="width:350px;"/></td></tr>
@@ -81,6 +86,21 @@ body {
 	</div>
 </div>
 <script type="text/javascript">
+var buttons = $.extend([], $.fn.datebox.defaults.buttons);
+buttons.splice(1, 0, {
+text: '清空',
+handler: function(target){
+	 $('#start_time').datebox('setValue',"");
+}
+});
+
+var e_buttons = $.extend([], $.fn.datebox.defaults.buttons);
+e_buttons.splice(1, 0, {
+text: '清空',
+handler: function(target){
+	 $('#end_time').datebox('setValue',"");
+}
+});
 	$(document).ready(function() {
 		$.ajax({
 			type:'POST',

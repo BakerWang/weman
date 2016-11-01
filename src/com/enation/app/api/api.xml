@@ -6,7 +6,7 @@
 		<table>es_api_deviceToken</table>
 		<field><name>id</name><type>int</type><size>10</size><option>11</option></field>
 		<field><name>member_id</name><type>int</type><size>10</size><option>00</option></field>
-		<field><name>token</name><type>varchar</type><size>100</size><option>00</option></field>
+		<field><name>deviceToken</name><type>varchar</type><size>100</size><option>00</option></field>
 		<field><name>tokenType</name><type>varchar</type><size>50</size><option>00</option></field>
 		<field><name>clientId</name><type>varchar</type><size>100</size><option>00</option></field>
 		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
@@ -34,6 +34,8 @@
 		<table>es_goods</table>
 		<field type="add"><name>url</name><type>varchar</type><size>100</size></field>
 		<field type="add"><name>isShowMKPrice</name><type>int</type><size>1</size></field>
+		<field type="add"><name>startTime</name><type>long</type><size>20</size></field>
+		<field type="add"><name>endTime</name><type>long</type><size>20</size></field>
 	</action>
 
 <!-- 主题表模块 -->
@@ -46,7 +48,7 @@
 		<field><name>position</name><type>int</type><size>10</size><option>00</option></field>
 		<field><name>goods_id</name><type>int</type><size>10</size><option>00</option></field>
 		<field><name>type</name><type>varchar</type><size>20</size><option>00</option></field>
-		<field><name>content</name><type>varchar</type><size>200</size><option>00</option></field>
+		<field><name>content</name><type>varchar</type><size>2000</size><option>00</option></field>
 		<field><name>fontsize</name><type>varchar</type><size>10</size><option>00</option></field>
 		<field><name>center</name><type>varchar</type><size>10</size><option>11</option></field>
 		<field><name>image</name><type>varchar</type><size>100</size><option>00</option></field>
@@ -64,16 +66,20 @@
 		<field><name>status</name><type>varchar</type><size>10</size><option>00</option></field>
 		<field><name>indexStatus</name><type>int</type><size>2</size><option>00</option></field>
 		<field><name>findStatus</name><type>int</type><size>2</size><option>00</option></field>
+		<field><name>bannerStatus</name><type>int</type><size>2</size><option>00</option></field>
 		<field><name>recommendStatus</name><type>int</type><size>2</size><option>00</option></field>
 		<field><name>image</name><type>varchar</type><size>100</size><option>00</option></field>
 		<field><name>minorImage</name><type>varchar</type><size>100</size><option>00</option></field>
 		<field><name>showDate</name><type>varchar</type><size>100</size><option>00</option></field>
 		<field><name>details</name><type>varchar</type><size>500</size><option>00</option></field>
+		<field><name>detailsPosition</name><type>varchar</type><size>50</size><option>00</option></field>
+		<field><name>productPosition</name><type>varchar</type><size>50</size><option>00</option></field>
 		<field><name>clickCount</name><type>int</type><size>20</size><option>00</option></field>
 		<field><name>loginClickCount</name><type>int</type><size>20</size><option>00</option></field>
 		<field><name>love_count</name><type>int</type><size>20</size><option>00</option></field>
 		<field><name>product_count</name><type>int</type><size>20</size><option>00</option></field>
 		<field><name>theme_tag_id</name><type>int</type><size>10</size><option>11</option></field>
+		<field><name>startTime</name><type>long</type><size>20</size><option>00</option></field>
 		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>
 	</action>
 <!-- 记录用户的浏览动作  eg：访问主题的记录 theme -->
@@ -161,6 +167,7 @@
 		<field><name>details</name><type>varchar</type><size>200</size><option>00</option></field>
 		<field><name>start_time</name><type>long</type><size>20</size><option>00</option></field>
 		<field><name>end_time</name><type>long</type><size>20</size><option>00</option></field>
+		<field><name>themeContentStyle</name><type>varchar</type><size>20</size><option>00</option></field>
 		<field><name>status</name><type>varchar</type><size>2</size><option>00</option></field>
 		<field><name>click_count</name><type>int</type><size>10</size><option>11</option></field>
 		<field><name>create_time</name><type>long</type><size>20</size><option>00</option></field>

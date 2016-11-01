@@ -19,6 +19,7 @@ public class ThemeContent {
 	private String productName;
 	private Double productPrice = 100.0;
 	private Double productMkPrice = 100.0;
+	private String productOrigin = "taobao";
 	private String intro;//商品的介绍
 	private String productImage;
 	private String productCategoryImage;//商品分类的图片
@@ -32,6 +33,12 @@ public class ThemeContent {
 	
 	
 	
+	public String getProductOrigin() {
+		return productOrigin;
+	}
+	public void setProductOrigin(String productOrigin) {
+		this.productOrigin = productOrigin;
+	}
 	public String getProductName() {
 		return productName;
 	}

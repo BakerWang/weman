@@ -80,9 +80,9 @@ public class BasePushMessage {
         }
         alertMsg.setBody(pushContentStr);
         //对于标题指定执行按钮所使用的Localizable.strings,仅支持IOS8.2以上版本
-        alertMsg.setTitleLocKey("WeMan我们");
+        alertMsg.setTitleLocKey("WeMan");
         //指定执行按钮所使用的Localizable.strings
-        alertMsg.setActionLocKey("WeMan我们");
+        alertMsg.setActionLocKey("WeMan");
         if(pushContent!=null){
 			for(String key:pushContent.keySet()){
 				apnpayload.addCustomMsg(key, pushContent.get(key));
@@ -99,7 +99,7 @@ public class BasePushMessage {
         	return ;
         }
         for(DeviceToken dt:userDeviceToken){
-        	dtl.add(dt.getToken());
+        	dtl.add(dt.getDeviceToken());
         }
         System.setProperty("gexin.rp.sdk.pushlist.needDetails", "true"); //显示每个用户的用户状态，false:不显示，true：显示 
         IPushResult ret = push.pushAPNMessageToList(appId, contentId, dtl);
@@ -151,9 +151,9 @@ public class BasePushMessage {
 		  }
           alertMsg.setBody(content);
           //对于标题指定执行按钮所使用的Localizable.strings,仅支持IOS8.2以上版本
-          alertMsg.setTitleLocKey("WeMan我们");
+          alertMsg.setTitleLocKey("WeMan");
           //指定执行按钮所使用的Localizable.strings
-          alertMsg.setActionLocKey("WeMan我们");
+          alertMsg.setActionLocKey("WeMan");
           apnpayload.setAlertMsg(alertMsg);
           
           if(pushContent!=null){

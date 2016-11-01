@@ -41,7 +41,7 @@ public class ShareAction extends BaseAction{
 				return "themeSuccess";
 			}else{
 				ArticleModel articleModel = articleService.getArtilceDetails(dataId);
-				request.setAttribute("userAttr", articleModel.getUserHeight()+"."+articleModel.getUserWeight()+"."+this.getAge(articleModel.getUserAge()));
+				request.setAttribute("userAttr", this.getAge(articleModel.getUserAge())+"|"+articleModel.getUserHeight()+"|"+articleModel.getUserWeight());
 				request.setAttribute("article", articleModel);
 				request.setAttribute("categoryImages", articleModel.getCategoryImage().split(","));
 				request.setAttribute("brand", articleModel.getBrandName().split(","));

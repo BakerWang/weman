@@ -75,7 +75,7 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), userId);
 		}else if(type==2){//我的粉丝
 			String sql = " select em.member_id as userId,em.face as photo,em.uname as username,"
-					+ " (select 1 from wh_api_action waab where waab.type = 1 and waab.status != -1 and waab.member_id = "+member_id+" and waab.data_id = waa.data_id) as isFan,"
+					+ " (select 1 from wh_api_action waab where waab.type = 1 and waab.status != -1 and waab.member_id = "+member_id+" and waab.data_id = waa.member_id) as isFan,"
 					+ " (select count(*) from wh_api_action waac where waac.type = 1 and waac.status != -1 and waac.data_id = waa.member_id) as fanCount,"
 					+ " (select count(*) from wh_api_article waat where waat.status != -1 and waat.member_id = waa.member_id) as articleCount"
 					+ " from wh_api_action waa "
@@ -91,13 +91,13 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 		if(type==1){//1是发文列表
 			String sql ="select waa.id as articleId,waa.image as articleImage from wh_api_article waa where waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);
-		}else if(type==2){//收藏主题
-			String sql ="select eat.id as themeId,eat.title as themeTitle,eat.details as themeDetails,eat.minorImage as themeImage from wh_api_action waa "
+		}else if(type==2){//收藏主题列表
+			String sql ="select eat.id as themeId,eat.title as themeTitle,eat.contentStyle as contentStyle,eat.details as themeDetails,eat.minorImage as themeImage from wh_api_action waa "
 					+ " left join es_api_theme eat on eat.id = waa.data_id "
 					+ " where waa.type = 2 and waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);
-		}else if(type==3){//收藏商品
-			String sql ="select eg.goods_id as goods_id,eg.isShowMKPrice as isShowMKPrice,eg.brief as brief,eg.name as name,eg.original as original,eg.price as price,eg.mktprice as mktprice,eg.url as url from wh_api_action waa "
+		}else if(type==3){//收藏商品列表
+			String sql ="select eg.goods_id as goods_id,eg.isShowMKPrice as isShowMKPrice,eg.brief as brief,eg.name as name,eg.original as original,eg.price as price,eg.mktprice as mktprice,eg.url as url,eg.productOrigin as productOrigin from wh_api_action waa "
 					+ " left join es_goods eg on eg.goods_id = waa.data_id "
 					+ " where waa.type = 3 and waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);
@@ -120,13 +120,13 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 		}else{
 			//被赞数
 			String loveCountSql = "select count(*) from wh_api_action waa "
-					+ "LEFT JOIN wh_api_article wa on wa.id = waa.data_id where wa.member_id = ? and waa.type= 4 and waa.status = 0 ";
-			int loveCount = this.daoSupport.queryForInt(loveCountSql, member_id);
+					+ "LEFT JOIN wh_api_article wa on wa.id = waa.data_id where wa.member_id = ? and waa.type= 4 and waa.status = 0 and waa.member_id != ?";
+			int loveCount = this.daoSupport.queryForInt(loveCountSql, member_id,member_id);
 			jsonObject.put("loveCount", String.valueOf(loveCount));
 			//评论数
 			String commentCountSql = "select count(*) from wh_api_comment wac "
-					+ "LEFT JOIN wh_api_article waa on waa.id = wac.article_id where waa.member_id = ? and isRead = 0 ";
-			int commentCount = this.daoSupport.queryForInt(commentCountSql, member_id);
+					+ "LEFT JOIN wh_api_article waa on waa.id = wac.article_id where waa.member_id = ? and isRead = 0 and wac.member_id != ?";
+			int commentCount = this.daoSupport.queryForInt(commentCountSql, member_id,member_id);
 			jsonObject.put("commentCount", String.valueOf(commentCount));
 			//加好友数
 			String addSql = "select count(*) from wh_api_action waa where waa.data_id = ? and waa.type= 1 and waa.status = 0";

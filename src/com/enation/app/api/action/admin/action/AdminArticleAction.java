@@ -34,8 +34,12 @@ public class AdminArticleAction extends BaseAction {
 	 */
 	public String articleList() {
 		try {
+			String pageSize = request.getParameter("pageSize");
+			long cpagesize = (pageSize==null)?1:Long.parseLong(pageSize);
+			page.setCurrentPageNo(cpagesize);
 			Page page1 = articleService.getArticleList(adminSearchForm, page);
 			request.setAttribute("page", page1);
+			request.setAttribute("pageSize", cpagesize);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

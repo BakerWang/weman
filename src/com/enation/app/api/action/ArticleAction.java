@@ -247,6 +247,19 @@ public class ArticleAction extends BaseAction{
 				commentJa.add(commentObj);
 			}
 			jsonObject.put("commentData", commentJa);
+			List<PhoneBanner> phoneBanners = bannerService.getCurrentBanners("社交banner");
+			if(phoneBanners!=null&&phoneBanners.size()>0){
+				JSONArray bannerJarray = new JSONArray();
+				for(PhoneBanner pb:phoneBanners){
+					JSONObject bannerObj = new JSONObject();
+					bannerObj.put("bannerType", String.valueOf(pb.getType()));
+					bannerObj.put("bannerId", String.valueOf(pb.getId()));
+					bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
+					bannerObj.put("bannerData", pb.getDetails());
+					bannerJarray.add(bannerObj);
+				}
+				jsonObject.put("bannerList", bannerJarray);
+			}
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
 				jsonObject.put("result", "FAILED");
@@ -412,6 +425,9 @@ public class ArticleAction extends BaseAction{
 						bannerObj.put("bannerId", String.valueOf(pb.getId()));
 						bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
 						bannerObj.put("bannerData", pb.getDetails());
+						if(pb.getThemeContentStyle()!=null&&!pb.getThemeContentStyle().equals("0")){
+							bannerObj.put("contentStyle", pb.getThemeContentStyle());
+						}
 						bannerJarray.add(bannerObj);
 					}
 					jsonObject.put("bannerList", bannerJarray);

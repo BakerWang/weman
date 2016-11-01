@@ -48,7 +48,7 @@ public class PhoneTokenDaoImpl extends BaseSupport<PhoneToken> implements PhoneT
 	public PhoneToken updatePhoneToken(PhoneToken phoneToken) {
 		phoneToken.setExpireDate(new Date().getTime());
 		phoneToken.setToken(this.getToken(phoneToken.getMember_id().toString()));
-		this.baseDaoSupport.update("api_phoneToken", phoneToken, " id = "+phoneToken.getId());
+		this.baseDaoSupport.update("es_api_phoneToken", phoneToken, " id = "+phoneToken.getId());
 		return phoneToken;
 	}
 	
@@ -65,7 +65,6 @@ public class PhoneTokenDaoImpl extends BaseSupport<PhoneToken> implements PhoneT
 		c.add(Calendar.MONTH, 1);
 		return c.getTime();
 	}
-
 	@Override
 	public int getMemberIdByAccessToken(String accessToken) {
 		String sql = "select * from es_api_phoneToken apt where apt.token = ? ";

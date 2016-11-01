@@ -13,10 +13,11 @@ import com.enation.app.shop.core.model.Goods;
 import com.enation.framework.database.Page;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public interface ProductService {
 
-	Page getProductList(int pageNo,int pageSize,Map<String,String> map);
+	Page getProductList(int pageNo,int pageSize,Map<String,Object> map);
 	
 	
 	/**
@@ -172,6 +173,24 @@ public interface ProductService {
 	 * @param string
 	 */
 	Page userThemeCount(Long startTime, Long endTime, int dataId, String string,Page page);
+
+
+	JSONObject getProductDetails(int productId, JSONObject jsonObject) throws Exception;
+
+
+	void updateThemeContent(int tcid, Map<String, Object> map)throws Exception;
+
+
+	void deleThemeContent(int tcid)throws Exception;
+
+
+	/**
+	 * 获取商品详情
+	 * @param parseInt
+	 * @return
+	 * @throws Exception
+	 */
+	Map<String,Object> getProductDetails(int parseInt)throws Exception;
 
 
 }

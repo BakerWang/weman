@@ -56,14 +56,16 @@ background-color: #FDEA7A;
 				<thead>
 					<tr>
 						<th data-options="field:'goods_id',checkbox:true,width:100" ></th>
+						<th data-options="field:'original',width:110" formatter="formatImage" ></th>
 						<th data-options="field:'url',width:200,sortable:'true'" formatter="formatUrl">购买地址</th>
 						<th data-options="field:'name',width:300" formatter="formatName">商品名称</th>
 						<th data-options="field:'brief',width:150" formatter="formatTitle">小标题</th>
-						<th data-options="field:'store_name',sortable:'true',width:250">店铺名称</th>
+						<th data-options="field:'productOrigin',width:110" formatter="formatOrigin">商品来源</th>
 						<th data-options="field:'cat_name',sortable:'true',width:100">分类</th>
 						<th data-options="field:'price',sortable:'true',width:100" formatter="formatMoney">销售价格</th>
-						<th data-options="field:'disabled',sortable:'true',width:50" formatter="market_enable">上架</th>
-						<th data-options="field:'brand_name',sortable:'true',width:200">品牌</th>
+						<th data-options="field:'market_enable',sortable:'true',width:50" formatter="market_enable">好物显示</th>
+						<th data-options="field:'brand_name',sortable:'true',width:100">品牌</th>
+						<th data-options="field:'formatObj',width:30" formatter="formatObj">操作</th>
 						<!-- <th data-options="field:'action',align:'center',width:100" formatter="formatAction">操作</th> -->
 					</tr>
 				</thead>
@@ -73,6 +75,32 @@ background-color: #FDEA7A;
 	</form>
 </div>
 <script type="text/javascript">
+function formatObj(valuee,row,index){
+	var val = '<a style="text-decoration: none;" class="b_fr" onclick="goUrl('+row.goods_id+')" href="javascript:void(0);">修改</a>';
+	return val;
+}
+function goUrl(pid){
+	parent.addTab1('修改商品','/b2b2cbak/apiAdmin/AdminProductAction_goProductDetails.do?pid='+pid);
+}
+function formatOrigin(valuee,row,index){
+	var val ='<select onchange="selOrigin(this,'+row.goods_id+')"><option';
+	var value = row.productorigin;
+	if(value=='taobao'){val=val+' selected="selected"';}
+	val = val +' value="taobao">淘宝</option><option';
+	if(value=='tmall'){val=val+' selected="selected"';}
+	val = val +' value="tmall">天猫</option><option';
+	if(value=='jingdong'){val=val+' selected="selected"';}
+	val = val +' value="jingdong">京东</option><option';
+	if(value=='yamaxun'){val=val+' selected="selected"';}
+	val = val +' value="yamaxun">亚马逊</option><option';
+	if(value=='wemantb'){val=val+' selected="selected"';}
+	val = val +' value="wemantb">weman专场</option></select>';
+	return val;
+}
+function formatImage(value,row,index){
+	var val='<img width="100px" height="100px" src="/b2b2cbak/statics/'+row.original+'" />'
+	return val;
+}
 function formatName(value,row,index){
 // 	var val="<a href=\"../../goods-"+row.goods_id+".html\"target=\"_blank\">"+row.name+"</a>";
 	return row.name;
@@ -86,10 +114,10 @@ function formatUrl(value,row,index){
 }
 function market_enable(value,row,index){
 	var val ='<select onchange="selMarketEnable(this,'+row.goods_id+')"><option';
-	if(value!=0){val=val+' selected="selected"';}
-	val = val +' value="1">否</option><option';
-	if(value==0){val=val+' selected="selected"';}
-	val = val +' value="0">是</option></select>';
+	if(value!=-1){val=val+' selected="selected"';}
+	val = val +' value="-1">否</option><option';
+	if(value==1){val=val+' selected="selected"';}
+	val = val +' value="1">是</option></select>';
 	//if(value==1){val="是";}else if(value==0){val="否";}
 	return val;
 }
@@ -100,6 +128,24 @@ function formatMoney(value,row,index){
 function formatAction(value,row,index){
 	var val="<a class='edit' title='查看详细' href='#' onclick='newTab(\""+(row.name).substring(0,11)+"..\",\"${ctx}/b2b2c/admin/storeGoods!edit.do?goodsId="+row.goods_id+"\")' ></a>";
 	return val;
+}
+function selOrigin(tt,id){
+	$.ajax({
+		type:'POST',
+		url:'/b2b2cbak/apiAdmin/AdminProductAction_updateProductOrigin.do',
+		data:{
+			'productId':id,
+			'productOrigin':$(tt).val()
+		},
+		dataType:'json',
+	    success: function(msg){
+	    	if(msg.result=='yes'){
+	    		alert('修改成功！');
+	    	}else{
+	    		alert('系统错误!');
+	    	}
+	    }
+	})
 }
 function selMarketEnable(tt,id){
 	$.ajax({

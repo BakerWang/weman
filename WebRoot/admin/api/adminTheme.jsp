@@ -97,10 +97,13 @@ tr:hover td .updateThemeA{
 		<span style="float:left;height:28px;">
 			<a href="javascript:void(0)" class="b_fr" onclick="parent.addTab1('主题添加','/b2b2cbak/apiAdmin/AdminProductAction_goNewTheme.do')">新建</a>
 		</span>
-		<span style="float: right;height:28px;"> 
-			<input id="searchKeyword" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
-			<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a>
-		</span>
+		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do" id="searchForm" method="post">
+			<span style="float: right;height:28px;"> 
+				<input type="hidden" value="1" name="pageNo" id="goodsPage"/>
+				<input id="searchKeyword" name="keywords" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
+				<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a>
+			</span>
+		</form>
 	</div>
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
@@ -108,7 +111,9 @@ tr:hover td .updateThemeA{
 				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>操作</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>登录用户点击次数</td><td>点击次数</td><td>删除</td></tr>
 <!-- 				<td>修改</td> -->
 				<s:iterator value="#request.page.result" var="themeObj">
-					<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">${themeObj.theme.title } </td><td><img src="/b2b2cbak/statics/${themeObj.theme.image }" width="80px" height="80px"/></td>
+					<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">
+						<a href="javascript:void(0)" style="text-decoration: none;" onclick="parent.addTab1('主题浏览','/b2b2cbak/apiAdmin/ShareAction_getDataDetails.do?type=theme&dataId=${themeObj.theme.id}')">${themeObj.theme.title } </a>
+					</td><td><img src="/b2b2cbak/statics/${themeObj.theme.image }" width="80px" height="80px"/></td>
 					<td>
 						<input type="checkbox" <s:if test="#themeObj.theme.indexStatus==1">checked="checked"</s:if> class="statusArray1">首页页
 						<input type="checkbox" <s:if test="#themeObj.theme.findStatus==1">checked="checked"</s:if> class="statusArray2">发现页
@@ -123,13 +128,12 @@ tr:hover td .updateThemeA{
 										<s:iterator value="#request.parentTags" var="ptag">
 													<option value="${ptag.id }" <s:if test="#ptag.id == #tagMap.key">selected="selected"</s:if>>${ptag.name }</option>
 										</s:iterator>
-										<option value="0">未选择</option>
 									</select> : 
 									<select class="ccategory">
+										<option value="0" name="0">未选择</option>
 										<s:iterator value="#request.childrenTags" var="ctag">
 													<option value="${ctag.id }" name="${ctag.category }" <s:if test="#ctag.id == #tagMap.value">selected="selected"</s:if>>${ctag.name }</option>
 										</s:iterator>
-										<option name="0">未选择</option>
 									</select>
 									<button onclick="updateCategroy(this,${themeObj.theme.id})">确定修改</button>
 								</div>
@@ -146,7 +150,7 @@ tr:hover td .updateThemeA{
 									<s:iterator value="#request.childrenTags" var="ctag">
 												<option value="${ctag.id }" name="${ctag.category }">${ctag.name }</option>
 									</s:iterator>
-									<option name="0" selected="selected">未选择</option>
+									<option value="0" name="0" selected="selected">未选择</option>
 								</select>
 								<button onclick="updateCategroy(this,${themeObj.theme.id})">确定修改</button>
 							</div>	
@@ -159,12 +163,13 @@ tr:hover td .updateThemeA{
 <%-- 						<a class="updateThemeA" onclick='parent.addTab1("主题修改","/b2b2cbak/apiAdmin/AdminProductAction_goThemeDetails.do?themeId=${themeObj.theme.id}");' href="javascript:void(0);" title="修改" ></a> --%>
 <!-- 					</td> -->
 					<td>
-						<a href="javascript:void(0)" onclick="parent.addTab1('用户点击主题详情','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId='+${themeObj.theme.id})">${themeObj.theme.loginClickCount }</a>
+						<a href="javascript:void(0)" onclick="parent.addTab1('用户点击主题详情','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId=${themeObj.theme.id}')">${themeObj.theme.loginClickCount }</a>
 					</td>
 					<td>
 						${themeObj.theme.clickCount }
 					</td>
 					<td>
+						<a style="text-decoration: none;" class="b_fr" onclick="parent.addTab1('修改主题','/b2b2cbak/apiAdmin/AdminProductAction_getThemeDetails.do?themeId=${themeObj.theme.id}')" href="javascript:void(0);">修改</a>
 						<a style="text-decoration: none;" class="b_fr" onclick="updateTheme(this,${themeObj.theme.id})" href="javascript:void(0);">删除</a>
 					</td></tr>
 				</s:iterator>
@@ -185,10 +190,14 @@ tr:hover td .updateThemeA{
             'num_edge_entries'    : 2,  
             'prev_text'           : "上一页",  
             'next_text'           : "下一页",  
-            'current_page'        :'${page.currentPageNo-1}',
+            'current_page'        :'${pageNo-1}',
             'callback'            : function(page_id,jq){
+           		var page = parseInt(page_id)+1;
+            	$('#goodsPage').val(page);
+           		$("#searchForm").submit();
+            	//var url = '/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do?page='+;
+            	//parent.addTab1('主题列表',url);
 //            		var type = "${type}";
-//            		var page = parseInt(page_id)+1;
 //            		$("#searchForm").find("input[name='page.pages']").val(page);
 //            		$("#searchForm").submit();
             } 
@@ -248,22 +257,24 @@ tr:hover td .updateThemeA{
 		})
 	}
 	function updateTheme(tt,tid){
-		var $this = $(tt);
-		$.ajax({
-			type:'POST',
-			url:'/b2b2cbak/apiAdmin/AdminProductAction_deleteTheme.do',
-			data:{
-				'themeId':tid
-			},
-			dataType:'json',
-		    success: function(msg){
-		    	if(msg.result=='yes'){
-		    		$this.parent().parent().remove();
-		    	}else{
-		    		alert('系统错误!');
-		    	}
-		    }
-		})
+		if(confirm("你确定要删除吗？")){
+			var $this = $(tt);
+			$.ajax({
+				type:'POST',
+				url:'/b2b2cbak/apiAdmin/AdminProductAction_deleteTheme.do',
+				data:{
+					'themeId':tid
+				},
+				dataType:'json',
+			    success: function(msg){
+			    	if(msg.result=='yes'){
+			    		$this.parent().parent().remove();
+			    	}else{
+			    		alert('系统错误!');
+			    	}
+			    }
+			})
+		}
 		
 	}
 	function tagSel(tt){
@@ -272,13 +283,14 @@ tr:hover td .updateThemeA{
 		$(tt).parent('div').children('.ccategory').find('[name="'+val+'"]').show();
 	}
 	function searchGoods(){
-		var kw = $('#searchKeyword').val();
-		if(kw==null||kw==''){
-			return;
-		}
-		var url = '/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do?page=1&keywords='+kw;
-		url = encodeURI(encodeURI(url));
-		window.location.href= url;
+		$("#searchForm").submit();
+// 		var kw = $('#searchKeyword').val();
+// 		if(kw==null||kw==''){
+// 			return;
+// 		}
+// 		var url = '/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do?page=1&keywords='+kw;
+// 		url = encodeURI(encodeURI(url));
+// 		window.location.href= url;
 	}
 	function updateCategroy(themeid){
 		var pcategory = $('#pcategory').val();
@@ -287,7 +299,7 @@ tr:hover td .updateThemeA{
 	function updateCategroy(tt,tid){
 		var keyId = $(tt).parent('div').children('.pcategory').val();
 		var valueId = $(tt).parent('div').children('.ccategory').val();
-		if(keyId==0||valueId==0){
+		if(keyId==0&&valueId==0){
 			alert('选择错误!');
 		}
 		$.ajax({

@@ -27,7 +27,8 @@
 					<tr>
 						<th data-options="field:'brand_id',checkbox:true,width:100"></th>
 						<th data-options="field:'name',width:200">品牌名称</th>
-						<th data-options="field:'url',width:300">品牌网址</th>
+						<th data-options="field:'url',width:250">品牌网址</th>
+						<th data-options="field:'logo',width:50" formatter="formatImage" >品牌图片</th>
 						<th data-options="field:'action',width:25" formatter="formatOperation">操作</th>
 					</tr>
 				</thead>
@@ -37,6 +38,10 @@
 	<div id="addBrand" ></div>
 
 	<script type="text/javascript">
+	function formatImage(value,row,index){
+		var val='<img width="50px" height="50px" src="/b2b2cbak/statics/'+row.logo+'" />'
+		return val;
+	}
 		var app_path = "";
 		function append(brandid) {
 			var map = {}; // Map map = new HashMap();

@@ -13,7 +13,6 @@ import org.apache.struts2.ServletActionContext;
 
 import com.enation.eop.SystemSetting;
 import com.enation.eop.sdk.context.EopSetting;
-import com.enation.framework.context.webcontext.ThreadContextHolder;
 import com.enation.framework.image.IThumbnailCreator;
 import com.enation.framework.image.ThumbnailCreatorFactory;
 import com.enation.framework.util.DateUtil;

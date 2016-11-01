@@ -75,8 +75,11 @@ body{
     padding: 0 5px;
 }
 </style>
-<script src="../admin/api/js/jquery-1.7.js" type="text/javascript"></script>
+<script src="../adminthemes/new/js/jquery-1.8.3.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="/b2b2cbak/statics/js/common-min2.js"></script>
+<link rel="stylesheet" type="text/css" href="/b2b2cbak/adminthemes/new/js/easy-ui/themes/gray/easyui.css"/>    
+<script type="text/javascript" src="/b2b2cbak/adminthemes/new/js/easy-ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/b2b2cbak/adminthemes/new/js/easy-ui/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../adminthemes/new/js/jquery.pagination.js"></script>
 <link href="../adminthemes/new/css/myPagination.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
@@ -104,19 +107,26 @@ function  ajaxFileUpload(i){
 }
 </script>
 <div style="background-color: white; padding: 15px 0 8px 10px;margin:0px;position: relative;overflow: hidden;">
-	<form id="addFormTotal"  enctype="multipart/form-data"  method="post" style="width:40%;float:left;">
-		<table style="width:98%;font-size:14px;color:black;" id="addThemeTable">
-			<tr height="38px"><td class="spanFront">主题图片 : </td><td width="480px"><input id="themeImageFile" type="file" name="themeFile"/></td></tr>
-			<tr height="38px"><td class="spanFront">主题副图 : </td><td width="480px"><input id="themeImageFile2" type="file" name="themeFile2"/></td></tr>
-			<tr height="38px"><td class="spanFront">主题标题 : </td><td><input class="inputFront" name="theme.title" /></td></tr>
-			<tr height="38px"><td class="spanFront">主题日期 : </td><td><input class="inputFront" name="theme.showDate" /></td></tr>
-			<tr height="38px"><td class="spanFront">主题描述 : </td><td><input class="inputFront" name="theme.details" /></td></tr>
+	<form id="addFormTotal"  enctype="multipart/form-data"  method="post" style="width:52%;float:left;">
+		<table style="width:98%;font-size:14px;color:black;table-layout:fixed;" id="addThemeTable">
+			<tr height="38px"><td class="spanFront">主题图片 : </td><td width="480px"><input id="themeImageFile" type="file" name="themeFile"/></td>
+			<td width="140px">上架：<input class="easyui-datetimebox" name="startTime" style="width: 90px;height: 28px;" id="start_time" data-options="buttons:buttons" /></td></tr>
+			<tr height="38px"><td class="spanFront">主题副图 : </td><td width="480px"><input id="themeImageFile2" type="file" name="themeFile2"/></td><td></td></tr>
+			<tr height="38px"><td class="spanFront">主题标题 : </td><td><input class="inputFront" name="theme.title" /></td>
+			<td></td></tr>
+			<tr height="38px"><td class="spanFront">主题日期 : </td><td><input class="inputFront" name="theme.showDate" /></td><td></td></tr>
+			<tr height="38px"><td class="spanFront">主题描述 : </td><td><input class="inputFront" name="theme.details" /></td>
+				<td>
+					主题的风格：<select name="theme.contentStyle"><option value="default">默认</option><option value="topic">专题</option></select>
+					主题描述位置：<select name="theme.detailsPosition"><option value="center">中</option><option value="left">左</option></select>
+					商品描述位置：<select name="theme.productPosition"><option value="center">中</option><option value="left">左</option></select>
+				</td></tr>
 <!-- 			<tr height="38px"><td class="spanFront">主题内容 : </td> -->
 <!-- 			<td class="themeContentTd">图片：<img width="100px" src="" height="80px" />(图片宽度：16,图片高度：center)</td></tr> -->
 		</table>
 	</form>
 	<div style="width:1px;float:left;background: gray;min-height:250px"></div>
-	<div style="float:left;margin-left:3%;width:48%">
+	<div style="float:left;margin-left:3%;width:40%">
 		<div style="width:100%;text-align: center;font-size:16px;color:black;">
 			添加主题内容&nbsp;&nbsp;||&nbsp;&nbsp;类型：<select onchange="selType(this)">
 						<option value="1">文字</option>
@@ -130,17 +140,17 @@ function  ajaxFileUpload(i){
 			<div id="wenziDiv" style="width:100%;">
 				<div style="width:100%;margin-top:15px;">
 					文字大小：<select id="fontSize">
+								<option value="16">16</option>
 								<option value="14">14</option>
 								<option value="15">15</option>
-								<option value="16">16</option>
 								<option value="17">17</option>
 								<option value="18">18</option>
 							</select>
 				</div>
 				<div style="width:100%;margin-top:10px;">
 					文字位置：<select id="center">
-								<option value="left">left</option>
 								<option value="center">center</option>
+								<option value="left">left</option>
 								<option value="right">right</option>
 							</select>
 				</div>
@@ -213,9 +223,17 @@ function  ajaxFileUpload(i){
 	</div>
 </div>
 <div class="buttonWrap">
-	<a href="javascript:;" onclick="submitForm()" class="easyui-linkbutton l-btn" id="searchAdvance" group=""><span class="l-btn-left"><span class="l-btn-text">保存</span></span></a>
+	<a href="javascript:;" onclick="submitForm()" class="easyui-linkbutton l-btn" id="searchAdvance" group="">保存</a>
 </div>
 <script>
+var buttons = $.extend([], $.fn.datetimebox.defaults.buttons);
+buttons.splice(1, 0, {
+text: '清空',
+handler: function(target){
+	 $('#start_time').datetimebox('setValue',"");
+}
+});
+
 	function selType(tt){
 		var type = $(tt).val();
 		if(type ==1){
@@ -264,7 +282,7 @@ function  ajaxFileUpload(i){
 			var center=$('#center').val();
 			var content=$('#content').val();
 			type = 'text';
-			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" type="'+type+'" position="'+position+'" fontSize="'+fontSize+'" center="'+center+'" content="'+content+'" >文字：'+content+'&nbsp;&nbsp;(文字大小：'+fontSize+',文字位置：'+center+')</td></tr>';
+			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td style="max-width:530px;word-wrap:break-word;" class="themeContentTd" type="'+type+'" position="'+position+'" fontSize="'+fontSize+'" center="'+center+'" content="'+content+'" >文字：'+content+'&nbsp;&nbsp;(文字大小：'+fontSize+',文字位置：'+center+')</td><td><button onclick="removeTr(this)">删除</button></td></tr>';
 			$('#addThemeTable').append(divhtml);
 		}else if(type == 2){
 			var image = '../statics/'+upImage;
@@ -273,7 +291,7 @@ function  ajaxFileUpload(i){
 			var iwidth = img.width;
 			var iheight = img.height;
 			type = 'image';
-			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" type="'+type+'" image="'+upImage+'" imageWidth="'+iwidth+'" imageHeight="'+iheight+'" position="'+position+'">图片：<img width="100px" src="'+image+'" height="80px" />&nbsp;&nbsp;(图片宽度：'+iwidth+'px,图片高度：'+iheight+'px)</td></tr></tr>';
+			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" type="'+type+'" image="'+upImage+'" imageWidth="'+iwidth+'" imageHeight="'+iheight+'" position="'+position+'">图片：<img width="100px" src="'+image+'" height="80px" />&nbsp;&nbsp;(图片宽度：'+iwidth+'px,图片高度：'+iheight+'px)</td><td><button onclick="removeTr(this)">删除</button></td></tr>';
 			$('#addThemeTable').append(divhtml);
 		}else if(type == 3){//video
 			var image = '../statics/'+upImage;
@@ -283,14 +301,17 @@ function  ajaxFileUpload(i){
 			var iheight = img.height;
 			type = 'video';
 			var videoUrl = $('#videoUrlInput').val();
-			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" videoUrl="'+videoUrl+'" type="'+type+'" image="'+upImage+'" imageWidth="'+iwidth+'" imageHeight="'+iheight+'" position="'+position+'">视频：<img width="100px" src="'+image+'" height="80px" />&nbsp;&nbsp;(图片宽度：'+iwidth+'px,图片高度：'+iheight+'px)</td></tr></tr>';
+			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" videoUrl="'+videoUrl+'" type="'+type+'" image="'+upImage+'" imageWidth="'+iwidth+'" imageHeight="'+iheight+'" position="'+position+'">视频：<img width="100px" src="'+image+'" height="80px" />&nbsp;&nbsp;(图片宽度：'+iwidth+'px,图片高度：'+iheight+'px)</td><td><button onclick="removeTr(this)">删除</button></td></tr>';
 			$('#addThemeTable').append(divhtml);
 		}else if(type == 4){
 			
-		}else if(type == 5){
-			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" type="defaultImage" position="'+position+'" >向上的箭头</td></tr>';
+		}else if(type == 5){//product
+			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" type="defaultImage" position="'+position+'" >向上的箭头</td><td><button onclick="removeTr(this)">删除</button></td></tr>';
 			$('#addThemeTable').append(divhtml);
 		}
+	}
+	function removeTr(tt){
+		$(tt).parent().parent().remove();
 	}
 	function addProductForTheme(pid,tt,type){
 		var position = $('.themeContentTd').length;
@@ -306,7 +327,7 @@ function  ajaxFileUpload(i){
 		if(type==2){
 			typeStr='不显示品牌';
 		}
-		var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" type="product" productId="'+pid+'" position="'+position+'" showType="'+type+'">商品："'+pname+'"('+typeStr+')</td></tr></tr>';
+		var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td class="themeContentTd" type="product" productId="'+pid+'" position="'+position+'" showType="'+type+'">商品："'+pname+'"('+typeStr+')</td><button onclick="removeTr(this)">删除</button></td></tr>';
 		$('#addThemeTable').append(divhtml);
 	}
 	function submitForm() {

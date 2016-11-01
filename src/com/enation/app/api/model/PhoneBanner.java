@@ -15,6 +15,7 @@ public class PhoneBanner {
 	private String status;
 	private Long create_time;
 	private int click_count;
+	private String themeContentStyle;//主题内容风格
 	
 	public enum Type{
 		Type_product("商品",1),
@@ -124,6 +125,12 @@ public class PhoneBanner {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public String getThemeContentStyle() {
+		return themeContentStyle;
+	}
+	public void setThemeContentStyle(String themeContentStyle) {
+		this.themeContentStyle = themeContentStyle;
 	}
 	
 	

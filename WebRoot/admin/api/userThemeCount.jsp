@@ -54,6 +54,9 @@
 </style>
 <div class='buttonArea'>
 	<div style="height:30px;margin-top:4px;">
+		<span style="float:left;height:28px;margin-left:15px;padding-top:3px;">
+			${resPage.result[0].title }
+		</span>
 		<span style="float: right;height:28px;"> 
 			<input id="searchKeyword" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
 			<a href="javascript:void(0)" class="b_fr" onclick="searchGoods(${dataId})">搜索</a>

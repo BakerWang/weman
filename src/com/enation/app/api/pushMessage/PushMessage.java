@@ -20,27 +20,27 @@ public class PushMessage {
     	dataMap.put("type", "web");
     	dataMap.put("data", "http://www.baidu.com");
     	DeviceToken dt = new DeviceToken();
-    	dt.setToken("63922e4bada09dfe0dbe0fd0d6b6939bd90c67fe0e96928719c217fe014e4e80");
+    	dt.setDeviceToken("ceeb75c6b913da660db648a3898d599f6b8ed1d4ada82070ccfbf65e7a55df9f");
     	dt.setTokenType("iphone");
-    	dt.setClientId("2f42fe2a573a5acf7dc4f326b53ec775");
+    	dt.setClientId("54c707552f3d42b6531abbf93cee5fd0");
 //    	dt.setToken("404f9f535df2b917a27b4b7f4fa24586cae3909a4acb5f071b697f42f9085230");
 //    	dt.setTokenType("iphone");
 //    	dt.setClientId("54c707552f3d42b6531abbf93cee5fd0");
-    	DeviceToken dt2 = new DeviceToken();
-    	dt2.setToken("f389512ed34ecddd93e9b741cc47f7e8348e162d40466e18c812034bb079972d");
-    	dt2.setTokenType("iphone");
-    	dt2.setClientId("6a4fb9eaaa98824d3272b148ecd60632");
+//    	DeviceToken dt2 = new DeviceToken();
+//    	dt2.setDeviceToken("f389512ed34ecddd93e9b741cc47f7e8348e162d40466e18c812034bb079972d");
+//    	dt2.setTokenType("iphone");
+//    	dt2.setClientId("6a4fb9eaaa98824d3272b148ecd60632");
 //    	DeviceToken dt3 = new DeviceToken();
 //    	dt3.setToken("b468835d5120cf710c5f2018f93e0b154f9874039f3e8d8b178caa4d5a65fdf8");
 //    	dt3.setTokenType("iphone");
 //    	dt3.setClientId("b59329e6715b3fce79bbc761fab488f9");
     	List<DeviceToken> dts = new ArrayList<DeviceToken>();
     	dts.add(dt);
-    	dts.add(dt2);
+//    	dts.add(dt2);
     	//dts.add(dt3);
     	try {
-			//pushSingleUser(content, dataMap, dt);
-    		pushUserList("大家好", dataMap, dts);
+			pushSingleUser(content, dataMap, dt);
+//    		pushUserList("大家好", dataMap, dts);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -95,7 +95,7 @@ public class PushMessage {
     				}
     				BasePushMessage.onlinePushSingleMessage(userMessage.getClientId(), dataObj.toString());
     			}else{
-    				BasePushMessage.offlinePushSingleMessage(content, userMessage.getToken(), dataMap);
+    				BasePushMessage.offlinePushSingleMessage(content, userMessage.getDeviceToken(), dataMap);
     			}
     		}
     	}

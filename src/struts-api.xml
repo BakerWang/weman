@@ -17,6 +17,8 @@
 
 		<action name="GlobalAction_*" class="com.enation.app.api.action.GlobalAction" method="{1}">
 		</action>
+		<action name="B2CAction_*" class="com.enation.app.api.action.B2CAction" method="{1}">
+		</action>
 		<action name="InitUserAction_*" class="com.enation.app.api.action.InitUserAction" method="{1}">
 		</action>
 		<action name="ProductAction_*" class="com.enation.app.api.action.ProductAction" method="{1}">
@@ -46,6 +48,7 @@
 			<result name="addProductJspSuccess">/admin/api/addGoods.jsp</result>
 			<result name="fetchThemeTagSuccess">/admin/api/updateThemeTag.jsp</result>
 			<result name="userThemeCountSuccess">/admin/api/userThemeCount.jsp</result>
+			<result name="goProductDetailsSuccess">/admin/api/updateProductDetails.jsp</result>
 		</action>
 		<action name="AdminBannerAction_*" class="com.enation.app.api.action.admin.action.AdminBannerAction" method="{1}">
 			<result name="bannerListSuccess">/admin/api/bannerList.jsp</result>

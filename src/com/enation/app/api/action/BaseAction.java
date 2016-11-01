@@ -78,6 +78,10 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Se
 		return saveName;
 	}
 	
+//	public static void main(String[] args) {
+//		UploadUtil.createThumb("G:/111.jpg","G:/444.jpg",2488);
+//	}
+	
 	public String resizeImage(String saveName,int width){
 		String basePath = request.getSession().getServletContext().getRealPath("/statics")+"/";
 		String resizeImage = saveName.substring(0,saveName.lastIndexOf("."))+"-resize"+saveName.substring(saveName.lastIndexOf("."));
@@ -185,6 +189,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Se
 		if(accessToken==null||"".equals(accessToken)){
 			return 0;
 		}
+		//logger.error("根据accessToken查找member_id："+accessToken);
 		int memberId = initUserService.getMemberIdByAccessToken(accessToken);
 		if(memberId==0){
 			jsonObject.put("result", "login");

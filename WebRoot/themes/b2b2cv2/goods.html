@@ -53,8 +53,8 @@
          			<!-- 商品相册 -->
 					<div class="gallery">	
 						<div class="preview">
-							 <a href="${big!''}"  id="zoom" rel="zoom-width:400px;zoom-height:400px;"  class="MagicZoom"> 
-							 	<img   src="${small!''}" style="width: 320px;height: 320px;" />
+							 <a href="statics/${big!''}"  id="zoom" rel="zoom-width:400px;zoom-height:400px;"  class="MagicZoom"> 
+							 	<img   src="statics/${small!''}" style="width: 320px;height: 320px;" />
 							 </a>
 						</div>
 						<div class="control_bar">
@@ -63,7 +63,7 @@
 								<ul>
 								<#list galleryList as gallery>
 									<li <#if !gallery_has_next>class="last"</#if> <#if gallery.isdefault==1>class="selected"</#if>> 
-										<@image src="${gallery.thumbnail!''}"  big="${gallery.big}" small="${gallery.small}"   />
+										<@image src="statics/${gallery.thumbnail!''}"  big="statics/${gallery.big}" small="statics/${gallery.small}"   />
 									</li>
 								</#list>	
 								</ul>
