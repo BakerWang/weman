@@ -47,7 +47,7 @@
 	</bean>
 	
 
-	<!-- 每天执行表达式，每晚23：30 -->
+	<!-- 每天执行表达式，每晚14：30 -->
 	<bean id="erverDayTime"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
@@ -55,7 +55,7 @@
 		</property>
 		 
 		<property name="cronExpression">
-			<value>0 30 23 * * ?</value>
+			<value>0 23 14 * * ?</value>
 		</property>
 	</bean>
 	
@@ -67,7 +67,7 @@
 		</property>
 		 
 		<property name="cronExpression">
-			<value>0 0 0/1 * * ?</value>
+			<value>0 5 * * * ?</value>
 		</property>
 		 
 	</bean>
@@ -84,14 +84,14 @@
 	</bean>
 	
 	
-	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序   -->
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  app/base/core/service/job -->
 	<bean id="startQuertz" lazy-init="false" autowire="no"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="erverDayTime" />
+<!-- 				<ref bean="erverDayTime" /> -->
 				<ref bean="erverHourTime" />
-				<ref bean="everyMonthTime"/>
+<!-- 				<ref bean="everyMonthTime"/> -->
 			</list>
 		</property>
 	</bean>

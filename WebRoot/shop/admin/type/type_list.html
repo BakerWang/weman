@@ -2,10 +2,14 @@
 <#assign dateFormat="com.enation.framework.directive.DateformateDirective"?new()>
 <script type="text/javascript" src="js/GoodsType.js"></script>
 <div class="main">
-	<div class="buttonArea">
+	<div class="buttonArea" style="float:left;">
 		<a href="javascript:void(0)" class="button blueButton" onclick="append()">添加</a>
 		<a href="javascript:void(0)" class="button" onclick="del()">删除</a>
 	</div>
+	<span id="simpleSearch" style="float:right;margin-right:20px;">
+		<a href="javascript:void(0)" class="button b_fr" data-options="plain:true" onclick="searchBrand()">搜索</a>
+		<input id="keyword" class="input_text b_fr mr5" value="" size="30" placeholder="请输入模糊关键字" name="searchKeyWord" type="text"> 
+	</span>
 	<div class="shadowBoxWhite tableDiv">
 		<form id="typeform">
 			<table class="easyui-datagrid"
@@ -26,7 +30,13 @@
 	</div>
 </div>
 <script type="text/javascript">
+function searchBrand(){
+	var keyword = $("#keyword").val();
 
+	$("#typedata").datagrid('load', {
+		 keyword:keyword
+    });
+}
 function append(id,obj){
 	var map = {}; // Map map = new HashMap();
 	if(!id){

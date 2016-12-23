@@ -25,6 +25,8 @@ public class Theme {
 	private Map<Integer,Integer> themetagList;
 	private String tagsImage;//主题tag的图片列表
 	private List<ThemeContent> themeContent;
+
+	private long realClickCount;//真实点击数   不是数据库字段
 	private int clickCount;//未登录用户点击数
 	private int loginClickCount;//登录用户的点击数
 	
@@ -187,6 +189,13 @@ public class Theme {
 	}
 	public void setBannerStatus(int bannerStatus) {
 		this.bannerStatus = bannerStatus;
+	}
+	@NotDbField
+	public long getRealClickCount() {
+		return realClickCount;
+	}
+	public void setRealClickCount(long realClickCount) {
+		this.realClickCount = realClickCount;
 	}
 
 	

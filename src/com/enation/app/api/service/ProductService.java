@@ -36,7 +36,7 @@ public interface ProductService {
 	 * @param map  删选参数
 	 * @return
 	 */
-	Page getThemeProducts(int pageNo,int pageSize,Map<String,String> map);
+	Page getThemeProducts(int pageNo,int pageSize,Map<String,Object> map);
 	
 	/**
 	 * 商品与主题的增删
@@ -172,7 +172,7 @@ public interface ProductService {
 	 * @param dataId
 	 * @param string
 	 */
-	Page userThemeCount(Long startTime, Long endTime, int dataId, String string,Page page);
+	Page userThemeCount(Long startTime, Long endTime,Long userStartTime, Long userEndTime, int dataId, String string,Page page);
 
 
 	JSONObject getProductDetails(int productId, JSONObject jsonObject) throws Exception;
@@ -191,6 +191,45 @@ public interface ProductService {
 	 * @throws Exception
 	 */
 	Map<String,Object> getProductDetails(int parseInt)throws Exception;
+
+
+	/**
+	 * 未登录用户点击主题的统计
+	 * @param startTime
+	 * @param endTime
+	 * @param dataId
+	 * @param string
+	 * @param page
+	 * @return
+	 */
+	Page noUserThemeCount(Long startTime, Long endTime, int dataId, String string, Page page);
+
+
+	/**
+	 * 获取后台首页的数据
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 * @throws Exception
+	 */
+	Map<String, Object> getAdminIndexDetails(Long startTime, Long endTime) throws Exception;
+
+
+	/**
+	 * 获取未上架的主题
+	 * @return
+	 * @throws Exception
+	 */
+	List<Map<String, Object>> getBrowseThemeList() throws Exception;
+
+	/**
+	 * app主题列表接口2.0
+	 * @param pageNo
+	 * @param pageSize
+	 * @param map
+	 * @return
+	 */
+	Page getThemeProductsAPPVersion2(int pageNo, int i, Map<String, String> map) throws Exception;
 
 
 }

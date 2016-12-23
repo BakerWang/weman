@@ -41,18 +41,91 @@ public class AdminProductAction extends BaseAction {
 	private ArticleService articleService;
 
 	
+	/**
+	 * 后台概况详情
+	 * @return
+	 */
+	public void adminIndexDetails(){
+		try {
+			String stime = ((request.getParameter("startTime")==null)||("".equals(request.getParameter("startTime"))))?"2016-01-01":request.getParameter("startTime");
+			String etime = ((request.getParameter("endTime")==null)||("".equals(request.getParameter("endTime"))))?"2020-09-01":request.getParameter("endTime");
+			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
+			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
+			Map<String,Object> resMap = productService.getAdminIndexDetails(startTime,endTime);
+			jsonObject = JSONObject.fromObject(resMap);
+			jsonObject.put("result", "yes");
+		} catch (Exception e) {
+			jsonObject.put("result", "no");
+			e.printStackTrace();
+		} finally {
+			out.write(jsonObject.toString());
+			out.close();
+		}
+	}
 	
-	public String userThemeCount(){
+	
+	/**
+	 * 未登录用户点击主题的详情
+	 * @return
+	 */
+	public String noUserThemeCount(){
 		try {
 			String stime = request.getParameter("startTime")==null?"2016-09-01":request.getParameter("startTime");
 			String etime = request.getParameter("endTime")==null?"2020-09-01":request.getParameter("endTime");
 			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
 			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
 			int dataId = Integer.parseInt(request.getParameter("themeId"));
-			page.setPageSize(20);
-			Page respage = productService.userThemeCount(startTime,endTime,dataId,"clickTheme",page);
+			page.setPageSize(30);
+			String pageNo = request.getParameter("pageNo");
+			if (pageNo == null || "".equals(pageNo)) {
+				pageNo = "1";
+			}
+			page.setCurrentPageNo(Long.parseLong(pageNo));
+			Page respage = productService.noUserThemeCount(startTime,endTime,dataId,"clickTheme",page);
 			request.setAttribute("resPage", respage);
+			request.setAttribute("startTime", stime);
+			request.setAttribute("endTime", etime);
 			request.setAttribute("dataId", dataId);
+			request.setAttribute("type", "nouser");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "userThemeCountSuccess";
+	}
+	
+	
+	/**
+	 * 登录用户点击主题的详情
+	 * @return
+	 */
+	public String userThemeCount(){
+		try {
+			String stime = request.getParameter("startTime")==null?"2016-09-01":request.getParameter("startTime");
+			String etime = request.getParameter("endTime")==null?"2020-09-01":request.getParameter("endTime");
+			String usertartTime = request.getParameter("userStartTime")==null?"2016-04-01":request.getParameter("userStartTime");
+			String userndTime = request.getParameter("userEndTime")==null?"1":request.getParameter("userEndTime");
+			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
+			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
+			Long userStartTime = new SimpleDateFormat("yyyy-MM-dd").parse(usertartTime).getTime()/1000;
+			Long userEndTime =new Date().getTime();
+			if(!"1".equals(userndTime)){
+				userEndTime = new SimpleDateFormat("yyyy-MM-dd").parse(userndTime).getTime()/1000;
+			}
+			int dataId = Integer.parseInt(request.getParameter("themeId"));
+			page.setPageSize(30);
+			String pageNo = request.getParameter("pageNo");
+			if (pageNo == null || "".equals(pageNo)) {
+				pageNo = "1";
+			}
+			page.setCurrentPageNo(Long.parseLong(pageNo));
+			Page respage = productService.userThemeCount(startTime,endTime,userStartTime,userEndTime,dataId,"clickTheme",page);
+			request.setAttribute("resPage", respage);
+			request.setAttribute("startTime", stime);
+			request.setAttribute("endTime", etime);
+			request.setAttribute("userStartTime", usertartTime);
+			request.setAttribute("userEndTime", new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
+			request.setAttribute("dataId", dataId);
+			request.setAttribute("type", "user");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -217,7 +290,7 @@ public class AdminProductAction extends BaseAction {
 	 */
 	public void addProductJson(){
 		try {
-			List<Map<String,Object>> catbrands = articleService.beginArticle();
+			List<Map<String,Object>> catbrands = articleService.beginArticle(0);
 			JSONArray dataArray = new JSONArray();
 			List<Integer> data = new ArrayList<Integer>();
 			for(Map<String,Object> map:catbrands){
@@ -278,12 +351,20 @@ public class AdminProductAction extends BaseAction {
 				pageNo = "1";
 			}
 			String keywords = request.getParameter("keywords");
-			Map<String, String> maps = new HashMap<String, String>();
+			Map<String, Object> maps = new HashMap<String, Object>();
 			if (keywords != null) {
 				keywords = java.net.URLDecoder.decode(keywords, "UTF-8");
 				maps.put("keywords", keywords);
 			}
+			String stime = request.getParameter("startTime")==null?"2016-09-01":request.getParameter("startTime");
+			String etime = request.getParameter("endTime")==null?"2020-09-01":request.getParameter("endTime");
+			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
+			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
+			maps.put("startTime", startTime);
+			maps.put("endTime", endTime);
 			Page page = productService.getThemeProducts(Integer.parseInt(pageNo), 10, maps);
+			request.setAttribute("startTime", stime);
+			request.setAttribute("endTime", etime);
 			request.setAttribute("page", page);
 			request.setAttribute("pageNo", pageNo);
 			List<ThemeTag> parentTags = productService.getParentThemeTagList();
@@ -342,7 +423,9 @@ public class AdminProductAction extends BaseAction {
 				String imageName = themeFileFileName;
 				if (FileUtil.isAllowUp(imageName)) {
 					String saveName = uploadImage(themeFile, imageName, "theme");
+					saveName = resizeImage(saveName,500);
 					String saveName2 = uploadImage(themeFile2, imageName, "theme");
+					saveName2 = resizeImage(saveName2,500);
 					theme.setImage(saveName);
 					theme.setMinorImage(saveName2);
 					theme.setStartTime(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(request.getParameter("startTime")).getTime());
@@ -676,6 +759,7 @@ public class AdminProductAction extends BaseAction {
 			map.put("cat_id", cat_id);
 			map.put("disabled", 10);
 			map.put("search_type", search_type);
+			map.put("order", "g.goods_id");
 			Page page = productService.getProductList(Integer.parseInt(pageNo), 10, map);
 			jsonObject.put("totalCount", page.getTotalCount());
 			JSONArray resJa = new JSONArray();

@@ -45,7 +45,7 @@ public interface ArticleService {
 	 * @return
 	 * @throws Exceptioin
 	 */
-	List<Map<String,Object>> beginArticle() throws Exception;
+	List<Map<String,Object>> beginArticle(int list_show) throws Exception;
 
 
 
@@ -189,7 +189,7 @@ public interface ArticleService {
 	 * @return
 	 * @throws Exception
 	 */
-	ArticleModel getArtilceDetails(int articleId) throws Exception;
+	ArticleModel getArtilceDetails(int articleId,int memberId) throws Exception;
 
 
 

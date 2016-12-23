@@ -183,7 +183,7 @@ public class BrandManager extends BaseSupport<Brand> implements IBrandManager {
 	 */
 	
 	public List<Brand> list() {
-		String sql = "select * from brand where disabled=0";
+		String sql = "select * from brand where disabled=0 order by name ";
 		List list = this.baseDaoSupport.queryForList(sql,new BrandMapper());
 		return list;
 	}
@@ -298,7 +298,7 @@ public class BrandManager extends BaseSupport<Brand> implements IBrandManager {
 
 	@Override
 	public List<Brand> list(int count) {
-		String sql = "select * from brand where disabled=0";
+		String sql = "select * from brand where disabled=0 order by name ";
 		Page page = this.baseDaoSupport.queryForPage(sql, 1, count, new BrandMapper());
 		List list = (List<Brand>)page.getResult();
 		return list;

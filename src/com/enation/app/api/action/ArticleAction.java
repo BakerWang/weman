@@ -285,7 +285,7 @@ public class ArticleAction extends BaseAction{
 		try{
 			int cmemberId = this.getMemberId(paramObject.getString("accessToken"));
 			int articleId = Integer.parseInt((String)paramObject.get("articleId"));
-			ArticleModel mapObj = articleService.getArtilceDetails(articleId);
+			ArticleModel mapObj = articleService.getArtilceDetails(articleId,cmemberId);
 			JSONObject obj = new JSONObject();
 			if(cmemberId==mapObj.getUserId()){
 				obj.put("canDel", "yes");
@@ -470,11 +470,12 @@ public class ArticleAction extends BaseAction{
 				//封面的原图
 				if (FileUtil.isAllowUp(cutCoverFileName)) {
 					String saveName = uploadImage(cutCover,cutCoverFileName, "articleImage");
+					saveName = resizeImage(saveName,500);
 					map.put("image", saveName);
 				}
 				if (FileUtil.isAllowUp(originalCoverFileName)) {
-					String saveName = uploadImage(originalCover,originalCoverFileName, "articleImage");
-					map.put("orImage", saveName);
+					//String saveName = uploadImage(originalCover,originalCoverFileName, "articleImage");
+					//map.put("orImage", saveName);
 				}
 			}else{
 				map.put("image", "attachment/articleImage/articleNullImage.png");
@@ -508,7 +509,7 @@ public class ArticleAction extends BaseAction{
 	 */
 	public void beginArticleCat(){
 		try{
-			List<Map<String,Object>> catbrands = articleService.beginArticle();
+			List<Map<String,Object>> catbrands = articleService.beginArticle(1);
 			JSONArray dataArray = new JSONArray();
 			List<Integer> data = new ArrayList<Integer>();
 			for(Map<String,Object> map:catbrands){

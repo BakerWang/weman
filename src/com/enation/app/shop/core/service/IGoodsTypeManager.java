@@ -1,6 +1,7 @@
 package com.enation.app.shop.core.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.enation.app.shop.core.model.Attribute;
 import com.enation.app.shop.core.model.GoodsType;
@@ -45,7 +46,7 @@ public interface IGoodsTypeManager {
 	 * @param pageSize
 	 * @return
 	 */
-	public Page pageType(String order,int page,int pageSize);
+	public Page pageType(String order,int page,int pageSize,Map<String,Object> resMap);
 	
 	
 	/**

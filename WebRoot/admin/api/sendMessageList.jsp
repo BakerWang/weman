@@ -98,12 +98,17 @@ tr:hover td .updateThemeA{
 		<span style="float:left;height:28px;">
 			<a href="javascript:void(0)" class="b_fr" onclick="parent.addTab1('推送添加','/b2b2cbak/apiAdmin/AdminSendMessage_addSendMessageJsp.do')">新建</a>
 		</span>
+		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminSendMessage_sendMessageList.do" id="searchForm" method="post">
+			<span style="float: right;height:28px;"> 
+				<input type="hidden" value="1" name="pageNo" id="goodsPage" />
+			</span>
+		</form>
 	</div>
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
 			<table style="width:100%;font-size: 12px; " cellspacing="0" cellpadding="0" border="0">
 				<tr class="datagrid-header">
-				<td>推送的文字</td><td>推送的类型</td><td>推送的内容</td><td>未读数</td><td>已读数</td><td>总数</td><td>创建时间</td></tr>
+				<td>推送的文字${page.currentPageNo }</td><td>推送的类型</td><td>推送的内容</td><td>未读数</td><td>已读数</td><td>总数</td><td>创建时间</td></tr>
 				<s:iterator value="#request.page.result" var="messageObj">
 					<tr class="divTr" style="" height="100px" >
 					<td>${messageObj.content }</td><td>${messageObj.type }</td>
@@ -138,9 +143,10 @@ tr:hover td .updateThemeA{
             'current_page'        :'${page.currentPageNo-1}',
             'callback'            : function(page_id,jq){
 //            		var type = "${type}";
-//            		var page = parseInt(page_id)+1;
-//            		$("#searchForm").find("input[name='page.pages']").val(page);
-//            		$("#searchForm").submit();
+           		var page = parseInt(page_id)+1;
+           		alert(page);
+           		$("#searchForm").find("#goodsPage").val(page);
+           		$("#searchForm").submit();
             } 
         });
 	});

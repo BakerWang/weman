@@ -39,22 +39,22 @@
 						<input type="text" value="${name!''}" id="mobile" class="input_text">
 					</td>
 					
-					<th width="70" align="right">会员等级</th>
-					<td>
-						<select name="member.lv_id" class="inputSelect valid" id="lv_id" >
-							<option value="0">--请选择等级--</option>
-							<#if lvlist??>
-								<#list lvlist as lv>
-									<option value="${lv.lv_id }">${lv.name }</option>
-								</#list>
-							</#if>
-						</select>
-					</td>
+<!-- 					<th width="70" align="right">会员等级</th> -->
+<!-- 					<td> -->
+<!-- 						<select name="member.lv_id" class="inputSelect valid" id="lv_id" > -->
+<!-- 							<option value="0">--请选择等级--</option> -->
+<!-- 							<#if lvlist??> -->
+<!-- 								<#list lvlist as lv> -->
+<!-- 									<option value="${lv.lv_id }">${lv.name }</option> -->
+<!-- 								</#list> -->
+<!-- 							</#if> -->
+<!-- 						</select> -->
+<!-- 					</td> -->
 					
-					<th width="70" align="right">电子邮件</th>
-					<td width="300px">
-						<input type="text" value="${email!''}" id="email"  class="input_text">
-					</td>
+<!-- 					<th width="70" align="right">电子邮件</th> -->
+<!-- 					<td width="300px"> -->
+<!-- 						<input type="text" value="${email!''}" id="email"  class="input_text"> -->
+<!-- 					</td> -->
 				</tr>
 				<tr>
 					<th width="70" align="right">注册时间</th>
@@ -94,15 +94,17 @@
 					<th data-options="field:'member_id',checkbox:true"></th>
 					<th data-options="field:'uname',width:200">用户名</th>
 					<th data-options="field:'mobile',width:200">手机</th>
-					<th data-options="field:'lv_name',sortable:'true',width:200">会员等级</th>
-					<th data-options="field:'email',width:200">电子邮件</th>
+<!-- 					<th data-options="field:'lv_name',sortable:'true',width:200">会员等级</th> -->
+					<th data-options="field:'birthday',width:200" formatter="formatBirthday">年龄</th>
 					<th data-options="field:'regtime',width:200,sortable:'true'"
 						formatter="formatRegtime">注册时间</th>
 					<th data-options="field:'lastlogin',width:200,sortable:'true'"
 						formatter="formatLastlogin">上次登录日期</th>
-					<th data-options="field:'logincount',width:200,sortable:'true'">本月登录次数</th>
-					<th data-options="field:'area',width:200" formatter="formatArea">城市</th>
-					<th data-options="field:'sex',width:200,sortable:'true'" formatter="formatSex">性别</th>
+					<th data-options="field:'logincount',width:200,sortable:'true'">启动app次数</th>
+					<th data-options="field:'viewthemecount',width:200,sortable:'true'">浏览主题数</th>
+					<th data-options="field:'viewarticlecount',width:200,sortable:'true'">浏览社交数</th>
+<!-- 					<th data-options="field:'area',width:200" formatter="formatArea">城市</th> -->
+<!-- 					<th data-options="field:'sex',width:200,sortable:'true'" formatter="formatSex">性别</th> -->
 					<!-- <th data-options="field:'login',width:100,align:'center'"
 						formatter="formatLogin">登录</th>
 						 -->
@@ -208,6 +210,18 @@
 		return getFormatDateByLong(value, "yyyy-MM-dd hh:mm:ss");
 	}
 
+	function formatBirthday(value, row, index){
+		return ages(value);
+	}
+	
+	 function ages(data)   
+	  {   
+	        var   d=   new Date(data);     
+             var   Y   =  new Date().getFullYear();   
+             return (Y-d.getFullYear());   
+	        return("输入的日期格式错误！");   
+	  }  
+	
 	function formatLastlogin(value, row, index) {
 		return getFormatDateByLong(value, "yyyy-MM-dd hh:mm:ss");
 	}

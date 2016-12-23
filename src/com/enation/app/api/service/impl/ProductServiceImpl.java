@@ -51,7 +51,8 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		if(time!=0){
 			sql = sql + " and g.startTime <"+time+" and g.endTime >"+time;
 		}
-		sql = sql +" order by g.startTime desc";
+		String orderStr = (String) ((map.get("order")==null)?"g.startTime":map.get("order"));
+		sql = sql +" order by "+orderStr+" desc";
 		return this.daoSupport.queryForPage(sql, pageNo, pageSize);
 	}
 
@@ -89,11 +90,18 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	 * @param map    
 	 * @return
 	 */
-	public Page getThemeProducts(int pageNo, int pageSize, Map<String, String> map) {
-		String sql="select at.id as id,at.minorImage as minorImage,at.contentStyle as contentStyle,at.image as image,at.title as title,at.details as details,at.indexStatus as indexStatus,at.findStatus as findStatus,at.recommendStatus as recommendStatus,at.loginClickCount as loginClickCount,at.clickCount as clickCount,at.create_time as createTime "
+	public Page getThemeProducts(int pageNo, int pageSize, Map<String, Object> map) {
+		String sql="select (select count(*) from wh_api_action waa where waa.type = 2 and waa.data_id = at.id and waa.status = 0 ) as loveThemeCount,"
+				+ " at.id as id,at.love_count as loveCount,at.minorImage as minorImage,at.contentStyle as contentStyle,at.image as image,at.title as title,at.details as details,at.indexStatus as indexStatus,at.findStatus as findStatus,at.recommendStatus as recommendStatus,at.loginClickCount as loginClickCount,at.clickCount as clickCount,at.create_time as createTime "
 				+ " from es_api_theme at "
 				+ " where at.status = '1' ";
 		if(map!=null){
+			if(map.containsKey("startTime")){
+				sql = sql +" and at.startTime > "+ (long)map.get("startTime");
+			}
+			if(map.containsKey("endTime")){
+				sql = sql +" and at.startTime < "+ (long)map.get("endTime");
+			}
 			if(map.containsKey("indexStatus")){
 				sql = sql +" and at.indexStatus = 1 and at.startTime < "+new Date().getTime();
 			}
@@ -101,7 +109,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 				sql = sql +" and at.findStatus = 1 and at.startTime < "+new Date().getTime();
 			}
 			if(map.containsKey("bannerStatus")){
-				sql = sql +" and at.bannerStatus = 1 ";
+				sql = sql +" and at.bannerStatus = "+Long.parseLong((String)map.get("bannerStatus"));
 			}
 			if(map.containsKey("recommendStatus")){
 				sql = sql +" and at.recommendStatus = 1 and at.startTime < "+new Date().getTime();
@@ -146,6 +154,8 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			thm.setLoginClickCount((int)resObj.get("loginClickCount"));
 			thm.setCreate_time((Long)resObj.get("createTime"));
 			thm.setContentStyle((String)resObj.get("contentStyle"));
+			thm.setLove_count((int)resObj.get("loveCount"));
+			thm.setRealClickCount((long)resObj.get("loveThemeCount"));
 			tps.setTheme(thm);
 			themeProducts.add(tps);
 		}
@@ -177,8 +187,13 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			}
 		}
 		String countSql = "SELECT COUNT(*) from es_api_theme where status =1 ";
+		if(map.containsKey("startTime")){
+			countSql = countSql +" and startTime > "+ (long)map.get("startTime");
+		}
+		if(map.containsKey("endTime")){
+			countSql = countSql +" and startTime < "+ (long)map.get("endTime");
+		}
 		int totalCount = this.daoSupport.queryForInt(countSql);
-		
 		return new Page(pageNo, totalCount, pageSize, themeProducts);
 	}
 
@@ -194,7 +209,6 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	@Transactional(propagation = Propagation.REQUIRED) 
 	public Theme saveTheme(Theme theme,List<Map<String,Object>> contentMaps) {
 		theme.setCreate_time(new Date().getTime());
-		theme.setLove_count(0);
 		theme.setProduct_count(0);
 		theme.setStatus("1");
 		theme.setCreate_time(new Date().getTime());
@@ -203,6 +217,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		theme.setRecommendStatus(1);
 		theme.setClickCount(0);
 		theme.setLove_count(0);
+		theme.setRealClickCount(0);
 		this.daoSupport.insert("es_api_theme", theme);
 		theme.setId(this.daoSupport.getLastId("es_api_theme"));
 		//保存主题内容
@@ -239,7 +254,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ThemeTag> getThemeTagList() {
-		String sql="select * from es_api_theme_tag where status =1 ";
+		String sql="select * from es_api_theme_tag where status =1 order by create_time desc";
 		List<ThemeTag> tts = this.daoSupport.queryForList(sql, ThemeTag.class);
 		List<ThemeTag> themeTagList = new ArrayList<ThemeTag>();
 		for(ThemeTag tt:tts){
@@ -352,12 +367,12 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		if(memberId!=0){
 			String clickSql="update es_api_theme eat set eat.loginClickCount = eat.loginClickCount+1 where eat.id = ?";
 			this.daoSupport.execute(clickSql, theme.getId());
-			String isExistsSql ="select count(*) from es_api_user_view eauv where eauv.type = 'clickTheme' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
-			int count = this.daoSupport.queryForInt(isExistsSql, theme.getId(),memberId);
-			if(count>0){
-				String updateUserViewSql = "update es_api_user_view eauv set eauv.viewCount = eauv.viewCount+1 where eauv.type = 'clickTheme' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
-				this.daoSupport.execute(updateUserViewSql, theme.getId(),memberId);
-			}else{
+//			String isExistsSql ="select count(*) from es_api_user_view eauv where eauv.type = 'clickTheme' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
+//			int count = this.daoSupport.queryForInt(isExistsSql, theme.getId(),memberId);
+//			if(count>0){
+//				String updateUserViewSql = "update es_api_user_view eauv set eauv.viewCount = eauv.viewCount+1 where eauv.type = 'clickTheme' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
+//				this.daoSupport.execute(updateUserViewSql, theme.getId(),memberId);
+//			}else{
 				Map<String,Object> userView = new HashMap<String,Object>();
 				userView.put("viewUserId", memberId);
 				userView.put("dataId", theme.getId());
@@ -366,10 +381,18 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 				userView.put("viewCount", "1");
 				userView.put("create_time", new Date().getTime());
 				this.daoSupport.insert("es_api_user_view", userView);
-			}
+//			}
 		}else{
 			String clickSql="update es_api_theme eat set eat.clickCount = eat.clickCount+1 where eat.id = ?";
 			this.daoSupport.execute(clickSql, theme.getId());
+			//未登录用户的统计
+			Map<String,Object> userView = new HashMap<String,Object>();
+			userView.put("dataId", theme.getId());
+			userView.put("type", "clickTheme");
+			userView.put("status", "1");
+			userView.put("viewCount", "1");
+			userView.put("create_time", new Date().getTime());
+			this.daoSupport.insert("es_api_user_view", userView);
 		}
 		return theme;
 	}
@@ -406,14 +429,42 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	}
 
 	@Override
-	public Page userThemeCount(Long startTime, Long endTime, int dataId, String type,Page page) {
-		String sql ="select em.uname as username,eauv.viewCount as viewCount,eat.title as title from es_api_user_view eauv "
+	public Page userThemeCount(Long startTime, Long endTime,Long userStartTime, Long userEndTime, int dataId, String type,Page page) {
+		String sql ="select em.uname as username,em.regtime as regtime,sum(eauv.viewCount) as viewCount,eat.title as title from es_api_user_view eauv "
 				+ " left join es_api_theme eat on eat.id = eauv.dataId "
 				+ " left join es_member em on em.member_id = eauv.viewUserId "
-				+ " where eauv.type = ? and eauv.dataId = ? and eauv.create_time > ? and eauv.create_time <= ?";
-		return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), type,dataId,startTime,endTime);
+				+ " where eauv.type = ? and eauv.viewUserId is not null and eauv.dataId = ? and eauv.create_time > ? and eauv.create_time <= ?"
+				+ " and em.regtime > ? and em.regtime < ? group by eauv.viewUserId ";
+		//Page resPage = this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), type,dataId,startTime,endTime,userStartTime,userEndTime);
+		List<Map<String,Object>> userlist = this.daoSupport.queryForListPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), type,dataId,startTime,endTime,userStartTime,userEndTime);
+		String sql2 ="select eauv.id from es_api_user_view eauv "
+				+ " left join es_member em on em.member_id = eauv.viewUserId "
+				+ " where eauv.type = ? and eauv.viewUserId is not null and eauv.dataId = ? and eauv.create_time > ? and eauv.create_time <= ?"
+				+ " and em.regtime > ? and em.regtime < ? group by eauv.viewUserId ";
+		List<Map<String,Object>> userlists = this.daoSupport.queryForList(sql2, type,dataId,startTime,endTime,userStartTime,userEndTime);
+//		String countSql = "SELECT COUNT(*) from es_api_user_view eauv "
+//				+ " left join es_member em on em.member_id = eauv.viewUserId "
+//				+ " where eauv.type = ? and eauv.viewUserId is not null and eauv.dataId = ? and eauv.create_time > ? and eauv.create_time <= ?"
+//				+ " and em.regtime > ? and em.regtime < ? group by eauv.viewUserId";
+//		int totalCount = this.daoSupport.queryForInt(countSql, type,dataId,startTime,endTime,userStartTime,userEndTime);
+		return new Page((int)page.getCurrentPageNo()*page.getPageSize(), userlists.size(), page.getPageSize(), userlist);
 	}
 
+	@Override
+	public Page noUserThemeCount(Long startTime, Long endTime, int dataId, String type,Page page) {
+		String sql ="select count(*) as viewCount,eat.title as title from es_api_user_view eauv "
+				+ " left join es_api_theme eat on eat.id = eauv.dataId "
+				+ " where eauv.type = ? and eauv.viewUserId is null and "
+				+ " eauv.dataId = ? and eauv.create_time > ? and eauv.create_time < ? ";
+		List<Map<String,Object>> userlist = this.daoSupport.queryForListPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), type,dataId,startTime,endTime);
+		String countSql = "SELECT COUNT(*) from es_api_user_view eauv "
+				+ " left join es_member em on em.member_id = eauv.viewUserId "
+				+ " where eauv.type = ? and eauv.viewUserId is not null and eauv.dataId = ? and eauv.create_time > ? and eauv.create_time <= ?";
+		int totalCount = this.daoSupport.queryForInt(countSql, type,dataId,startTime,endTime);
+		return new Page(0, totalCount, page.getPageSize(), userlist);
+		//return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), type,dataId,startTime,endTime);
+	}
+	
 	/**
 	 * b2c的获取商品详情
 	 * @param productId
@@ -495,6 +546,72 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	public Map<String,Object> getProductDetails(int pid) throws Exception {
 		String sql = "select * from es_goods eg where eg.goods_id = ?";
 		return this.daoSupport.queryForMap(sql,pid);
+	}
+
+	@Override
+	public Map<String, Object> getAdminIndexDetails(Long startTime, Long endTime) throws Exception {
+		Map<String,Object> resMap = new HashMap<String,Object>();
+		String themeCount = "select sum(viewCount) from es_api_user_view eauv where eauv.type = 'clickTheme' ";
+		themeCount = themeCount +" and create_time > "+startTime+" and create_time < "+endTime;
+		int totalThemeCount = this.baseDaoSupport.queryForInt(themeCount);
+		resMap.put("themeCount", totalThemeCount);
+		String themeCount2 = "select sum(viewCount) as themeCount from es_api_user_view eauv where eauv.type = 'clickTheme' and viewUserId is null";
+		themeCount2 = themeCount2 +" and create_time > "+startTime+" and create_time < "+endTime;
+		int themeCountNoLogin =  this.baseDaoSupport.queryForInt(themeCount2);
+		resMap.put("themeCountNoLogin",themeCountNoLogin);
+		resMap.put("themeCountLogin", totalThemeCount-themeCountNoLogin);
+		String themeLoveCount = "select count(*) from wh_api_action waa where waa.type = 2 and waa.status != -1";
+		themeLoveCount = themeLoveCount +" and create_time > "+startTime+" and create_time < "+endTime;
+		resMap.put("themeCountLove", this.baseDaoSupport.queryForInt(themeLoveCount));
+		String articleViewCount = "select sum(viewCount) from es_api_user_view eauv where eauv.type = 'clickArticle' ";
+		articleViewCount = articleViewCount +" and create_time > "+startTime+" and create_time < "+endTime;
+		resMap.put("articleCount", this.daoSupport.queryForInt(articleViewCount));
+		String articleLoveCount = "select count(*) from wh_api_action waa where waa.type = 4 and waa.status != -1";
+		articleLoveCount = articleLoveCount +" and create_time > "+startTime+" and create_time < "+endTime;
+		resMap.put("articleCountLove", this.daoSupport.queryForInt(articleLoveCount));
+		String articleCommentCount = "select count(*) from wh_api_comment wac where wac.status != -1";
+		articleCommentCount = articleCommentCount +" and create_time > "+startTime+" and create_time < "+endTime;
+		resMap.put("articleCountComment", this.daoSupport.queryForInt(articleCommentCount));
+		String addUserCount = "select count(*) from es_member em where 1=1 ";
+		addUserCount = addUserCount +" and regtime > "+startTime/1000+" and regtime < "+endTime/1000;
+		resMap.put("addUserCount", this.daoSupport.queryForInt(addUserCount));
+		return resMap;
+	}
+
+	@Override
+	public List<Map<String, Object>> getBrowseThemeList() throws Exception {
+		String sql ="select * from es_api_theme eat where eat.startTime > ? and eat.startTime < ?";
+		return this.baseDaoSupport.queryForList(sql, new Date().getTime()-1000*60*60*2,new Date().getTime()+1000*60*60*24*2);
+	}
+
+	/**
+	 * 首页接口   version2.0
+	 * @param pageNo
+	 * @param i
+	 * @param map
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public Page getThemeProductsAPPVersion2(int pageNo, int pageSize, Map<String, String> map) throws Exception {
+		String sql="select at.id as id,at.contentStyle as contentStyle,at.image as image,eg.name as pname,eg.original as pimage,eg.price as pprice,eg.goods_id as pid "
+				+ " from es_api_theme at "
+				+ " left join es_api_theme_content eac on eac.theme_id = at.id "
+				+ " left join es_goods eg on eg.goods_id = eac.goods_id "
+				+ " where at.status = '1' and at.startTime < ? and eac.type = 'product' and eac.isIndexShow = 1 ";
+		if(map!=null){
+			if(map.containsKey("indexStatus")){
+				sql = sql +" and at.indexStatus = 1 ";
+			}
+			if(map.containsKey("contentStyle")){
+				sql = sql +" and at.contentStyle = '" + map.get("contentStyle")+"'";
+			}
+		}
+		sql = sql +" order by at.startTime desc";
+		List<Map<String,Object>> themeList = this.daoSupport.queryForListPage(sql, pageNo, pageSize,new Date().getTime());
+		String countSql = "SELECT COUNT(*) from es_api_theme where status =1 and startTime < ? and contentStyle = '" + map.get("contentStyle")+"' and indexStatus = 1 ";
+		int totalCount = this.daoSupport.queryForInt(countSql,new Date().getTime());
+		return new Page(0, totalCount, pageSize, themeList);
 	}
 
 

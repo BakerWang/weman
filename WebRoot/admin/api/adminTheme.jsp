@@ -3,12 +3,13 @@
 <%@taglib prefix="s" uri="/struts-tags" %>
 <%@taglib prefix="cc" uri="/tcardztaglib" %>
 <script src="../adminthemes/new/js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/b2b2cbak/statics/js/common-min2.js"></script>
+<script type="text/javascript" src="/b2b2cbak/adminthemes/new/js/easy-ui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/b2b2cbak/adminthemes/new/js/easy-ui/easyui-lang-zh_CN.js"></script>
 <script type="text/javascript" src="../adminthemes/new/js/jquery.pagination.js"></script>
 <link href="../adminthemes/new/css/myPagination.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="/b2b2cbak/adminthemes/new/js/easy-ui/themes/gray/easyui.css"/>
 <style type="text/css">
-body{
-	font-size: 12px;
-}
 .mr5 {
     display: block;
     margin-top: 0;
@@ -43,11 +44,6 @@ body{
     margin-top: 10px;
     padding: 10px 0 5px;
     width: 100%;
-}
-table tr td {
-    padding: 6px;
-    white-space: normal;
-    word-break: break-all;
 }
 .datagrid-header {
     height: 50px;
@@ -100,6 +96,10 @@ tr:hover td .updateThemeA{
 		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do" id="searchForm" method="post">
 			<span style="float: right;height:28px;"> 
 				<input type="hidden" value="1" name="pageNo" id="goodsPage"/>
+				<span style="float:left;height:28px;margin-left:15px;">
+					主题上架时间 : <input class="easyui-datebox" name="startTime" value="${startTime }" style="width: 130px;height: 28px;" id="start_time" data-options="buttons:buttons" />
+					<input class="easyui-datebox" name="endTime" value="${endTime }" style="width: 130px;height: 28px;" id="end_time" data-options="buttons:buttons" />
+				</span>
 				<input id="searchKeyword" name="keywords" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
 				<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a>
 			</span>
@@ -108,7 +108,7 @@ tr:hover td .updateThemeA{
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
 			<table style="width:100%;font-size: 12px; " cellspacing="0" cellpadding="0" border="0">
-				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>操作</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>登录用户点击次数</td><td>点击次数</td><td>删除</td></tr>
+				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>操作</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>登录用户点击次数</td><td>点击次数(未)</td><td>删除</td></tr>
 <!-- 				<td>修改</td> -->
 				<s:iterator value="#request.page.result" var="themeObj">
 					<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">
@@ -119,7 +119,7 @@ tr:hover td .updateThemeA{
 						<input type="checkbox" <s:if test="#themeObj.theme.findStatus==1">checked="checked"</s:if> class="statusArray2">发现页
 						<input type="checkbox" <s:if test="#themeObj.theme.recommendStatus==1">checked="checked"</s:if> class="statusArray3">推荐页
 						<button onclick="updateThemeStatus(${themeObj.theme.id},this)">确定修改</button>
-					</td><td><input type="text" style="width:50px;" value="${themeObj.theme.love_count }" id="themeLoveCount" /><button onclick="updateLoveCount(${themeObj.theme.id })">修改</button></td>
+					</td><td>(${themeObj.theme.realClickCount })<input type="text" style="width:50px;" value="${themeObj.theme.love_count }" class="themeLoveCount" /><button onclick="updateLoveCount(this,${themeObj.theme.id })">修改</button></td>
 					<td>
 						<s:if test="#themeObj.theme.themetagList.size()>0">
 							<s:iterator value="#themeObj.theme.themetagList" var="tagMap">
@@ -166,7 +166,7 @@ tr:hover td .updateThemeA{
 						<a href="javascript:void(0)" onclick="parent.addTab1('用户点击主题详情','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId=${themeObj.theme.id}')">${themeObj.theme.loginClickCount }</a>
 					</td>
 					<td>
-						${themeObj.theme.clickCount }
+						<a href="javascript:void(0)" onclick="parent.addTab1('用户点击主题详情','/b2b2cbak/apiAdmin/AdminProductAction_noUserThemeCount.do?themeId=${themeObj.theme.id}')">${themeObj.theme.clickCount }</a>
 					</td>
 					<td>
 						<a style="text-decoration: none;" class="b_fr" onclick="parent.addTab1('修改主题','/b2b2cbak/apiAdmin/AdminProductAction_getThemeDetails.do?themeId=${themeObj.theme.id}')" href="javascript:void(0);">修改</a>
@@ -203,8 +203,17 @@ tr:hover td .updateThemeA{
             } 
         });
 	});
-	function updateLoveCount(id){
-		var loveCount = $('#themeLoveCount').val();
+	var buttons = $.extend([], $.fn.datebox.defaults.buttons);
+	buttons.splice(1, 0, {
+	text: '清空',
+	handler: function(target){
+		 $('#start_time').datebox('setValue',"");
+		 $('#end_time').datebox('setValue',"");
+	}
+	});
+	function updateLoveCount(tt,id){
+		var loveCount =$(tt).parent().find('.themeLoveCount').val();
+// 		var loveCount = $('#themeLoveCount').val();
 		$.ajax({
 			type:'POST',
 			url:'/b2b2cbak/apiAdmin/AdminProductAction_updateThemeStatus.do',

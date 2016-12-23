@@ -20,6 +20,8 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.enation.app.api.dao.PhoneTokenDao;
 import com.enation.app.api.service.InitUserService;
+import com.enation.app.api.util.ImageMagicTools;
+import com.enation.app.base.core.model.Member;
 import com.enation.eop.sdk.utils.DateUtil;
 import com.enation.eop.sdk.utils.UploadUtil;
 import com.enation.framework.database.Page;
@@ -78,16 +80,22 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Se
 		return saveName;
 	}
 	
-//	public static void main(String[] args) {
-//		UploadUtil.createThumb("G:/111.jpg","G:/444.jpg",2488);
-//	}
+	public static void main(String[] args) {
+		try {
+			ImageMagicTools.cutImage(500,"F:/logs/201610032319367601.png","F:/logs/a-500.png");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("test");
+	}
 	
-	public String resizeImage(String saveName,int width){
+	public String resizeImage(String saveName,int width) throws Exception{
 		String basePath = request.getSession().getServletContext().getRealPath("/statics")+"/";
-		String resizeImage = saveName.substring(0,saveName.lastIndexOf("."))+"-resize"+saveName.substring(saveName.lastIndexOf("."));
+		String resizeImage = saveName.substring(0,saveName.lastIndexOf("."))+"-resize"+width+".jpg";
 		String newPath = basePath+resizeImage;
 		String oldPath = basePath+saveName; 
-		UploadUtil.createThumb(oldPath,newPath,width);
+		//UploadUtil.createThumb(oldPath,newPath,width);//原来的压缩图片
+		ImageMagicTools.cutImage(width,oldPath,newPath);//im4java新的压缩图片
 		return resizeImage;
 	}
 	
@@ -199,4 +207,10 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Se
 		return initUserService.getMemberIdByAccessToken(accessToken);
 	}
 	
+	public Member getMemberDetails(String accessToken) throws Exception{
+		if(accessToken==null||"".equals(accessToken)){
+			return null;
+		}
+		return initUserService.getMemberDetailsByAccessToken(accessToken);
+	}
 }

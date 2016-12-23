@@ -34,13 +34,13 @@ public class ShareAction extends BaseAction{
 			if("theme".equals(type)){
 				Theme theme = productService.getThemeDetails(dataId, 0);
 				request.setAttribute("theme", theme);
-				Map<String,String> map = new HashMap<String,String>();
+				Map<String,Object> map = new HashMap<String,Object>();
 				map.put("recommendStatus", "1");
 				Page page =	productService.getThemeProducts(1, 5 , map);
 				request.setAttribute("pageObj", page);
 				return "themeSuccess";
 			}else{
-				ArticleModel articleModel = articleService.getArtilceDetails(dataId);
+				ArticleModel articleModel = articleService.getArtilceDetails(dataId,0);
 				request.setAttribute("userAttr", this.getAge(articleModel.getUserAge())+"|"+articleModel.getUserHeight()+"|"+articleModel.getUserWeight());
 				request.setAttribute("article", articleModel);
 				request.setAttribute("categoryImages", articleModel.getCategoryImage().split(","));

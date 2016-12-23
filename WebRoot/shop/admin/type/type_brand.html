@@ -49,12 +49,38 @@ function selectChoose(){
 	$("#choose_sel>option").attr("selected","true");
 	return true;
 }
+function searchBrand(){
+	$.ajax({
+		type:'POST',
+		url:'/b2b2cbak/shop/admin/brand!listJson.do',
+		data:{
+			'keyword':$('#keywordd').val(),
+			'page':1,
+			'rows':15
+		},
+		dataType:'json',
+	    success: function(msg){
+	    	//console.log(msg);
+	    	$('#brand_sel').html('');
+	    	var divhtml = '';
+	    	for(var i=0;i<msg.rows.length;i++){
+	    		divhtml=divhtml+'<option value="'+msg.rows[i].brand_id+'">'+msg.rows[i].name+'</option>';
+	    	}
+	    	$('#brand_sel').append(divhtml);
+	    }
+	 });
+}
 </SCRIPT>
 <div class="easyui-panel" style="border-style: none;">
 	<form method="post" name="theForm1" id="typebrandFrom" class="validate">
 		<table cellspacing="1" cellpadding="3" width="100%" class="form-table">
 			<tr>
-				<td width="19%" height="77" align="left">&nbsp; <select
+				<td width="19%" height="77" align="left">&nbsp; 
+				<span id="simpleSearch">
+					<a href="javascript:void(0)" class="button b_fr" data-options="plain:true" onclick="searchBrand()">搜索</a>
+					<input id="keywordd" class="input_text b_fr mr5" style="width:100px;" value="" size="30" placeholder="请输入模糊关键字" name="searchKeyWord" type="text"> 
+				</span>
+				<select
 					name="brandlist" id="brand_sel" multiple="true"
 					style="width: 200px; height: 200px; border: 1px solid #000000">
 						<#list brandlist as brand>

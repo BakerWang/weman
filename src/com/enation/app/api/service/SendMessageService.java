@@ -33,6 +33,20 @@ public interface SendMessageService {
 	 * @throws Exception
 	 */
 	Page getSendMessageList(Page page) throws Exception;
-	
+
+	/**
+	 * 获取总共发了多少次推送的列表
+	 * @param page
+	 * @return
+	 * @throws Exception
+	 */
+	void saveSendTimeMessage(String pushMessage, String dataId, String type,String startTime) throws Exception;
+
+	/**
+	 * 定时推送调用的service
+	 * @throws Exception
+	 */
+	void saveAndSendMessage() throws Exception;
+
 
 }

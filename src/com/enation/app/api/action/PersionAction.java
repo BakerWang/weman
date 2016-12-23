@@ -86,7 +86,8 @@ public class PersionAction extends BaseAction{
 					obj.put("content", content);
 					obj.put("image", image);
 					obj.put("createTime", date);
-					if("theme".equals(xttype)){
+					if(xttype.indexOf("theme")>=0){
+						obj.put("type", "theme");
 						obj.put("themeId", map.get("dataId"));
 						obj.put("themeTitle", (String)map.get("ttitle"));
 						obj.put("themeImage", this.getImageUrl((String)map.get("timage")));
@@ -98,6 +99,7 @@ public class PersionAction extends BaseAction{
 						obj.put("productPrice", String.valueOf((double)map.get("pprice")));
 						obj.put("productMKPrice", String.valueOf((double)map.get("pmkprice")));
 						obj.put("productBrief", (String)map.get("pbrief"));
+						obj.put("productOrigin", (String)map.get("productOrigin"));
 					}else if("web".equals(xttype)){
 						obj.put("url", map.get("dataId"));
 					}
@@ -131,7 +133,7 @@ public class PersionAction extends BaseAction{
 		try {
 			int member_id = this.getMemberId(paramObject.getString("accessToken"));
 			persionService.fecthMessageCount(jsonObject, member_id);//我里面的总消息说（赞数，评论数，关注数，系统通知数）
-			Map<String,String> map = new HashMap<String,String>();
+			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("recommendStatus", "1");
 			Page page =	productService.getThemeProducts(1, 5 , map);
 			List<ThemeProduct> tps = (List<ThemeProduct>) page.getResult();
@@ -455,6 +457,20 @@ public class PersionAction extends BaseAction{
 					}
 				}
 				ja.add(obj);
+			}
+			if(type==2&&pageNo==1){
+				if(member_id==1||member_id==40||member_id==2||member_id==5){
+					List<Map<String,Object>> btps = productService.getBrowseThemeList();
+					for(Map<String,Object> tp:btps){
+						JSONObject theme = new JSONObject();
+						theme.put("themeId", String.valueOf(tp.get("id")));
+						theme.put("themeImage", this.getImageUrl((String)tp.get("image")));
+						theme.put("themeTitle", tp.get("title"));
+						theme.put("themeDetails", tp.get("details"));
+						theme.put("contentStyle", tp.get("contentStyle"));
+						ja.add(0, theme);
+					}
+				}
 			}
 			jsonObject.put("totalPageCount", respage.getTotalPageCount());
 			jsonObject.put("data", ja);

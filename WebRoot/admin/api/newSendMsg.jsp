@@ -94,7 +94,7 @@ a {
 					<option value="themeDefault">主题详情页(默认样式)</option>
 					<option value="themeTopic">主题详情页(专题样式)</option>
 					<option value="product">商品详情页</option>
-					<option value="systemMsg">消息列表</option>
+					<option value="message">消息列表</option>
 				</select>
 			</td></tr>
 			<tr height="38px"><td class="spanFront">推送内容: </td>
@@ -106,6 +106,9 @@ a {
 					<a style="display:none;" id="selectProduct" href="#productList">选择详情</a>
 				</div>
 				<span id="bannerDetailsMsg"></span>
+			</td></tr>
+			<tr><td class="spanFront">预约推送时间：</td><td>
+				<input class="easyui-datetimebox" name="startTime" style="width: 90px;height: 28px;" id="start_time" data-options="buttons:buttons" />
 			</td></tr>
 			<tr height="38px"><td class="spanFront">测试推送用户手机号:</td><td> <input type="text" id="mobile" value="18217557671" /><input type="button" value="测试推送" onclick="testSendMessage()" /></td>
 		</table>
@@ -127,33 +130,28 @@ a {
 		</div>
 	</div>
 	<div class="buttonWrap">
+		<a href="javascript:;" onclick="submitFormTask()" class="l-btn" id="searchAdvanceTask" group=""><span class="l-btn-left"><span class="l-btn-text">预约推送</span></span></a>
 		<a href="javascript:;" onclick="submitForm()" class="l-btn" id="searchAdvance" group=""><span class="l-btn-left"><span class="l-btn-text">全局推送</span></span></a>
 	</div>
 </div>
 <script>
-	
-	var buttons = $.extend([], $.fn.datebox.defaults.buttons);
-	buttons.splice(1, 0, {
-	text: '清空',
-	handler: function(target){
-		 $('#start_time').datebox('setValue',"");
-	}
-	});
-	
-	var e_buttons = $.extend([], $.fn.datebox.defaults.buttons);
-	e_buttons.splice(1, 0, {
-	text: '清空',
-	handler: function(target){
-		 $('#end_time').datebox('setValue',"");
-	}
-	});
+var buttons = $.extend([], $.fn.datetimebox.defaults.buttons);
+buttons.splice(1, 0, {
+text: '清空',
+handler: function(target){
+	 $('#start_time').datetimebox('setValue',"");
+}
+});
 	function BannerDetailsSel(tt){
 		var value = $(tt).val();
 		$('.bannerDetails').hide();
 		if(value=='web'){
 			$('#bannerTypeHtml').show();
 			$('#bannerDetailsMsg').html('（填写绝对路径URl）');
-		}else if(value=='theme'){
+		}else if(value=='themeDefault'){
+			$('#bannerTypeThemeAndProduct').show();
+			$('#bannerDetailsMsg').html('（选择准确的主题或商品）');
+		}else if(value=='themeTopic'){
 			$('#bannerTypeThemeAndProduct').show();
 			$('#bannerDetailsMsg').html('（选择准确的主题或商品）');
 		}else if(value=='product'){
@@ -182,8 +180,8 @@ a {
 		    		for(var i=0;i<msg.productList.length;i++){
 		    			var pd=msg.productList[i];
 		    			divhtml=divhtml+'<tr class="datagrid-header"><td  style="border-left: 1px solid #ccc;text-aglin:left;"><a target="_blank" href="../goods-${goods.goods_id }.html">'+pd.pname+'</a></td><td>'+pd.pprice+'</td>';
-		    			divhtml=divhtml+'<td><img src="'+pd.pimage+'" width="50px" height="50px"/> </td><td>'+pd.pviewCount+'</td>';
-		    			divhtml=divhtml+'<td><a class="b_fr" pname="'+pd.pname+'" onclick="addProductForBanner('+pd.purl+',this)" href="javascript:void(0);">添加</a></td>';
+		    			divhtml=divhtml+'<td><img src="../statics/'+pd.pimage+'" width="50px" height="50px"/> </td><td>'+pd.pviewCount+'</td>';
+		    			divhtml=divhtml+'<td><a class="b_fr" pname="'+pd.pname+'" onclick=addProductForBanner("'+pd.pid+'",this) href="javascript:void(0);">添加</a></td>';
 		    		}
 		    		$('#productAll').html('');
 		    		$('#productAll').prepend(divhtml);
@@ -246,7 +244,8 @@ a {
 		                'current_page'        :page-1,
 		                'callback'            : function(page_id,jq){
 		                	var page = parseInt(page_id)+1;
-		                	catchProductDetails(page,namekeyword);
+		                	catchThemeDetails(page,namekeyword);
+		                	//catchProductDetails(page,namekeyword);
 		                } 
 		            });
 		    	}else{
@@ -257,7 +256,7 @@ a {
 	}
 	function selectProcutButton(){
 		var value =  $('#type').val();
-		if(value=='theme'){
+		if(value=='themeDefault' || value=='themeTopic'){
 			catchThemeDetails(1,'');
 		}else if(value=='product'){
 			catchProductDetails(1,'');
@@ -275,6 +274,8 @@ a {
 	function addProductForBanner(purl,tt){
 		$('#productIds').show();
 		$('#productIds').html($(tt).attr('pname'));
+		//console.log(purl);
+		//console.log(unescape(purl));
 		$('[name="data_id"]').val(purl);
 		$.fancybox.close();
 	}
@@ -284,7 +285,7 @@ a {
 		var dataId = $('[name="data_id"]').val();
 		var type =$('#type').val();
 		var content =$('#pushMessage').val();
-		if(type!='systemMsg'&&dataId==''){
+		if(type!='message'&&dataId==''){
 			textSendMessageFlag = false;
 			alert('推送内容不能为空！！');
 			return ;
@@ -320,6 +321,28 @@ a {
 		    	}
 		    }
 		})
+	}
+	function submitFormTask(){
+		if(!textSendMessageFlag){
+			alert("预约推送前必须测试！！！");
+			return;
+		}
+			$.Loading.show("正在添加......");
+			var options = {
+				url : "/b2b2cbak/apiAdmin/AdminSendMessage_saveSendMessageTask.do",
+				type : "POST",
+				dataType : 'json',
+				success : function(data) {
+					if (data.result == "success") {
+						parent.addTab1("banner","/b2b2cbak/apiAdmin/AdminSendMessage_sendMessageList.do");
+						parent.CloseTabByTitle("推送添加");
+					}
+				},
+				error : function(e) {
+					alert("出现错误 ，请重试"+e);
+				}
+			};
+			$("#addForm").ajaxSubmit(options);
 	}
 	function submitForm() {
 		if(!textSendMessageFlag){

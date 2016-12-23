@@ -99,12 +99,15 @@ tr:hover td .updateThemeA{
 <!-- 			<a href="javascript:void(0)" class="b_fr" onclick="parent.addTab1('banner添加','/b2b2cbak/apiAdmin/AdminBannerAction_newBanner.do')">新建</a> -->
 <%-- 		</span> --%>
 		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminArticleAction_articleList.do" id="searchForm" method="post">
-			<span style="float: right;height:28px;"> ${adminSearchForm.type }
-				<select id="articleFormStatus"style="height:30px;margin-right:5px;">
-					<option value="111">所有</option>
-					<option value="0">待审核</option>
-					<option value="2">通过</option>
-					<option value="-2">未通过</option>
+			<span style="float: right;height:28px;">
+				<select id="articleFormStatus" name="adminSearchForm.status" style="height:30px;margin-right:5px;">
+					<option selected="selected" value="111">所有</option>
+					<option <s:if test="#request.adminSearchForm.status==0">selected="selected"</s:if> value="0">新建</option>
+					<option <s:if test="#request.adminSearchForm.status==-1">selected="selected"</s:if> value="-1">删除</option>
+					<option <s:if test="#request.adminSearchForm.status==1">selected="selected"</s:if> value="1">全部</option>
+<!-- 					<option value="0">待审核</option> -->
+<!-- 					<option value="2">通过</option> -->
+<!-- 					<option value="-2">未通过</option> -->
 				</select>
 				<input type="hidden" value="1" id="pageSize" name="pageSize" />
 				<input id="searchKeyword" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
@@ -122,7 +125,7 @@ tr:hover td .updateThemeA{
 					<td>${articleObj.tagStr }</td>
 					<td>${articleObj.loveCount }</td><td>${articleObj.commentCount }</td>
 					<td>
-						<input type="text" style="width:50px;" value="${articleObj.viewCount }" id="articleViewCount" /><button onclick="updateViewCount(${articleObj.id })">修改</button>
+						<input type="text" style="width:50px;" value="${articleObj.viewCount }" class="articleViewCount" /><button onclick="updateViewCount(this,${articleObj.id })">修改</button>
 					</td>
 					<td>
 						<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${articleObj.createTime }"/>
@@ -140,13 +143,13 @@ tr:hover td .updateThemeA{
 	</div>
 </div>
 <div class="pagelist">
-	<div style="line-height:46px;height:46px;width:150px;float:left"><span>共 ${page.totalCount} 页/${page.totalCount}条记录 </span></div>
+	<div style="line-height:46px;height:46px;width:150px;float:left"><span>共 ${page.totalPageCount} 页/${page.totalCount}条记录 </span></div>
 	<div id="adminUserManagePagination" class="pagination" style="float:left;margin-top:15px"></div>
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#adminUserManagePagination").pagination('${page.totalCount}', {  
-            'items_per_page'      : 10,  
+            'items_per_page'      : 20,  
             'num_display_entries' : 5, 
             'ellipse_text'        : "...",
             'num_edge_entries'    : 2,  
@@ -159,12 +162,13 @@ tr:hover td .updateThemeA{
            		var page = parseInt(page_id)+1;
            		$('#pageSize').val(page);
            		console.log($('#pageSize').val())
-           		$("#searchForm").submit();
+           		searchGoods();
+           		//$("#searchForm").submit();
             } 
         });
 	});
-	function updateViewCount(id){
-		var viewCount = $('#articleViewCount').val();
+	function updateViewCount(tt,id){
+		var viewCount = $(tt).parent().find('.articleViewCount').val();
 		$.ajax({
 			type:'POST',
 			url:'/b2b2cbak/apiAdmin/AdminArticleAction_updateArticleStatus.do',
@@ -204,12 +208,15 @@ tr:hover td .updateThemeA{
 	function searchGoods(){
 		var kw = $('#searchKeyword').val();
 		var status = $('#articleFormStatus').val();
-		var url = '/b2b2cbak/apiAdmin/AdminArticleAction_articleList.do?page.currentPageNo=1';
+		if(kw!=null&&kw!=''){
+			$('#pageSize').val('1');
+		}
+		var url = '/b2b2cbak/apiAdmin/AdminArticleAction_articleList.do?pageSize='+$('#pageSize').val();
 		if(kw!=null&&kw!=''){
 			url = url+'&adminSearchForm.title='+kw;
 		}
-		if(status!='111'){
-			url = url+'&adminSearchForm.type='+status;
+		if(status!=113){
+			url = url+'&adminSearchForm.status='+status;
 		}
 		url = encodeURI(encodeURI(url));
 		window.location.href= url;

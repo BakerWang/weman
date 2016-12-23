@@ -89,7 +89,6 @@ public class JdbcDaoSupport<T> implements IDaoSupport<T> {
 
 			sql = sql + ")";
 			if(table.equals("es_settings")){
-				//System.out.println(sql);	
 			}
 //			
 			jdbcTemplate.update(sql, values);

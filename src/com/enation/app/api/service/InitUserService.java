@@ -11,7 +11,7 @@ import com.enation.framework.database.Page;
 public interface InitUserService {
 
 	@Transactional(propagation = Propagation.REQUIRED)  
-	int register(Member member,String notifyType, String deviceToken, String bindType, String bindNum);
+	int register(Member member,String notifyType, String deviceToken, String bindType, String bindNum,String clientId);
 
 	/**
 	 * 验证是否绑定
@@ -71,5 +71,13 @@ public interface InitUserService {
 	 * @throws Exception
 	 */
 	Map<String, Object> shareUrl(String type, int dataId) throws Exception;
+
+	/**
+	 * 获取用户的详细信息
+	 * @param accessToken
+	 * @return
+	 * @throws Exception
+	 */
+	Member getMemberDetailsByAccessToken(String accessToken) throws Exception;
 
 }

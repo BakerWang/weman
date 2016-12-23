@@ -36,7 +36,7 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 		dtoMap.put("view_count", 0);
 		dtoMap.put("love_count", 0);
 		dtoMap.put("comment_count", 0);
-		dtoMap.put("status", 0);//未通过审核
+		dtoMap.put("status", 1);//未通过审核
 		String good_type_name = (String) dtoMap.get("good_type_name");
 		String[] good_type_names = good_type_name.split(",");
 		String good_type_id = "";
@@ -89,12 +89,16 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 
 
 	@Override
-	public List<Map<String,Object>> beginArticle() throws Exception {
+	public List<Map<String,Object>> beginArticle(int list_show) throws Exception {
 		String tagSql = "select gc.cat_id as cid,gc.image as cimage,gc.name as cname,gc.parent_id as cparentid,bb.brand_id as bid,bb.name as bname,bb.logo as blogo "
 				+ "from es_goods_cat gc "
 				+ "LEFT JOIN es_type_brand tb on tb.type_id = gc.type_id "
 				+ "left JOIN es_brand bb on bb.brand_id = tb.brand_id "
-				+ "where gc.list_show = 1 order by cat_order";
+				+ "where 1=1 ";
+		if(list_show!=0){
+			tagSql = tagSql + " and gc.list_show = " + list_show;
+		}
+		tagSql = tagSql + " order by gc.cat_order";
 		List<Map<String,Object>> catbrands = this.daoSupport.queryForList(tagSql);
 		return catbrands;
 	}
@@ -158,7 +162,8 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 				  + " where 1=1 ";
 		if(adminSearchForm!=null){
 			if(adminSearchForm.getTitle()!=null&&!"".equals(adminSearchForm.getTitle())){
-				sql = sql+" and waa.content like '%"+adminSearchForm.getTitle()+"%'";
+				String title = java.net.URLDecoder.decode(adminSearchForm.getTitle(), "UTF-8");
+				sql = sql+" and waa.content like '%"+title+"%'";
 			}
 			if(adminSearchForm.getStatus()==100){// 未登录的情况      除陌生人未通过审核的   
 				sql = sql+" and waa.status = 1 ";
@@ -172,7 +177,7 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 			 				 + " ))"
 						+ " or (waa.status = 1 and waa.member_id not in (select waac.data_id from wh_api_action waac where waac.type = 1 and waac.status != -1 and waac.member_id = "+adminSearchForm.getUserId()+") ))";
 				//看到未关注的通过
-			}else if(adminSearchForm.getStatus()!=0){
+			}else if(adminSearchForm.getStatus()!=111){//if(adminSearchForm.getStatus()!=0)
 				sql = sql+" and waa.status = "+adminSearchForm.getStatus();
 			}
 		}
@@ -200,7 +205,11 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 				String catImages = "";
 				for(String b:catId){
 					if(catIdLogoMap.containsKey(Integer.parseInt(b))){
-						catImages = catImages+StaticProperty.currentUrl+catIdLogoMap.get(Integer.parseInt(b))+",";
+						String image = StaticProperty.currentUrl+catIdLogoMap.get(Integer.parseInt(b));
+						if(catIdLogoMap.get(Integer.parseInt(b))==null||"".equals(catIdLogoMap.get(Integer.parseInt(b)))){
+							image = StaticProperty.currentUrl+"attachment/allDefaultImage/defaultCateImage.png";
+						}
+						catImages = catImages+image+",";
 					}
 				}
 				if(!catImages.equals("")){
@@ -318,9 +327,15 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void updateArticleComment(int commentId, Map<String, Object> commentMap) throws Exception {
 		this.daoSupport.update("wh_api_comment", commentMap, "id = "+commentId);
-		
+		String article = "select article_id as aid from wh_api_comment wac where wac.id = ?";
+		List<Map<String,Object>> am =  this.daoSupport.queryForList(article, commentId);
+		if(am!=null&&am.size()>0){
+			String updateSql = "update wh_api_article waa set waa.comment_count = waa.comment_count-1  where waa.id = ?";
+			this.daoSupport.execute(updateSql, (int)am.get(0).get("aid"));
+		}
 	}
 
 	@Override
@@ -384,7 +399,7 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 					String usersql = "select ead.* from es_api_devicetoken ead "
 							+ " left join wh_api_article waa on waa.member_id = ead.member_id "
 							+ " where waa.id = ?";
-					DeviceToken userMessage = (DeviceToken) this.baseDaoSupport.queryForObject(usersql, DeviceToken.class, am.getId());
+					DeviceToken userMessage = (DeviceToken) this.baseDaoSupport.queryForObject(usersql, DeviceToken.class, dataId);
 					int member_id = (int)actionMap.get("member_id");
 					if(userMessage!=null&&userMessage.getMember_id()!=member_id){
 						String msql = "select em.uname as username from es_member em where em.member_id = ?";
@@ -486,7 +501,7 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 
 
 	@Override
-	public ArticleModel getArtilceDetails(int articleId) throws Exception {
+	public ArticleModel getArtilceDetails(int articleId,int memberId) throws Exception {
 		String sql = "select waa.id as id,waa.tagStr as tagStr,waa.content as content,em.uname as userName,em.face as userPhoto,em.member_id as userId, waa.status as status,em.birthday as userAge,em.height as userHeight,em.weight as userWeight, "
 				+ " waa.image as image,waa.orImage as orImage,waa.love_count as loveCount,waa.comment_count as commentCount,waa.view_count as viewCount,waa.create_time as createTime,"
 				+ " waa.good_cat_name as brandName,waa.good_cat_id as categoryIds "
@@ -520,14 +535,31 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 			}
 		}
 		if(am!=null){
-			Map<String,Object> commentMap = new HashMap<String,Object>();
-			commentMap.put("view_count", am.getViewCount()+1);
-			this.daoSupport.update("wh_api_article", commentMap, " id = "+am.getId());
 			String loveUserSql ="select em.member_id as member_id,em.face as photo from wh_api_action waa "
 					+ " left join es_member em on em.member_id = waa.member_id "
 					+ " where waa.type = 4 and waa.data_id = ? order by love_count desc ";
 			Page lovepage = this.daoSupport.queryForPage(loveUserSql, 1, 8, am.getId());
 			am.setLoveUserList((List<Map<String,Object>>)lovepage.getResult());
+			Map<String,Object> commentMap = new HashMap<String,Object>();
+			commentMap.put("view_count", am.getViewCount()+1);
+			this.daoSupport.update("wh_api_article", commentMap, " id = "+am.getId());
+			if(memberId!=0){
+//				String isExistsSql ="select count(*) from es_api_user_view eauv where eauv.type = 'clickArticle' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
+//				int count = this.daoSupport.queryForInt(isExistsSql, am.getId(),memberId);
+//				if(count>0){
+//					String updateUserViewSql = "update es_api_user_view eauv set eauv.viewCount = eauv.viewCount+1 where eauv.type = 'clickArticle' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
+//					this.daoSupport.execute(updateUserViewSql, am.getId(),memberId);
+//				}else{
+					Map<String,Object> userView = new HashMap<String,Object>();
+					userView.put("viewUserId", memberId);
+					userView.put("dataId", am.getId());
+					userView.put("type", "clickArticle");
+					userView.put("status", "1");
+					userView.put("viewCount", "1");
+					userView.put("create_time", new Date().getTime());
+					this.daoSupport.insert("es_api_user_view", userView);
+//				}
+			}
 		}
 		return am;
 	}

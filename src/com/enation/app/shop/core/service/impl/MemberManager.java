@@ -253,10 +253,10 @@ public class MemberManager extends BaseSupport<Member> implements IMemberManager
 		Long upLogintime = member.getLastlogin();// 登录积分使用
 		member.setLastlogin(DateUtil.getDateline());
 		member.setLogincount(logincount);
-		this.edit(member);
-		ThreadContextHolder.getSessionContext().setAttribute(UserConext.CURRENT_MEMBER_KEY, member);
+//		this.edit(member);
+//		ThreadContextHolder.getSessionContext().setAttribute(UserConext.CURRENT_MEMBER_KEY, member);
 
-//		HttpCacheManager.sessionChange();
+//		HttpCacheManager.sessionChange(); 废弃的
 		this.memberPluginBundle.onLogin(member, upLogintime);
 
 		return member;
@@ -347,7 +347,6 @@ public class MemberManager extends BaseSupport<Member> implements IMemberManager
 	public Page searchMember(Map memberMap, Integer page, Integer pageSize,String other,String order) {
 		String sql = createTemlSql(memberMap);
 		sql+=" order by "+other+" "+order;
-//		System.out.println(sql);
 		Page webpage = this.daoSupport.queryForPage(sql, page, pageSize);
 		
 		return webpage;
@@ -383,7 +382,10 @@ public class MemberManager extends BaseSupport<Member> implements IMemberManager
 		Integer region_id = (Integer) memberMap.get("region_id");
 		
 		
-		String sql = "select m.*,lv.name as lv_name from "
+		String sql = "select m.*,lv.name as lv_name, "
+				+ " (select sum(eauv.viewCount) from es_api_user_view eauv where eauv.type= 'clickTheme' and eauv.viewUserId = m.member_id) as viewThemeCount ,"
+				+ " (select sum(eauv2.viewCount) from es_api_user_view eauv2 where eauv2.type = 'clickArticle' and eauv2.viewUserId = m.member_id) as viewArticleCount "
+				+ " from "
 			+ this.getTableName("member") + " m left join "
 			+ this.getTableName("member_lv")
 			+ " lv on m.lv_id = lv.lv_id where 1=1 ";

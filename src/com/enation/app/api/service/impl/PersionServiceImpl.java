@@ -94,12 +94,12 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 		}else if(type==2){//收藏主题列表
 			String sql ="select eat.id as themeId,eat.title as themeTitle,eat.contentStyle as contentStyle,eat.details as themeDetails,eat.minorImage as themeImage from wh_api_action waa "
 					+ " left join es_api_theme eat on eat.id = waa.data_id "
-					+ " where waa.type = 2 and waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
+					+ " where exists(select 1 from es_api_theme et where waa.data_id = et.id) and waa.type = 2 and waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);
 		}else if(type==3){//收藏商品列表
 			String sql ="select eg.goods_id as goods_id,eg.isShowMKPrice as isShowMKPrice,eg.brief as brief,eg.name as name,eg.original as original,eg.price as price,eg.mktprice as mktprice,eg.url as url,eg.productOrigin as productOrigin from wh_api_action waa "
 					+ " left join es_goods eg on eg.goods_id = waa.data_id "
-					+ " where waa.type = 3 and waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
+					+ " where exists(select 1 from es_goods eeg where eeg.goods_id = waa.data_id) and waa.type = 3 and waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);
 		}
 		return null;
@@ -125,8 +125,8 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 			jsonObject.put("loveCount", String.valueOf(loveCount));
 			//评论数
 			String commentCountSql = "select count(*) from wh_api_comment wac "
-					+ "LEFT JOIN wh_api_article waa on waa.id = wac.article_id where waa.member_id = ? and isRead = 0 and wac.member_id != ?";
-			int commentCount = this.daoSupport.queryForInt(commentCountSql, member_id,member_id);
+					+ "LEFT JOIN wh_api_article waa on waa.id = wac.article_id where (waa.member_id = ? or find_in_set(?,wac.userIds)>0 ) and waa.status != -1 and wac.status != -1 and wac.isRead = 0 and wac.member_id != ?";
+			int commentCount = this.daoSupport.queryForInt(commentCountSql, member_id,member_id,member_id);
 			jsonObject.put("commentCount", String.valueOf(commentCount));
 			//加好友数
 			String addSql = "select count(*) from wh_api_action waa where waa.data_id = ? and waa.type= 1 and waa.status = 0";
@@ -167,8 +167,8 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 			sql ="select wac.id as zzid ,em.member_id as memberId,em.face as photo,em.uname as username,wac.create_time as createTime,waa.image as articleImage,waa.id as articleId "
 					+ " from wh_api_comment wac left join wh_api_article waa on waa.id = wac.article_id "
 					+ " left join es_member em on em.member_id = wac.member_id "
-					+ " where waa.member_id = ? and waa.status != -1 and wac.member_id != ? order by wac.create_time desc";
-			Page respage = this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id,member_id);
+					+ " where (waa.member_id = ? or find_in_set(?,wac.userIds)>0 ) and waa.status != -1 and wac.status != -1 and wac.member_id != ? order by wac.create_time desc";
+			Page respage = this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id,member_id,member_id);
 			String zzid = "";
 			for(Map<String,Object> map:(List<Map<String,Object>>)respage.getResult()){
 				zzid = zzid +map.get("zzid")+",";
@@ -202,9 +202,9 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 		}else if(type==4){//通知4 
 			sql ="select eapm.id as zzid,eapm.type as type,eapm.content as content,eapm.data_id as dataId,eapm.create_time as createTime, "
 					+ " eat.title as ttitle,eat.image as timage,eat.details as tdetails ,"
-					+ " eg.name as pname,eg.brief as pbrief,eg.price as pprice,eg.mktprice as pmkprice,eg.original as pimage "
+					+ " eg.name as pname,eg.brief as pbrief,eg.price as pprice,eg.mktprice as pmkprice,eg.original as pimage,eg.productOrigin as productOrigin "
 					+ " from es_api_push_message eapm "
-					+ " left join es_api_theme eat on (eat.id = eapm.data_id and eapm.type = 'theme') "
+					+ " left join es_api_theme eat on (eat.id = eapm.data_id and locate('theme',eapm.type)>0) "
 					+ " left join es_goods eg on (eg.goods_id = eapm.data_id and eapm.type='product')  "
 					+ " where eapm.member_id = ? and eapm.status != -1 order by eapm.create_time desc";
 			Page respage = this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);

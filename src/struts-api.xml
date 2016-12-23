@@ -21,6 +21,8 @@
 		</action>
 		<action name="InitUserAction_*" class="com.enation.app.api.action.InitUserAction" method="{1}">
 		</action>
+		<action name="LiveAction_*" class="com.enation.app.api.action.live.LiveAction" method="{1}">
+		</action>
 		<action name="ProductAction_*" class="com.enation.app.api.action.ProductAction" method="{1}">
 		</action>
 		<action name="ArticleAction_*" class="com.enation.app.api.action.ArticleAction" method="{1}">

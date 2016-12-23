@@ -1,5 +1,8 @@
 package com.enation.app.api.action.admin.action;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,14 +29,21 @@ public class AdminSendMessage extends BaseAction {
 		return "addSendMessageJspSuccess";
 	}
 	
+	
 	/**
 	 * 推送列表
 	 * @return
 	 */
 	public String sendMessageList(){
 		try {
-			page.setPageSize(20);
+			page.setPageSize(10);
+			String pageNo = request.getParameter("pageNo");
+			if (pageNo == null || "".equals(pageNo)) {
+				pageNo = "1";
+			}
+			page.setCurrentPageNo(Long.parseLong(pageNo));
 			Page resPage = sendMessageService.getSendMessageList(page);
+			resPage.setCurrentPageNo(Long.parseLong(pageNo));
 			request.setAttribute("page", resPage);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -41,13 +51,30 @@ public class AdminSendMessage extends BaseAction {
 		return "sendMessageListSuccess";
 	}
 	
+	public void saveSendMessageTask(){
+		try {
+			String pushMessage = request.getParameter("pushMessage");
+			String dataId = request.getParameter("data_id");
+			String type = request.getParameter("type");
+			String startTime = request.getParameter("startTime");
+			sendMessageService.saveSendTimeMessage(pushMessage,dataId,type,startTime);//保存定时发送表
+			//sendMessageService.saveSendMessage(pushMessage,dataId,type);//发送定时推送
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			out.write(jsonObject.toString());
+			out.close();
+		}
+	}
 	
 	public void saveSendMessage(){
 		try {
 			String pushMessage = request.getParameter("pushMessage");
 			String dataId = request.getParameter("data_id");
 			String type = request.getParameter("type");
-			sendMessageService.saveSendMessage(pushMessage,dataId,type);
+			//String startTime = request.getParameter("startTime");
+			//sendMessageService.saveSendTimeMessage(pushMessage,dataId,type,startTime);//保存定时发送表
+			sendMessageService.saveSendMessage(pushMessage,dataId,type);//发送定时推送
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

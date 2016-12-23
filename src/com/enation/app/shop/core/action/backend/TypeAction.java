@@ -1,7 +1,9 @@
 package com.enation.app.shop.core.action.backend;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -139,8 +141,11 @@ public class TypeAction extends WWAction {
 	 * @author LiFenLong
 	 * @return 类型列表Json
 	 */
+	private String keyword;
 	public String listJson(){
-		this.webpage = this.goodsTypeManager.pageType(order, this.getPage(),this.getPageSize());
+		Map<String,Object> resMap = new HashMap<String,Object>();
+		resMap.put("keyword", keyword);
+		this.webpage = this.goodsTypeManager.pageType(order, this.getPage(),this.getPageSize(),resMap);
 		this.showGridJson(webpage);
 		return JSON_MESSAGE;
 	}
@@ -564,6 +569,14 @@ public class TypeAction extends WWAction {
 
 	public List getAttrList() {
 		return attrList;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 	public void setAttrList(List attrList) {

@@ -44,7 +44,7 @@ public class InitUserAction extends BaseAction{
 				if(map.containsKey("hotTags")){
 					jsonObject.put("hotTags", map.get("hotTags"));
 				}
-				String impress = "帅哥,潮先生,二二的";
+				String impress = "MAN,COOL,FASHION";
 				jsonObject.put("impress", impress);
 				String path = request.getContextPath();
 				String bpath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
@@ -53,7 +53,7 @@ public class InitUserAction extends BaseAction{
 				jsonObject.put("bodyUrl", bpath+"/api/body.html");//身型说明
 				jsonObject.put("skinUrl", bpath+"/api/skin.html");//肤质说明
 				jsonObject.put("loginBackgroundImage", this.getImageUrl("attachment/allDefaultImage/loginBackgroundImage.png"));//登录背景图
-				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImage.gif"));//启动图
+				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImageD.gif"));//启动图
 				jsonObject.put("eulaUrl", bpath+"/api/eula.html");
 				jsonObject.put("fontColor", "c2c2c2");
 				jsonObject.put("fontColor2", "ff6251");
@@ -290,7 +290,8 @@ public class InitUserAction extends BaseAction{
 				if(loginType==null){
 					loginType="iphone";
 				}
-				int resInt = initUserService.register(member,loginType,deviceToken,bindType,bindNum);
+				String clientId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+				int resInt = initUserService.register(member,loginType,deviceToken,bindType,bindNum,clientId);
 				if(resInt==0){
 					jsonObject.put("result", "FAILED");
 					jsonObject.put("reason", "此手机号或用户名已被注册!");

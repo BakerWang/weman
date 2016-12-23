@@ -1,7 +1,112 @@
 <#include '/admin/header.html' >
+<style>
+.b_fr {
+    text-decoration: none;
+    display: block;
+    margin-top: 0;
+    background-color: #f7f7f7;
+    border: 1px solid #d1d1d1;
+    border-radius: 3px;
+    color: #666666;
+    cursor: pointer;
+    display: inline-block;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 20px;
+}
+</style>
 <div class="main">
-	<div class="index_nav">欢迎您登录管理后台</div>
+	<div class="index_nav" style="text-align: c">欢迎您登录管理后台</div>
 	
+	<div style="width:100%;height:40px;margin-top:10px;font-size:15px;">
+		<span style="float:left;height:28px;margin-left:15px;">
+			开始时间: <input class="easyui-datebox" name="startTime" style="width: 130px;height: 28px;" id="start_time" data-options="buttons:buttons" />
+			结束时间：<input class="easyui-datebox" name="endTime" style="width: 130px;height: 28px;" id="end_time" data-options="buttons:buttons" />
+		</span>
+		<a href="javascript:void(0)" class="b_fr" style="float:left;margin-left:20px;" onclick="subBut()">搜索</a>
+	</div>
+
+<div id="index_box">
+	<div id="item1" class="item">
+		<div class="indexitem">
+			<div class="title">
+				<h3>数据统计分析</h3>
+			</div>
+			<div class="body">
+				<table width="100%" cellspacing="0" cellpadding="0" border="0">
+					<tbody>
+						<tr>
+							<th ><span>主题点击数：</span></th>
+							<td>
+								<div id="themeCount" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th ><span>主题点击数(未注册用户)：</span></th>
+							<td>
+								<div id="themeCountNoLogin" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th width="240px"><span>主题点击数(注册用户)：</span></th>
+							<td width="60px">
+								<div id="themeCountLogin" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th ><span>主题收藏数：</span></th>
+							<td>
+								<div id="themeCountLove" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th ><span>社交浏览数：</span></th>
+							<td>
+								<div id="articleCount" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th ><span>社交点赞数：</span></th>
+							<td>
+								<div id="articleCountLove" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th ><span>社交评论数：</span></th>
+							<td>
+								<div id="articleCountComment" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th ><span>新增用户数：</span></th>
+							<td>
+								<div id="addUserCount" style="height: 18px; overflow: hidden;text-align: center;">
+									-1
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 	<div id="template" class="indexitem">
 		<div class="title"><h3></h3></div>
 		<div class="body"></div>
@@ -26,6 +131,14 @@
 </div>
 -->
 <script>
+var buttons = $.extend([], $.fn.datebox.defaults.buttons);
+buttons.splice(1, 0, {
+text: '清空',
+handler: function(target){
+	 $('#start_time').datebox('setValue',"");
+	 $('#end_time').datebox('setValue',"");
+}
+});
 function addItem(title,itemurl,sort){
 	$.ajax({
 		url:itemurl,
@@ -55,10 +168,39 @@ function createItem(item_html,title,sort){
 }
 
 $(function(){
-	<#list itemList as item>
-		addItem('${item.title}','${ctx}${item.url}',${item.sort});
-	</#list>
+// 	<#list itemList as item>
+// 		addItem('${item.title}','${ctx}${item.url}',${item.sort});
+// 	</#list>
+	subBut();
+	
 });
+
+function subBut(){
+	console.log($('#start_time').val()+'||'+$('#end_time').val());
+	$.ajax({
+		type:'POST',
+		url:'/b2b2cbak/apiAdmin/AdminProductAction_adminIndexDetails.do',
+		data:{
+			'startTime':$("[name='startTime']").val(),
+			'endTime':$("[name='endTime']").val()
+		},
+		dataType:'json',
+	    success: function(msg){
+	    	if(msg.result=='yes'){
+	    		$('#themeCount').html(msg.themeCount);
+	    		$('#themeCountNoLogin').html(msg.themeCountNoLogin);
+	    		$('#themeCountLogin').html(msg.themeCountLogin);
+	    		$('#articleCount').html(msg.articleCount);
+	    		$('#articleCountComment').html(msg.articleCountComment);
+	    		$('#themeCountLove').html(msg.themeCountLove);
+	    		$('#articleCountLove').html(msg.articleCountLove);
+	    		$('#addUserCount').html(msg.addUserCount);
+	    	}else{
+	    		alert('系统错误!');
+	    	}
+	    }
+	})
+}
 </script>
 
 <#include '/admin/footer.html' >

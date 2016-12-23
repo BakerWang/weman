@@ -33,7 +33,7 @@ public class GlobalInterceptor implements Interceptor{
 	    HttpServletResponse response= (HttpServletResponse) invocation.getInvocationContext().get(StrutsStatics.HTTP_RESPONSE);
 	    //Logger.getLogger(getClass()).error("访问的方法："+request.getRequestURI());
 	    JSONObject jsonObject = new JSONObject();
-	    if(request.getContentType().contains("form-data")){
+	    if(request.getContentType().contains("form-data")||request.getContentType().indexOf("x-www-form-urlencoded")>=0){
 	    	for(Object key:request.getParameterMap().keySet()){
 				jsonObject.put(key.toString(),request.getParameter(key.toString()));
 			}
@@ -61,7 +61,7 @@ public class GlobalInterceptor implements Interceptor{
 	    		e.printStackTrace();
 	    	}
 	    }
-		if(request.getContentType().contains("application/json")){//multipart/form-data 
+		if(request.getContentType().contains("application/json")){//application/x-www-form-urlencoded||application/json
 			String requestStr = IOUtils.toString(request.getInputStream(),"UTF-8");
 			jsonObject = JSONObject.fromObject(requestStr);
 			request.setAttribute("params", jsonObject);

@@ -13,9 +13,11 @@
 					<th data-options="field:'id',width:80">ID</th>
 					<th data-options="field:'text',width:200">名称</th>
 					<th data-options="field:'type_text',width:60">类型</th>
-					<th data-options="field:'api_status',width:100">列表是否显示</th>
-					<th data-options="field:'cat_order',width:80"
+					<th data-options="field:'api_status',width:60">列表是否显示</th>
+					<th data-options="field:'cat_order',width:60"
 						formatter="formatGoodscount">排序</th>
+					<th data-options="field:'image',width:60"
+						formatter="formatGoodsImage">图片</th>
 					<th data-options="field:'add',width:25,align:'center'"
 						formatter="formatAdd">添加子</th>
 					<th data-options="field:'edit',width:25,align:'center'"
@@ -144,7 +146,10 @@
 		val+='<input type="hidden" name="cat_ids" value="'+row.id+'" > '
 		return val;
 	}
-
+	function formatGoodsImage(value, row, index){
+		var val = '<img src="/b2b2cbak/statics/'+value+'" width="70px" height="70px">';
+		return val;
+	}
 	function del(catid) {
 		if (!confirm("确定要删除此类别吗？")) {
 			return;

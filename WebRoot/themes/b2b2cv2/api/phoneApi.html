@@ -226,13 +226,26 @@
 		base(url,dataParam);
 	}
 	
-	function getThemeList(){
-		var username=$('#username').val();
+	function getThemeList2(){
 		var page = $('#themeListPage').val();
 		var url = "ProductAction_getThemeList.do";
 		var dataParam = {
 				"loginType":"global",
 				"clientType":"iphone",
+				"version":"2.0.1",
+				"accessToken":accessToken,
+				"page":page
+		};
+		base(url,dataParam);
+	}
+	function getThemeList(){
+		var page = $('#themeListPage2').val();
+		var url = "ProductAction_getThemeList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0.1",
+				"accessToken":accessToken,
 				"page":page
 		};
 		base(url,dataParam);
@@ -243,6 +256,7 @@
 		var dataParam = {
 				"loginType":"global",
 				"clientType":"iphone",
+				"bannerId":$('#bannerIdInput').val(),
 				"page":page
 		};
 		base(url,dataParam);
@@ -504,6 +518,27 @@
 			$('#persionUserId2').show();
 		}
 	}
+	function catchPublishDetails(){
+		var url = 'LiveAction_getLivePublishDetails.do';
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"name":$('#publishKey').val()
+		};
+		base(url,dataParam); 
+	}
+	function catchPlayDetails(){
+		var url = 'LiveAction_getLivePlayDetails.do';
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"accessToken":accessToken,
+				"version":"1.0",
+				"name":$('#playKey').val()
+		};
+		base(url,dataParam); 
+	}
 	//B2C电商接口
 	function getProductDetails(){
 		var url = "ProductAction_getProductDetails.do";
@@ -515,6 +550,7 @@
 		};
 		base(url,dataParam); 
 	}
+	
 </script>
 </head>
 <body>
@@ -532,7 +568,9 @@
 	<input type="text" id="deviceToken" value="539869a1fb302e382c44a3b74cc005f39f09051046a6a03be32727a90a8843ab"/>
 	<input type="text" id="clientId" value="6a4fb9eaaa98824d3272b148ecd60632"/><input type="button" onclick="bindClientId()" value="绑定个推的clientId(唯一标示)"/><br/>
 	
-	
+	<h2>直播接口测试</h2><br/>
+	<input type="text" value="yimeizhibo01" id="publishKey" /><input type="button" onclick="catchPublishDetails()" value="获取录播接口"/><br/>
+	<input type="text" value="yimeizhibo01" id="playKey" /><input type="button" onclick="catchPlayDetails()" value="获取播放接口"/><br/>
 	<h2>登录注册接口测试</h2><br/>
 	<select id="shareType"><option value="theme">主题分享</option><option value="article">发文分享</option></select><input type="text" id="shareDataId" value="108" /><button onclick="shareBut()">获取分享内容</button><br/>
 	
@@ -559,7 +597,8 @@
 	<h2>商品接口测试</h2><br/>
 <!-- 	<input type="button" onclick="getProductList()" value="获取商品列表"/><br/> -->
 	页数：<input value="1" id="themeListPage" /><input type="button" onclick="getThemeList()" value="获取主题列表"/><br/>
-	页数：<input value="1" id="bannerThemeListPage" /><input type="button" onclick="getBannerThemeList()" value="获取banner主题列表"/><br/>
+	页数：<input value="1" id="themeListPage2" /><input type="button" onclick="getThemeList2()" value="获取主题列表(version2)"/><br/>
+	页数：<input value="1" id="bannerThemeListPage" /><input value="49" id="bannerIdInput" /><input type="button" onclick="getBannerThemeList()" value="获取banner主题列表"/><br/>
 	主题id：<input value="30" id="themeIdA" /><input type="button" onclick="getThemeDetails()" value="获取主题详情"/><br/>
 	<h2>个人主页接口测试</h2><br/>
 	<input type="button" onclick="saveFAQ()" value="意见反馈"/>(图片是originalFAQ 是list 多个图片 )<br/>

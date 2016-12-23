@@ -43,6 +43,9 @@ public class Member implements java.io.Serializable {
 	private Integer agentid; // 代理商id
 	private Integer is_cheked; // 是否已验证
 	private String registerip; // 注册IP
+	
+	private long viewThemeCount;//浏览主题数
+	private long viewArticleCount;//浏览发文数
  
 	
 	//昵称
@@ -422,6 +425,24 @@ public class Member implements java.io.Serializable {
 
 	public void setOrFace(String orFace) {
 		this.orFace = orFace;
+	}
+
+	@NotDbField
+	public long getViewThemeCount() {
+		return viewThemeCount;
+	}
+
+	public void setViewThemeCount(long viewThemeCount) {
+		this.viewThemeCount = viewThemeCount;
+	}
+
+	@NotDbField
+	public long getViewArticleCount() {
+		return viewArticleCount;
+	}
+
+	public void setViewArticleCount(long viewArticleCount) {
+		this.viewArticleCount = viewArticleCount;
 	}
 
 	

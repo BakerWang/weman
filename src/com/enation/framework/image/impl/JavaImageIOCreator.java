@@ -68,8 +68,8 @@ public class JavaImageIOCreator implements IThumbnailCreator {
 	}
 
 	public static void main(String args[]) throws IOException{
-		ImageMagickCreator creator = new ImageMagickCreator("E:/1462434794529.jpg", "E:/1462434794529-small.jpg");
-		creator.resize(200);
+		ImageMagickCreator creator = new ImageMagickCreator("E:/201611210209550347.png", "E:/000-small.jpg");
+		creator.resize(1240);
 		
 	}
 	

@@ -139,7 +139,7 @@ a {
 	<div style="margin: 0 auto;width:320px;" id="bottomDiv">
 		<div style="height:60px;">
 		</div>
-		<header  id="appDiv" style="position: fixed; bottom: 0px; width: 320px; background-color: #383838;height: 60px;">
+		<header onclick="location.href='http://www.weman.cc/downloadAppStore.jsp?downType=2'" id="appDiv" style="position: fixed; bottom: 0px; width: 320px; background-color: #383838;height: 60px;">
 			<div style="float: left; height: 44px;left: 6px;position: absolute;top: 8px;width: 44px;"><img alt="" src="../admin/api/image/logo64.png"></div>
 			<div style="color: #fff;font-size: 16px;line-height: 18px;padding: 13px 55px 0;text-align: left;">
 				<p>WeMan我们</p>

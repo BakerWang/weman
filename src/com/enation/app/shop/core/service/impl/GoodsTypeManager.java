@@ -1,6 +1,7 @@
 package com.enation.app.shop.core.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import com.enation.app.shop.core.service.GoodsTypeUtil;
 import com.enation.app.shop.core.service.IGoodsTypeManager;
 import com.enation.eop.sdk.database.BaseSupport;
 import com.enation.framework.database.Page;
+import com.enation.framework.util.StringUtil;
 
 /**
  * 商品类型管理
@@ -45,10 +47,13 @@ public class GoodsTypeManager extends BaseSupport<GoodsType> implements IGoodsTy
 	 * @return
 	 */
 	
-	public Page pageType(String order, int page, int pageSize) {
+	public Page pageType(String order, int page, int pageSize,Map<String,Object> resMap) {
 		order  = order==null?" type_id desc":order;
-		
 		String sql  = "select * from goods_type where disabled=0";
+		String keyword = (String) resMap.get("keyword");
+		if(keyword!=null&&!StringUtil.isEmpty(keyword)){
+			sql+=" and name like '%"+keyword+"%'";
+		}
 		sql+="  order by ";
 		sql+=order;
 		

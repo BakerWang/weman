@@ -135,8 +135,9 @@ public class ImageMagickCreator implements IThumbnailCreator {
 
 	
 	public static void main(String args[]) throws IOException{
-		ImageMagickCreator creator = new ImageMagickCreator("E:/1462434794529.jpg", "E:/1462434794529-small.jpg");
+		ImageMagickCreator creator = new ImageMagickCreator("E:/201611210209550347.png", "E:/sd-small.jpg");
 		creator.resize(200);
+		System.out.println(System.getProperty("java.library.path"));
 		
 	}
 	

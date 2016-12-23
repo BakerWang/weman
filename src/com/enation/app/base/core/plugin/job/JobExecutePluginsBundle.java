@@ -49,7 +49,6 @@ public class JobExecutePluginsBundle extends AutoRegisterPluginsBundle {
 	 * 每天执行
 	 */
 	public void everyDayExcecute(){
-		
 		try{
 			List<IPlugin> plugins = this.getPlugins();
 			

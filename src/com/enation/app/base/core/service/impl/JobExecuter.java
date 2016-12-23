@@ -1,5 +1,8 @@
 package com.enation.app.base.core.service.impl;
 
+import javax.annotation.Resource;
+
+import com.enation.app.api.service.SendMessageService;
 import com.enation.app.base.core.plugin.job.JobExecutePluginsBundle;
 import com.enation.app.base.core.service.IJobExecuter;
 
@@ -11,17 +14,25 @@ import com.enation.app.base.core.service.IJobExecuter;
 public class JobExecuter implements IJobExecuter {
 	private JobExecutePluginsBundle jobExecutePluginsBundle;
 
+	@Resource
+	private SendMessageService sendMessageService;
+	
 	@Override
 	public void everyHour() {
-		jobExecutePluginsBundle.everyHourExcecute();
+		try {
+			System.out.println("testet");
+			sendMessageService.saveAndSendMessage();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+//		jobExecutePluginsBundle.everyHourExcecute();
 	}
 
 	@Override 
 	public void everyDay() {
 		try{
-			this.jobExecutePluginsBundle.everyDayExcecute();
+			//this.jobExecutePluginsBundle.everyDayExcecute();
 		}catch(Exception e){
-			
 			e.printStackTrace();
 		}
 	}

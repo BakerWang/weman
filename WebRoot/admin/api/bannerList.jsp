@@ -98,10 +98,15 @@ tr:hover td .updateThemeA{
 		<span style="float:left;height:28px;">
 			<a href="javascript:void(0)" class="b_fr" onclick="parent.addTab1('banner添加','/b2b2cbak/apiAdmin/AdminBannerAction_newBanner.do')">新建</a>
 		</span>
-		<span style="float: right;height:28px;"> 
-			<input id="searchKeyword" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
-			<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a>
-		</span>
+		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do" id="searchForm" method="post">
+			<span style="float: right;height:28px;"> 
+				<input type="hidden" value="1" name="pageNo" id="goodsPage" />
+			</span>
+<%-- 			<span style="float: right;height:28px;">  --%>
+<!-- 				<input id="searchKeyword" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord">  -->
+<!-- 				<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a> -->
+<%-- 			</span> --%>
+		</form>
 	</div>
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
@@ -144,9 +149,9 @@ tr:hover td .updateThemeA{
             'current_page'        :'${page.currentPageNo-1}',
             'callback'            : function(page_id,jq){
 //            		var type = "${type}";
-//            		var page = parseInt(page_id)+1;
-//            		$("#searchForm").find("input[name='page.pages']").val(page);
-//            		$("#searchForm").submit();
+           		var page = parseInt(page_id)+1;
+           		$("#searchForm").find("#goodsPage").val(page);
+           		$("#searchForm").submit();
             } 
         });
 	});
@@ -169,13 +174,13 @@ tr:hover td .updateThemeA{
 		})
 		
 	}
-	function searchGoods(){
-		var kw = $('#searchKeyword').val();
-		if(kw==null||kw==''){
-			return;
-		}
-		var url = '/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do?page=1&keywords='+kw;
-		url = encodeURI(encodeURI(url));
-		window.location.href= url;
-	}
+// 	function searchGoods(){
+// 		var kw = $('#searchKeyword').val();
+// 		if(kw==null||kw==''){
+// 			return;
+// 		}
+// 		var url = '/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do?page=1&keywords='+kw;
+// 		url = encodeURI(encodeURI(url));
+// 		window.location.href= url;
+// 	}
 </script>

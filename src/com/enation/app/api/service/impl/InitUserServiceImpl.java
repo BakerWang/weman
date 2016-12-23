@@ -37,7 +37,7 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 	
 	
 	@Transactional(propagation = Propagation.REQUIRED)
-	public int register(Member member,String notifyType,String deviceToken,String bindType, String bindNum) {
+	public int register(Member member,String notifyType,String deviceToken,String bindType, String bindNum,String clientId) {
 		int res = memberManager.add(member);
 		if(res == 1){
 			if(bindType!=null&&bindNum!=null&&!"".equals(bindType)&&!"".equals(bindNum)){//绑定账号添加
@@ -56,8 +56,8 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 			phoneToken.setMember_id(member.getMember_id());
 			phoneTokenDao.savePhoneToken(phoneToken);
 			
-			String sql="select ead.* from es_api_devicetoken ead where ead.deviceToken = ? and ead.tokenType = ?";
-			List<DeviceToken> dts = this.daoSupport.queryForList(sql, DeviceToken.class, deviceToken,notifyType);
+			String sql="select ead.* from es_api_devicetoken ead where ead.clientId = ? and ead.tokenType = ?";
+			List<DeviceToken> dts = this.daoSupport.queryForList(sql, DeviceToken.class, clientId,notifyType);
 			if(dts==null||dts.size()==0){
 				String sql2="select ead.* from es_api_devicetoken ead where ead.member_id = ? and tokenType = ?";
 				List<DeviceToken> dtss = this.daoSupport.queryForList(sql2, DeviceToken.class, member.getMember_id(),notifyType);
@@ -69,11 +69,12 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 				dt.setDeviceToken(deviceToken);
 				dt.setTokenType(notifyType);
 				dt.setCreate_time(new Date().getTime());
+				dt.setClientId(clientId);
 				deviceTokenDao.saveDeviceToken(dt);
 			}else{
 				if(dts.get(0).getMember_id()==null){
-					String updatesql = "update es_api_devicetoken ead set ead.member_id = ?  where ead.deviceToken = ? and ead.tokenType = ?";
-					this.daoSupport.execute(updatesql, member.getMember_id(),deviceToken,notifyType);
+					String updatesql = "update es_api_devicetoken ead set ead.member_id = ? , ead.deviceToken = ?  where ead.clientId = ? and ead.tokenType = ?";
+					this.daoSupport.execute(updatesql, member.getMember_id(),deviceToken,clientId,notifyType);
 				}
 			}
 			
@@ -130,8 +131,8 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 			resMap.put("username",member.getUname());
 			resMap.put("face",member.getFace());
 			
-			String csql="select ead.* from es_api_devicetoken ead where ead.deviceToken = ? and tokenType = ?";
-			List<DeviceToken> cdts = this.daoSupport.queryForList(csql, DeviceToken.class, deviceToken,clientType);
+			String csql="select ead.* from es_api_devicetoken ead where ead.clientId = ? and tokenType = ?";
+			List<DeviceToken> cdts = this.daoSupport.queryForList(csql, DeviceToken.class, clientId,clientType);
 			if(cdts==null||cdts.size()==0){
 				String sql="select ead.* from es_api_devicetoken ead where ead.member_id = ? and tokenType = ?";
 				List<DeviceToken> dts = this.daoSupport.queryForList(sql, DeviceToken.class, member.getMember_id(),clientType);
@@ -147,8 +148,8 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 				dt.setClientId(clientId);
 				deviceTokenDao.saveDeviceToken(dt);
 			}else{
-				String updatesql = "update es_api_devicetoken ead set ead.member_id = ? where ead.deviceToken = ?  and ead.tokenType = ?";
-				this.daoSupport.execute(updatesql,member.getMember_id(),deviceToken,clientType);
+				String updatesql = "update es_api_devicetoken ead set ead.member_id = ?,ead.deviceToken = ? where ead.clientId = ?  and ead.tokenType = ?";
+				this.daoSupport.execute(updatesql,member.getMember_id(),deviceToken,clientId,clientType);
 			}
 			return resMap;
 		}
@@ -225,9 +226,11 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 				dt.setMember_id(memberId);
 				deviceTokenDao.saveDeviceToken(dt);
 			}
+			String updateUserLoginCountSql ="update es_member em set em.logincount = em.logincount+1 where em.member_id = ?";
+			this.daoSupport.execute(updateUserLoginCountSql,memberId);
 		}else{
-			String sql="select ead.* from es_api_devicetoken ead where ead.deviceToken = ? and ead.tokenType = ?";
-			List<DeviceToken> dts = this.daoSupport.queryForList(sql, DeviceToken.class, deviceToken,clientType);
+			String sql="select ead.* from es_api_devicetoken ead where ead.clientId = ? and ead.tokenType = ?";
+			List<DeviceToken> dts = this.daoSupport.queryForList(sql, DeviceToken.class, clientId,clientType);
 			if(dts==null||dts.size()==0){
 				DeviceToken dt = new DeviceToken();
 				dt.setClientId(clientId);
@@ -238,8 +241,8 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 			}else{
 				String oldclientId = dts.get(0).getClientId();
 				if(oldclientId!=null&&!oldclientId.equals(clientId)){
-					String updatesql = "update es_api_devicetoken ead set ead.clientId = ?  where ead.deviceToken = ? and ead.tokenType = ?";
-					this.daoSupport.execute(updatesql, clientId,deviceToken,clientType);
+					String updatesql = "update es_api_devicetoken ead set ead.deviceToken = ?  where ead.clientId = ? and ead.tokenType = ?";
+					this.daoSupport.execute(updatesql, deviceToken,clientId,clientType);
 				}
 			}
 		}
@@ -261,6 +264,15 @@ public class InitUserServiceImpl extends BaseSupport implements InitUserService{
 			}
 		}
 		return null;
+	}
+
+
+	@Override
+	public Member getMemberDetailsByAccessToken(String accessToken) throws Exception {
+		String sql = "select em.* from es_api_phoneToken apt "
+				+ " left join es_member em on em.member_id = apt.member_id "
+				+ " where apt.token = ? ";
+		return (Member) this.daoSupport.queryForObject(sql, Member.class, accessToken);
 	}
 
 
