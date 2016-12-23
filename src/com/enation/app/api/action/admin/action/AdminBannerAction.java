@@ -111,7 +111,14 @@ public class AdminBannerAction extends BaseAction{
 	
 	public String bannerList(){
 		try {
+			page.setPageSize(20);
+			String pageNo = request.getParameter("pageNo");
+			if (pageNo == null || "".equals(pageNo)) {
+				pageNo = "1";
+			}
+			page.setCurrentPageNo(Long.parseLong(pageNo));
 			Page pages = bannerService.getBanners(adminSearchForm, page);
+			pages.setCurrentPageNo(Long.parseLong(pageNo));
 			request.setAttribute("page", pages);
 		} catch (Exception e) {
 			e.printStackTrace();
