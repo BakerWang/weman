@@ -12,7 +12,9 @@ import com.enation.app.api.action.live.qiniu.LiveUtils;
 import com.enation.app.api.action.live.qiniu.Stream;
 import com.enation.app.api.action.live.rongyun.LiveRYUtil;
 import com.enation.app.api.service.LiveService;
+import com.enation.app.api.service.PersionService;
 import com.enation.app.base.core.model.Member;
+import com.enation.app.shop.core.service.impl.MemberManager;
 
 import net.sf.json.JSONObject;
 
@@ -29,6 +31,8 @@ public class LiveAction extends BaseAction {
 	 */
 	public void getLivePublishDetails() {
 		try {
+			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):"e3b43d31e09f8f2b24335d063cb6114c";
+			Member member = this.getMemberDetails(accessToken);
 			String name = paramObject.getString("name");
 			if(name==null||"".equals(name)){
 				name = "yimei0001";
@@ -42,37 +46,53 @@ public class LiveAction extends BaseAction {
 			String hub = null;
 			String publishUrl = null;
 			String playUrl = null;
+			String title = null;
 			if(liveDetails==null||liveDetails.size()==0){
 				Stream streamObj = LiveUtils.createStream(name);
-				publishKey = streamObj.getPublishKey();
+				try {
+					publishKey = streamObj.getPublishKey();
+				} catch (Exception e) {
+					jsonObject.put("result", "FAILED");
+					jsonObject.put("reason", "直播名字已存在");
+					return;
+				}
 				hub = streamObj.getHubName();
 				publishUrl = streamObj.rtmpPublishUrl();
 				playUrl = streamObj.rtmpLiveUrls().get(Stream.ORIGIN);
+				title = streamObj.getTitle();
 				Map<String,Object> map = new HashMap<String,Object>();
 				map.put("title", name);
 				map.put("publishKey", publishKey);
 				map.put("hub", hub);
 				map.put("disabled", 1);
-				map.put("startTime", new Date().getTime());
-				map.put("createTime", new Date().getTime());
+				map.put("startTime", new Date().getTime()/1000);
+				map.put("createTime", new Date().getTime()/1000);
 				map.put("publish", publishUrl);
 				map.put("isSave", -1);
 				map.put("play", playUrl);
-				map.put("title", streamObj.getTitle());
+				map.put("title", title);
 				map.put("streamId", streamObj.getStreamId());
 				map.put("playback", streamObj.getPlaybackHlshost());
+				map.put("memberId", member.getMember_id());
+				map.put("details", "直播人比较懒，还没有来得及添加介绍！");
 				liveService.saveLiveDetails(map);
 			}else{
 				publishKey = (String)liveDetails.get("publishKey");
 				hub = (String)liveDetails.get("hub");
 				publishUrl = (String)liveDetails.get("publish");
 				playUrl = (String)liveDetails.get("play");
+				title = (String)liveDetails.get("title");
+			}
+			if(member!=null){
+				String tokenStr = LiveRYUtil.getRongYunToken(String.valueOf(member.getMember_id()),member.getUname(),member.getFace());
+				jsonObject.put("rongyunToken", tokenStr);
 			}
 			jsonObject.put("publishKey", publishKey);
 			jsonObject.put("hub", hub);
 			jsonObject.put("disabled", false);
 			jsonObject.put("publishUrl", publishUrl);
 			jsonObject.put("playUrl", playUrl);
+			jsonObject.put("chatId", title);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e);
@@ -93,7 +113,10 @@ public class LiveAction extends BaseAction {
 		}
 	}
 
-	
+	@Resource
+	private PersionService persionService;
+	@Resource
+	private MemberManager memberService;
 	/**
 	 * 获取直播拉流信息
 	 */
@@ -103,14 +126,25 @@ public class LiveAction extends BaseAction {
 			Map<String,Object> liveDetails = liveService.getLiveDetails(name);
 			Member member = this.getMemberDetails(paramObject.getString("accessToken"));
 			String userphoto = this.getImageUrl(member.getFace());
-			String tokenStr = LiveRYUtil.getRongYunToken(member.getMember_id().toString(),member.getUname(),userphoto);
+			int memberId = member.getMember_id();
+			String tokenStr = LiveRYUtil.getRongYunToken(String.valueOf(memberId),member.getUname(),userphoto);
 			if(liveDetails!=null&&liveDetails.size()>0){
 				jsonObject.put("rongyunToken", tokenStr);
 				jsonObject.put("publishUrl", liveDetails.get("publish"));
 				jsonObject.put("playUrl", liveDetails.get("play"));
-				jsonObject.put("userid", member.getMember_id());
-				jsonObject.put("username", member.getUname());
-				jsonObject.put("userphoto", userphoto);
+				jsonObject.put("chatId", liveDetails.get("title"));
+				if(persionService.getIsFriend(memberId,String.valueOf((int)liveDetails.get("memberId")))){
+					jsonObject.put("isFriend", "yes");
+				}else{
+					jsonObject.put("isFriend", "no");
+				}
+				jsonObject.put("viewUserId", memberId);
+				int liveUserId = (int)liveDetails.get("memberId");
+				Member liveMember = memberService.get(liveUserId);
+				jsonObject.put("userid", liveMember.getMember_id());
+				jsonObject.put("username", liveMember.getUname());
+				jsonObject.put("userphoto", this.getImageUrl(liveMember.getFace()));
+				jsonObject.put("liveDetails", liveDetails.get("details"));
 			}else{
 				jsonObject.put("result", "noPublish");
 			}

@@ -82,14 +82,14 @@
 	function createArticle(){
 		var url = "ArticleAction_saveArticle.do";
 		var dataParam = {
-				"accessToken":"9fc191053990ede419c9312f15dd7d05",
+				"accessToken":"2214f907189b156c91b145630799599a",
 				"clientType":"iphone",
 				"content":'我是测试的发文内容！！大家请忽略我的存在!',
-				"good_cat_id":'493,496',
-				"good_cat_name":'卫衣,下装',
-				"good_type_name":'品牌1,品牌2',
+				"good_cat_id":'129',
+				"good_type_name":"夹克",
+				"good_cat_name":"ZARA",
 				"address":'上海',
-				"tagStr":'测试1,测试2'
+				"tagStr":'新人报道'
 		};
 		base(url,dataParam);
 	}
@@ -234,6 +234,17 @@
 				"clientType":"iphone",
 				"version":"2.0.1",
 				"accessToken":accessToken,
+				"page":page
+		};
+		base(url,dataParam);
+	}
+	function getThemeList3(){
+		var page = $('#themeListPage').val();
+		var url = "ProductAction_getThemeList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"2.0.1",
 				"page":page
 		};
 		base(url,dataParam);
@@ -402,6 +413,16 @@
 		};
 		base(url,dataParam);
 	}
+	function getFindReplayList(){
+		var url = "ProductAction_getReplayList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"page":"1",
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
 	//未登录的接口
 	function shareBut(){
 		var url = "InitUserAction_shareUrl.do";
@@ -524,6 +545,7 @@
 				"loginType":"global",
 				"clientType":"iphone",
 				"version":"1.0",
+				"accessToken":accessToken,
 				"name":$('#publishKey').val()
 		};
 		base(url,dataParam); 
@@ -539,7 +561,7 @@
 		};
 		base(url,dataParam); 
 	}
-	//B2C电商接口
+	//B2C电商接口http://localhost:8090/b2b2cbak/api/ProductAction_getThemeList.do
 	function getProductDetails(){
 		var url = "ProductAction_getProductDetails.do";
 		var dataParam = {
@@ -550,6 +572,17 @@
 		};
 		base(url,dataParam); 
 	}
+	function getThemeDetailsApp(){
+		var url = "ProductAction_getProductDetailsAPP.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"2.0.1",
+				"pid":$('#productId').val()
+		};
+		base(url,dataParam); 
+	}
+	
 	
 </script>
 </head>
@@ -596,8 +629,10 @@
 	<select id="actionType2"><option value="1">关注好友</option><option value="2">收藏主题</option><option value="3">收藏商品</option></select><input type="text" id="dataId2" value="8" /><input type="button" onclick="delUserAction()" value="取消用户动作"/><br/>
 	<h2>商品接口测试</h2><br/>
 <!-- 	<input type="button" onclick="getProductList()" value="获取商品列表"/><br/> -->
+        商品id：<input value="55" id="productId" /><input type="button" onclick="getThemeDetailsApp()" value="获取商品详情"/><br/>
 	页数：<input value="1" id="themeListPage" /><input type="button" onclick="getThemeList()" value="获取主题列表"/><br/>
-	页数：<input value="1" id="themeListPage2" /><input type="button" onclick="getThemeList2()" value="获取主题列表(version2)"/><br/>
+	页数：<input value="1" id="themeListPage2" /><input type="button" onclick="getThemeList2()" value="获取主题列表(登录的version2)"/><br/>
+	页数：<input value="1" id="themeListPage2" /><input type="button" onclick="getThemeList3()" value="获取主题列表(未登录的version2)"/><br/>
 	页数：<input value="1" id="bannerThemeListPage" /><input value="49" id="bannerIdInput" /><input type="button" onclick="getBannerThemeList()" value="获取banner主题列表"/><br/>
 	主题id：<input value="30" id="themeIdA" /><input type="button" onclick="getThemeDetails()" value="获取主题详情"/><br/>
 	<h2>个人主页接口测试</h2><br/>
@@ -612,7 +647,8 @@
 	<select id="selMessageType"><option value="3">获取被赞列表</option><option value="2">获取被评论列表</option><option value="1">获取被加好友列表</option><option value="4">获取系统通知列表</option> </select><input type="button" onclick="fecthMessageList()" value="获取消息类别列表"/>
 	<h2>发现接口测试</h2><br/>
 	<input type="button" onclick="getFindList()" value="发现接口"/><br/>
-	<input type="text" id="typeId" value="9"/><input type="button" onclick="getFindThemeList()" value="点击发现获取主题列表接口"/><br/>
+	<input type="text" id="typeId" value="1001"/><input type="button" onclick="getFindReplayList()" value="回放列表接口"/><br/>
+	<input type="text" id="typeId" value="21"/><input type="button" onclick="getFindThemeList()" value="点击发现获取主题列表接口"/><br/>
 	<br/><br/><br/><br/>
 </body>
 </html>

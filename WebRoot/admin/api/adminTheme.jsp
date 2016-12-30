@@ -96,11 +96,16 @@ tr:hover td .updateThemeA{
 		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do" id="searchForm" method="post">
 			<span style="float: right;height:28px;"> 
 				<input type="hidden" value="1" name="pageNo" id="goodsPage"/>
+				类型：<select name="contentStyle">
+					<option value="0">所有</option>
+					<option <s:if test="#request.contentStyle=='topic'">selected="selected"</s:if> value="topic">首页（专题）</option>
+					<option <s:if test="#request.contentStyle=='default'">selected="selected"</s:if> value="default">发现（主题）</option>
+				</select>
 				<span style="float:left;height:28px;margin-left:15px;">
 					主题上架时间 : <input class="easyui-datebox" name="startTime" value="${startTime }" style="width: 130px;height: 28px;" id="start_time" data-options="buttons:buttons" />
 					<input class="easyui-datebox" name="endTime" value="${endTime }" style="width: 130px;height: 28px;" id="end_time" data-options="buttons:buttons" />
 				</span>
-				<input id="searchKeyword" name="keywords" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字" name="searchKeyWord"> 
+				<input id="searchKeyword" name="keywords" class="mr5" type="text" value="" size="30"	placeholder="请输入模糊关键字"> 
 				<a href="javascript:void(0)" class="b_fr" onclick="searchGoods()">搜索</a>
 			</span>
 		</form>

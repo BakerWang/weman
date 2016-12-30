@@ -86,7 +86,6 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Se
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("test");
 	}
 	
 	public String resizeImage(String saveName,int width) throws Exception{

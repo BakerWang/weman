@@ -18,9 +18,9 @@ public class BannerServiceImpl extends BaseSupport implements BannerService{
 
 	@Override
 	public boolean saveBanner(PhoneBanner banner) throws Exception {
-		if(checkExistsBanner(banner)){
-			return false;
-		}
+//		if(checkExistsBanner(banner)){
+//			return false;
+//		}
 		this.baseDaoSupport.insert("es_api_banner", banner);
 		return true;
 	}

@@ -42,6 +42,22 @@ public class AdminProductAction extends BaseAction {
 
 	
 	/**
+	 * app商品详情页  浮层
+	 * @return
+	 */
+	public String getPrdocutDetailsApp(){
+		try {
+			int pid = Integer.parseInt(request.getParameter("pid"));
+			Map<String,Object> map = productService.getProductDetails(pid);
+			request.setAttribute("resObj", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "getProductDetailsAppSuccess";
+	}
+	
+	
+	/**
 	 * 后台概况详情
 	 * @return
 	 */
@@ -159,6 +175,7 @@ public class AdminProductAction extends BaseAction {
 			int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
 			int productBrand = Integer.parseInt(request.getParameter("productBrand"));
 			int isShowMKPrice = Integer.parseInt(request.getParameter("isShowMKPrice"));
+			int hasCoupon = Integer.parseInt(request.getParameter("hasCoupon"));
 			if(productImage!=null&&productImageFileName!=null&&!"".equals(productImageFileName)){
 				if (FileUtil.isAllowUp(productImageFileName)) {
 					String saveName = uploadImage(productImage,productImageFileName, "productImage");
@@ -176,6 +193,7 @@ public class AdminProductAction extends BaseAction {
 					map.put("price", price);
 					map.put("mktprice", mkprice);
 					map.put("productOrigin", productOrigin);
+					map.put("hasCoupon", hasCoupon);
 					productService.addProduct(map);
 				}
 			}
@@ -362,7 +380,12 @@ public class AdminProductAction extends BaseAction {
 			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
 			maps.put("startTime", startTime);
 			maps.put("endTime", endTime);
+			String contentSl = request.getParameter("contentStyle");
+			if(contentSl!=null&&!"0".equals(contentSl)){
+				maps.put("contentStyle", contentSl);
+			}
 			Page page = productService.getThemeProducts(Integer.parseInt(pageNo), 10, maps);
+			request.setAttribute("contentStyle", contentSl);
 			request.setAttribute("startTime", stime);
 			request.setAttribute("endTime", etime);
 			request.setAttribute("page", page);
@@ -551,10 +574,15 @@ public class AdminProductAction extends BaseAction {
 				}
 				productService.updateTheme(themeId, map);
 			}else{
+				String isIndexShow = request.getParameter("isIndexShow");
 				int tcid = Integer.parseInt(request.getParameter("tcid"));
-				productService.deleThemeContent(tcid);
+				if(isIndexShow!=null&&!"".equals(isIndexShow)){
+					map.put("isIndexShow", Integer.parseInt(isIndexShow));
+					productService.updateThemeContent(tcid, map);
+				}else{
+					productService.deleThemeContent(tcid);
+				}
 			}
-			
 			jsonObject.put("result", "yes");
 		} catch (Exception e) {
 			e.printStackTrace();

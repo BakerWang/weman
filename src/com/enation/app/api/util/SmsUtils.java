@@ -24,7 +24,6 @@ public class SmsUtils {
 				NEWACCOUNT, NEWPASSWORD, mobile, content);
 		JSONObject obj = JSONObject.fromObject(str);
 		int rspcode = (int) JSONObject.fromObject(JSONArray.fromObject(obj.get("Rets")).get(0)).get("Rspcode");
-		System.out.println(rspcode);
 		if(rspcode==0){
 			return true;
 		}

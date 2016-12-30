@@ -102,6 +102,7 @@ a {
 					<option value="主题详情页">主题详情页</option>
 					<option value="商品详情页">商品详情页</option>
 					<option value="静态图">静态图</option>
+					<option value="直播">直播</option>
 <!-- 					<option>社交详情页</option> -->
 <!-- 					<option>个人详情页</option> -->
 				</select>
@@ -179,6 +180,9 @@ a {
 			$('#bannerDetailsMsg').html('（选择准确的主题或商品）');
 		}else if(value=='静态图'){
 			
+		}else if(value=='直播'){
+			$('#bannerTypeHtml').show();
+			$('#bannerDetailsMsg').html('（填写直播名字）');
 		}
 	}
 	function searchGoods(){
@@ -264,7 +268,7 @@ a {
 		                'current_page'        :page-1,
 		                'callback'            : function(page_id,jq){
 		                	var page = parseInt(page_id)+1;
-		                	catchProductDetails(page,namekeyword);
+		                	catchThemeDetails(page,namekeyword);
 		                } 
 		            });
 		    	}else{

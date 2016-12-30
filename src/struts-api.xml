@@ -33,6 +33,10 @@
 		</action>
 	</package>
 	<package name="apiAdmin" namespace="/apiAdmin" extends="eop_default">
+		<action name="AdminLiveAction_*" class="com.enation.app.api.action.live.AdminLiveAction" method="{1}">
+			<result name="getLiveListSuccess">/admin/api/liveList.jsp</result>
+			<result name="getLiveDetailsSuccess">/admin/api/liveDetails.jsp</result>
+		</action>
 		<action name="ShareAction_*" class="com.enation.app.api.action.admin.action.ShareAction" method="{1}">
 			<result name="themeSuccess">/admin/api/shareThemeDetails.jsp</result>
 			<result name="articleSuccess">/admin/api/shareArticleDetails.jsp</result>
@@ -51,6 +55,7 @@
 			<result name="fetchThemeTagSuccess">/admin/api/updateThemeTag.jsp</result>
 			<result name="userThemeCountSuccess">/admin/api/userThemeCount.jsp</result>
 			<result name="goProductDetailsSuccess">/admin/api/updateProductDetails.jsp</result>
+			<result name="getProductDetailsAppSuccess">/admin/productDetails.jsp</result>
 		</action>
 		<action name="AdminBannerAction_*" class="com.enation.app.api.action.admin.action.AdminBannerAction" method="{1}">
 			<result name="bannerListSuccess">/admin/api/bannerList.jsp</result>

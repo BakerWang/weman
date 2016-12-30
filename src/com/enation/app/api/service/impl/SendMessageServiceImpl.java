@@ -22,14 +22,16 @@ public class SendMessageServiceImpl extends BaseSupport implements SendMessageSe
 		List<DeviceToken> dts = this.daoSupport.queryForList(sql, DeviceToken.class);
 		if(dts!=null&&dts.size()>0){
 			long nlong = new Date().getTime();
-			String insertSql = "insert into es_api_push_message (content,member_id,data_id,type,status,create_time) values ";
-			for(DeviceToken dt :dts){
-				if(dt.getMember_id()!=null){
-					insertSql = insertSql +"('"+pushMessage+"',"+dt.getMember_id()+",'"+dataId+"','"+type+"',0,"+nlong+"),";
+			if(!"live".equals(type)){
+				String insertSql = "insert into es_api_push_message (content,member_id,data_id,type,status,create_time) values ";
+				for(DeviceToken dt :dts){
+					if(dt.getMember_id()!=null){
+						insertSql = insertSql +"('"+pushMessage+"',"+dt.getMember_id()+",'"+dataId+"','"+type+"',0,"+nlong+"),";
+					}
 				}
+				insertSql = insertSql.substring(0,insertSql.lastIndexOf(","));
+				this.daoSupport.execute(insertSql);
 			}
-			insertSql = insertSql.substring(0,insertSql.lastIndexOf(","));
-			this.daoSupport.execute(insertSql);
 			Map<String,String> dataMap = new HashMap<String,String>();
 			dataMap.put("type", type);
 			if("product".equals(type)){

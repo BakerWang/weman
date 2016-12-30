@@ -120,6 +120,9 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			if(map.containsKey("keywords")){
 				sql = sql +" and at.title like '%"+map.get("keywords")+"%' ";
 			}
+			if(map.containsKey("contentStyle")){
+				sql = sql +" and at.contentStyle = '"+(String)map.get("contentStyle")+"'";
+			}
 			if(map.containsKey("typeId")){
 				int typeId = Integer.parseInt((String)map.get("typeId"));
 				if(typeId==0){
@@ -192,6 +195,9 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		}
 		if(map.containsKey("endTime")){
 			countSql = countSql +" and startTime < "+ (long)map.get("endTime");
+		}
+		if(map.containsKey("contentStyle")){
+			countSql = countSql +" and contentStyle = '"+(String)map.get("contentStyle")+"'";
 		}
 		int totalCount = this.daoSupport.queryForInt(countSql);
 		return new Page(pageNo, totalCount, pageSize, themeProducts);
@@ -594,7 +600,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 	 */
 	@Override
 	public Page getThemeProductsAPPVersion2(int pageNo, int pageSize, Map<String, String> map) throws Exception {
-		String sql="select at.id as id,at.contentStyle as contentStyle,at.image as image,eg.name as pname,eg.original as pimage,eg.price as pprice,eg.goods_id as pid "
+		String sql="select at.id as id,at.contentStyle as contentStyle,at.image as image,eg.productOrigin as productOrigin,eg.url as purl,eg.name as pname,eg.original as pimage,eg.price as pprice,eg.goods_id as pid "
 				+ " from es_api_theme at "
 				+ " left join es_api_theme_content eac on eac.theme_id = at.id "
 				+ " left join es_goods eg on eg.goods_id = eac.goods_id "

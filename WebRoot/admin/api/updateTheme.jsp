@@ -191,7 +191,14 @@ function  ajaxFileUpload(i){
 					<td><button tcid="${tc.id }" onclick="updateContent('product',this)">删除</button></td>
 				</s:elseif><s:elseif test="#tc.type=='product'">
 					<td class="themeContentTd" type="product" productId="${tc.goods_id }" position="${tc.postion }" showType="${tc.type }">商品："${tc.productName }"</td>
-					<td><button tcid="${tc.id }" onclick="updateContent('product',this)">删除</button></td>
+					<td>
+						<s:if test="#tc.isIndexShow==-1">
+							<button tcid="${tc.id }" onclick="updateContentIndex(this,1)">首页显示</button>
+						</s:if><s:else>
+							<button tcid="${tc.id }" onclick="updateContentIndex(this,-1)">首页不显示</button>
+						</s:else>
+						<button tcid="${tc.id }" onclick="updateContent('product',this)">删除</button>
+					</td>
 				</s:elseif><s:elseif test="#tc.type=='defaultImage'">
 					<td class="themeContentTd" type="defaultImage" position="${tc.postion}" >向上的箭头</td>
 					<td><button tcid="${tc.id }" onclick="removeTr(this)">删除</button></td>
@@ -304,6 +311,25 @@ handler: function(target){
 	 $('#start_time').datetimebox('setValue',"");
 }
 });
+function updateContentIndex(tt,status){
+	var tcid = $(tt).attr('tcid');
+	$.ajax({
+		type:'POST',
+		url:'/b2b2cbak/apiAdmin/AdminProductAction_updateThemeContent.do',
+		data:{
+			'tcid':tcid,
+			'isIndexShow':status,
+			'type':'product'
+		},
+		dataType:'json',
+	    success: function(msg){
+	    	if(msg.result=='yes'){
+    			alert('设置成功！');
+    			$(tt).parent().parent().remove();
+	    	}
+	    }
+	});
+}
 function updateContent(type,tt){
 	var tcid = $(tt).attr('tcid');
 	var fontSize=null;

@@ -95,6 +95,7 @@ a {
 					<option value="themeTopic">主题详情页(专题样式)</option>
 					<option value="product">商品详情页</option>
 					<option value="message">消息列表</option>
+					<option value="live">直播消息</option>
 				</select>
 			</td></tr>
 			<tr height="38px"><td class="spanFront">推送内容: </td>
@@ -157,6 +158,9 @@ handler: function(target){
 		}else if(value=='product'){
 			$('#bannerTypeThemeAndProduct').show();
 			$('#bannerDetailsMsg').html('（选择准确的主题或商品）');
+		}else if(value=='live'){
+			$('#bannerTypeHtml').show();
+			$('#bannerDetailsMsg').html('（填写直播名字，不要有错哦!）');
 		}else{
 			$('#bannerDetailsMsg').html('跳转消息列表不用填写内容');
 		}

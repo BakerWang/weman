@@ -65,6 +65,17 @@ public class Member implements java.io.Serializable {
 	private int height=175;
 	private int weight=70;
 	
+	private int canLive ;//能否直播  -1不能   1能
+	
+	
+	public int getCanLive() {
+		return canLive;
+	}
+
+	public void setCanLive(int canLive) {
+		this.canLive = canLive;
+	}
+
 	@PrimaryKeyField
 	public Integer getMember_id() {
 		return member_id;

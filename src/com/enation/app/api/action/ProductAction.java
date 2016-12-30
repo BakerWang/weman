@@ -15,7 +15,9 @@ import com.enation.app.api.model.Theme;
 import com.enation.app.api.model.ThemeContent;
 import com.enation.app.api.model.ThemeTag;
 import com.enation.app.api.service.BannerService;
+import com.enation.app.api.service.LiveService;
 import com.enation.app.api.service.ProductService;
+import com.enation.app.base.core.model.Member;
 import com.enation.app.shop.component.gallery.model.GoodsGallery;
 import com.enation.app.shop.core.model.Goods;
 import com.enation.framework.database.Page;
@@ -36,6 +38,38 @@ public class ProductAction extends BaseAction{
 	@Resource
 	private BannerService bannerService;
 	
+	
+	
+	/**
+	 * 商品二级详情页
+	 */
+	public void getProductDetailsAPP(){
+		try {
+			int pid = Integer.parseInt(paramObject.getString("pid"));
+			Map<String,Object> map = productService.getProductDetails(pid);
+			if(map!=null){
+				jsonObject.put("pid", String.valueOf(pid));
+				jsonObject.put("purl", String.valueOf(map.get("url")));
+				jsonObject.put("hasCoupon", String.valueOf(map.get("hasCoupon")));
+				jsonObject.put("h5Url", "http://www.weman.cc:8089/b2b2cbak/apiAdmin/AdminProductAction_getPrdocutDetailsApp.do?pid="+pid);
+			}
+		} catch (Exception e) {
+			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
+				jsonObject.put("result", "FAILED");
+			}
+			if(!jsonObject.containsKey("reason")){
+				jsonObject.put("reason", "系统错误！");
+			}
+			e.printStackTrace();
+			this.logger.error("调用"+methodStr+"方法失败");
+			this.logger.error("参数:"+requestStr);
+			this.logger.error("获取发现列表失败",e);
+			this.logger.error(e,e);
+		} finally {
+			out.print(jsonObject);
+			out.close();
+		}
+	}
 	
 	
 	
@@ -81,16 +115,22 @@ public class ProductAction extends BaseAction{
 							childrenTag.add(childrenTagObj);
 						}
 					}
-					typeObj.put("typeData", childrenTag);
 					if("身型".equals(themetag.getName())){
 						typeObj.put("typeStyle", "1");
+						typeObj.put("typeData", childrenTag);
 						typeJa.add(0,typeObj);
 					}else if("类型".equals(themetag.getName())){
 						typeObj.put("typeStyle", "2");
+						JSONObject childrenTagObj = new JSONObject();
+						childrenTagObj.put("typeId", "1001");
+						childrenTagObj.put("typeName", "直播分类");
+						childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findLiveDefault.png"));
+						childrenTag.add(3,childrenTagObj);
+						typeObj.put("typeData", childrenTag);
 						typeJa.add(typeObj);
 					}
-					
 				}
+				
 			}
 			List<PhoneBanner> phoneBanners = bannerService.getCurrentBanners("发现banner");
 			if(phoneBanners!=null&&phoneBanners.size()>0){
@@ -168,6 +208,49 @@ public class ProductAction extends BaseAction{
 			out.close();
 		}
 	}
+	
+	@Resource
+	private LiveService liveService;
+	
+	/**
+	 * 获取回放列表接口
+	 */
+	public void getReplayList(){
+		try {
+			page.setCurrentPageNo(Long.parseLong(paramObject.getString("page")));
+			page.setPageSize(10);
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("status", 1);
+			Page resPage = liveService.getLivePalyBackList(map,page);
+			List<Map<String,Object>> livelist = (List<Map<String, Object>>) resPage.getResult();
+			JSONArray jsonArray = new JSONArray();
+			for(Map<String,Object> liveDetail :livelist){
+				JSONObject liveObj = new JSONObject();
+				liveObj.put("liveImage", this.getImageUrl((String)liveDetail.get("image")));
+				liveObj.put("liveUrl", liveDetail.get("url"));
+				liveObj.put("liveId", String.valueOf(liveDetail.get("id")));
+				jsonArray.add(liveObj);
+			}
+			jsonObject.put("liveImage", this.getImageUrl("attachment/allDefaultImage/findThemeXiongDefault.png"));
+			jsonObject.put("liveData", jsonArray);
+		} catch (Exception e) {
+			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
+				jsonObject.put("result", "FAILED");
+			}
+			if(!jsonObject.containsKey("reason")){
+				jsonObject.put("reason", "系统错误！");
+			}
+			e.printStackTrace();
+			this.logger.error("调用"+methodStr+"方法失败");
+			this.logger.error("参数:"+requestStr);
+			this.logger.error("获取发现列表失败",e);
+			this.logger.error(e,e);
+		} finally {
+			out.print(jsonObject);
+			out.close();
+		}
+	}
+	
 	/**
 	 * 点击发现列表进入主题列表接口
 	 */
@@ -494,6 +577,8 @@ public class ProductAction extends BaseAction{
 						productObj.put("pname", tp.get("pname"));
 						productObj.put("pimage", this.getImageUrl((String)tp.get("pimage")));
 						productObj.put("pprice", String.valueOf(tp.get("pprice")));
+						productObj.put("purl", tp.get("purl"));
+						productObj.put("productOrigin", tp.get("productOrigin"));
 						JSONArray ja = theme.getJSONArray("productData");
 						ja.add(productObj);
 						theme.put("productData", ja);
@@ -510,8 +595,17 @@ public class ProductAction extends BaseAction{
 						beforThemeId = (int)tp.get("id");
 					}
 				}
-				jsonArray.add(theme);
-				jsonObject.put("themeData", jsonArray);
+				if(tps!=null&&tps.size()>0){
+					jsonArray.add(theme);
+					jsonObject.put("themeData", jsonArray); 
+				}
+				String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+				Member member = this.getMemberDetails(accessToken);
+				if(member!=null&&member.getCanLive()==1){
+					jsonObject.put("canLive", "yes");
+				}else{
+					jsonObject.put("canLive", "no");
+				}
 			}
 			//类型列表
 			List<ThemeTag> themeTags = productService.getThemeTagList();
@@ -554,21 +648,25 @@ public class ProductAction extends BaseAction{
 				}
 			}
 			//banner获取
-			List<PhoneBanner> phoneBanners = bannerService.getCurrentBanners("首页banner");
-			if(phoneBanners!=null&&phoneBanners.size()>0){
-				JSONArray bannerJarray = new JSONArray();
-				for(PhoneBanner pb:phoneBanners){
-					JSONObject bannerObj = new JSONObject();
-					bannerObj.put("bannerType", String.valueOf(pb.getType()));
-					bannerObj.put("bannerId", String.valueOf(pb.getId()));
-					bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
-					bannerObj.put("bannerData", pb.getDetails());
-					if(pb.getThemeContentStyle()!=null&&!pb.getThemeContentStyle().equals("0")){
-						bannerObj.put("contentStyle", pb.getThemeContentStyle());
+			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+			int cmemberid = this.getMemberId(accessToken);
+			if(cmemberid!=0&&(cmemberid==3||cmemberid==1||cmemberid==36||cmemberid==4||cmemberid==30)){
+				List<PhoneBanner> phoneBanners = bannerService.getCurrentBanners("首页banner");
+				if(phoneBanners!=null&&phoneBanners.size()>0){
+					JSONArray bannerJarray = new JSONArray();
+					for(PhoneBanner pb:phoneBanners){
+						JSONObject bannerObj = new JSONObject();
+						bannerObj.put("bannerType", String.valueOf(pb.getType()));
+						bannerObj.put("bannerId", String.valueOf(pb.getId()));
+						bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
+						bannerObj.put("bannerData", pb.getDetails());
+						if(pb.getThemeContentStyle()!=null&&!pb.getThemeContentStyle().equals("0")){
+							bannerObj.put("contentStyle", pb.getThemeContentStyle());
+						}
+						bannerJarray.add(bannerObj);
 					}
-					bannerJarray.add(bannerObj);
+					jsonObject.put("bannerList", bannerJarray);
 				}
-				jsonObject.put("bannerList", bannerJarray);
 			}
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){

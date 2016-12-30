@@ -59,6 +59,12 @@ body {
 			 	<tr><td>商品名字：</td><td><input name="title" style="width:350px;" /></td></tr>
 			 	<tr><td>商品标题：</td><td><input name="title2" style="width:350px;" /></td></tr>
 			 	<tr><td>购买地址：</td><td><input name="url" style="width:350px;"/></td></tr>
+			 	<tr><td>是否有优惠券：</td><td>
+			 		<select name="hasCoupon">
+			 			<option value="-1">无</option>
+			 			<option value="1">有</option>
+			 		</select>
+			 	</td></tr>
 			 	<tr><td>商品价格：</td><td><input name="price"/>(纯数字)</td></tr>
 			 	<tr><td>市场价格：</td><td><input name="mkprice" /></td></tr>
 			 	<tr><td>商品描述：</td><td><textarea name="details" rows="5" cols="40"></textarea> </td></tr>

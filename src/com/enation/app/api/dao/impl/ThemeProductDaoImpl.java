@@ -125,7 +125,6 @@ public class ThemeProductDaoImpl extends BaseSupport implements ThemeProductDao{
 					}else{
 						tp.getTheme().getThemetagList().put(keyid, valueid);
 					}
-					System.out.println(keyid+"||"+valueid);
 					break;
 				}
 			}
