@@ -122,8 +122,8 @@ public class ProductAction extends BaseAction{
 					}else if("类型".equals(themetag.getName())){
 						typeObj.put("typeStyle", "2");
 						JSONObject childrenTagObj = new JSONObject();
-						childrenTagObj.put("typeId", "1001");
-						childrenTagObj.put("typeName", "直播分类");
+						childrenTagObj.put("id", "1001");
+						childrenTagObj.put("name", "直播分类");
 						childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findLiveDefault.png"));
 						childrenTag.add(3,childrenTagObj);
 						typeObj.put("typeData", childrenTag);
@@ -232,6 +232,7 @@ public class ProductAction extends BaseAction{
 				jsonArray.add(liveObj);
 			}
 			jsonObject.put("liveImage", this.getImageUrl("attachment/allDefaultImage/findThemeXiongDefault.png"));
+			jsonObject.put("title", "直播回放接口");
 			jsonObject.put("liveData", jsonArray);
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
@@ -263,46 +264,89 @@ public class ProductAction extends BaseAction{
 				maps.put("typeId", typeId);
 			}
 			maps.put("findStatus", "1");
-			Page page =	productService.getThemeProducts(pageNo, 10 , maps);
-			List<ThemeProduct> tps = (List<ThemeProduct>) page.getResult();
-			JSONArray jsonArray = new JSONArray();
-			for(ThemeProduct tp:tps){
+			String type = paramObject.getString("type");
+			Page page = null;
+			if(type!=null&&"index".equals(type)){
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("contentStyle", "topic");
+				map.put("indexStatus", "1");
+				map.put("typeId", typeId);
+				page =	productService.getThemeProductsAPPVersion2(pageNo, 10 , map);
+				List<Map<String,Object>> tps = (List<Map<String,Object>>) page.getResult();
+				JSONArray jsonArray = new JSONArray();
 				JSONObject theme = new JSONObject();
-				theme.put("themeId", String.valueOf(tp.getTheme().getId()));
-				theme.put("themeImage", this.getImageUrl(tp.getTheme().getMinorImage()));
+				int beforThemeId = 0;
+				for(Map<String,Object> tp:tps){
+					if(beforThemeId == (int)tp.get("id")){
+						JSONObject productObj = new JSONObject();
+						productObj.put("pid", tp.get("pid"));
+						productObj.put("pname", tp.get("pname"));
+						productObj.put("pimage", this.getImageUrl((String)tp.get("pimage")));
+						productObj.put("pprice", String.valueOf(tp.get("pprice")));
+						productObj.put("purl", tp.get("purl"));
+						productObj.put("productOrigin", tp.get("productOrigin"));
+						JSONArray ja = theme.getJSONArray("productData");
+						ja.add(productObj);
+						theme.put("productData", ja);
+					}else{
+						if(beforThemeId != 0){
+							jsonArray.add(theme);
+						}
+						theme = new JSONObject();
+						theme.put("themeId", String.valueOf(tp.get("id")));
+						theme.put("themeImage", this.getImageUrl((String)tp.get("image")));
+						theme.put("contentStyle", tp.get("contentStyle"));
+						theme.put("tags", this.getImageUrl((String)tp.get("tagImage")));
+						theme.put("productData", new JSONArray());
+						beforThemeId = (int)tp.get("id");
+					}
+				}
+				if(tps!=null&&tps.size()>0){
+					jsonArray.add(theme);
+					jsonObject.put("themeData", jsonArray); 
+				}
+			}else{
+				page =	productService.getThemeProducts(pageNo, 10 , maps);
+				List<ThemeProduct> tps = (List<ThemeProduct>) page.getResult();
+				JSONArray jsonArray = new JSONArray();
+				for(ThemeProduct tp:tps){
+					JSONObject theme = new JSONObject();
+					theme.put("themeId", String.valueOf(tp.getTheme().getId()));
+					theme.put("themeImage", this.getImageUrl(tp.getTheme().getMinorImage()));
 //				theme.put("tags", tp.getTheme().getTagsImage());
-				theme.put("contentStyle", tp.getTheme().getContentStyle());
-				theme.put("themeTitle", tp.getTheme().getTitle());
-				theme.put("themeDetails", tp.getTheme().getDetails());
-				jsonArray.add(theme);
-			}
-			ThemeTag ctag = productService.getThemeTagById(typeId);
-			if(ctag!=null){
-				if("熊".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeXiongDefault.png"));
-				}else if("猴".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeHouDefault.png"));
-				}else if("狒狒".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeFeiFeiDefault.png"));
-				}else if("通用".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeAllDefault.png"));
-				}else if("服装".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeFuZhuangDefault.png"));
-				}else if("护肤".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeHuFuDefault.png"));
-				}else if("配饰".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemePeiShiDefault.png"));
-				}else if("生活".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeShengHuoDefault.png"));
-				}else if("情趣".equals(ctag.getName())){
-					jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeQingQuDefault.png"));
+					theme.put("contentStyle", tp.getTheme().getContentStyle());
+					theme.put("themeTitle", tp.getTheme().getTitle());
+					theme.put("themeDetails", tp.getTheme().getDetails());
+					jsonArray.add(theme);
+				}
+				ThemeTag ctag = productService.getThemeTagById(typeId);
+				if(ctag!=null){
+					if("熊".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeXiongDefault.png"));
+					}else if("猴".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeHouDefault.png"));
+					}else if("狒狒".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeFeiFeiDefault.png"));
+					}else if("通用".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeAllDefault.png"));
+					}else if("服装".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeFuZhuangDefault.png"));
+					}else if("护肤".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeHuFuDefault.png"));
+					}else if("配饰".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemePeiShiDefault.png"));
+					}else if("生活".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeShengHuoDefault.png"));
+					}else if("情趣".equals(ctag.getName())){
+						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeQingQuDefault.png"));
+					}else{
+						jsonObject.put("image", this.getImageUrl("123.png"));
+					}
 				}else{
 					jsonObject.put("image", this.getImageUrl("123.png"));
 				}
-			}else{
-				jsonObject.put("image", this.getImageUrl("123.png"));
+				jsonObject.put("themeData", jsonArray);
 			}
-			jsonObject.put("themeData", jsonArray);
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
 				jsonObject.put("result", "FAILED");

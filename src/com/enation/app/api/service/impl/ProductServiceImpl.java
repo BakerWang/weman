@@ -612,6 +612,14 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			if(map.containsKey("contentStyle")){
 				sql = sql +" and at.contentStyle = '" + map.get("contentStyle")+"'";
 			}
+			if(map.containsKey("typeId")){
+				int typeId = Integer.parseInt((String)map.get("typeId"));
+				if(typeId==0){
+					sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagkeyid = "+typeId +" )";
+				}else{
+					sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagvalueid = "+typeId +" )";
+				}
+			}
 		}
 		sql = sql +" order by at.startTime desc";
 		List<Map<String,Object>> themeList = this.daoSupport.queryForListPage(sql, pageNo, pageSize,new Date().getTime());

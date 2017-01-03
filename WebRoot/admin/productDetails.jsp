@@ -21,8 +21,23 @@ body{
 </style>
 </head>
 <body style="margin:0px;padding:0px;">
-<div style="width:100%;height:auto;overflow: hidden;">
-	${resObj.goods_id }
+<div style="width:88%;height:auto;overflow: hidden;margin:0 auto;margin-top:26px;margin-right:6%;margin-left:6%;">
+	<div style="width:90%;margin:0 auto;text-align: center;max-height:200px;overflow: hidden;">
+		<img src="/b2b2cbak/statics/${resObj.original }" width="100%" />
+	</div>
+	<div style="width:100%;text-align: center;color:#313131;font-weight: bold;font-size:18px;margin-top:12px;">
+		${resObj.brief }
+	</div>
+	<div style="width:100%;text-align: center;color:#626262;font-size:12px;margin-top:0px;">
+		${resObj.name }
+	</div>
+	<div style="width:100%;text-align: center;color:#FF5149;font-weight: bold;font-size: 28px;margin-top:8px;">
+		￥${resObj.price }
+	</div>
+	<div style="width:100%;text-align: left;color: #000000;font-size: 14px;margin-top:6px;">
+		${resObj.intro }
+	</div>
+	<div style="height:10px;width:100%;"></div>
 </div>
 </body>
 </html>
