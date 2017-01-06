@@ -543,23 +543,23 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 			Map<String,Object> commentMap = new HashMap<String,Object>();
 			commentMap.put("view_count", am.getViewCount()+1);
 			this.daoSupport.update("wh_api_article", commentMap, " id = "+am.getId());
-			if(memberId!=0){
+//			if(memberId!=0){
 //				String isExistsSql ="select count(*) from es_api_user_view eauv where eauv.type = 'clickArticle' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
 //				int count = this.daoSupport.queryForInt(isExistsSql, am.getId(),memberId);
 //				if(count>0){
 //					String updateUserViewSql = "update es_api_user_view eauv set eauv.viewCount = eauv.viewCount+1 where eauv.type = 'clickArticle' and eauv.dataId = ? and eauv.status = 1 and eauv.viewUserId = ?";
 //					this.daoSupport.execute(updateUserViewSql, am.getId(),memberId);
 //				}else{
-					Map<String,Object> userView = new HashMap<String,Object>();
-					userView.put("viewUserId", memberId);
-					userView.put("dataId", am.getId());
-					userView.put("type", "clickArticle");
-					userView.put("status", "1");
-					userView.put("viewCount", "1");
-					userView.put("create_time", new Date().getTime());
-					this.daoSupport.insert("es_api_user_view", userView);
+//					Map<String,Object> userView = new HashMap<String,Object>();
+//					userView.put("viewUserId", memberId);
+//					userView.put("dataId", am.getId());
+//					userView.put("type", "clickArticle");
+//					userView.put("status", "1");
+//					userView.put("viewCount", "1");
+//					userView.put("create_time", new Date().getTime());
+//					this.daoSupport.insert("es_api_user_view", userView);
 //				}
-			}
+//			}
 		}
 		return am;
 	}
@@ -605,6 +605,12 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 			String addCollectSql = "update es_api_theme eat set eat.love_count = eat.love_count-1  where eat.id = ?";
 			this.daoSupport.execute(addCollectSql, themeId);
 		}
+	}
+
+
+	@Override
+	public void saveUserView(Map<String, Object> userView) throws Exception {
+		this.daoSupport.insert("es_api_user_view", userView);
 	}
 
 	

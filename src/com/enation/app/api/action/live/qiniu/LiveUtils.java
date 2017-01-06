@@ -27,10 +27,10 @@ public class LiveUtils {
 	
 	public static void main(String[] args) {
 		try {
-			//System.out.println(createStream("100010").toJsonString());
-			//System.out.println(getStream("z1.test-02.mjchen134").toJsonString());
+			System.out.println(createStream("100012").toJsonString());
+			//System.out.println(getStream("z1.test-02.123456").toJsonString());
 			//z1.test-02.123456||1483069478||1483077595
-			saveLive("z1.test-02.123456",1483069478,1483077595);
+			//saveLive("z1.test-02.123456",1483069478,1483077595);
 			//String str=""
 			//System.out.println(JSONObject.fromObject(response.toString()).get(""));
 		} catch (Exception e) {
@@ -48,6 +48,7 @@ public class LiveUtils {
 		try {
 			
 			Stream stream = hub.createStream(streamName, null, "static");
+			System.out.println(stream.hlsLiveUrls().get(Stream.ORIGIN));
 			return stream;
 			/*
 			 * { "id":"z1.test-hub.55d97350eb6f92638c00000a",

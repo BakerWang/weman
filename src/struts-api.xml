@@ -40,6 +40,7 @@
 		<action name="ShareAction_*" class="com.enation.app.api.action.admin.action.ShareAction" method="{1}">
 			<result name="themeSuccess">/admin/api/shareThemeDetails.jsp</result>
 			<result name="articleSuccess">/admin/api/shareArticleDetails.jsp</result>
+			<result name="getLiveDetailsSuccess">/admin/api/shareLiveDetails.jsp</result>
 		</action>
 		<action name="AdminSendMessage_*" class="com.enation.app.api.action.admin.action.AdminSendMessage" method="{1}">
 			<result name="addSendMessageJspSuccess">/admin/api/newSendMsg.jsp</result>

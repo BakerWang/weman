@@ -11,6 +11,7 @@ import com.enation.app.api.action.BaseAction;
 import com.enation.app.api.action.live.qiniu.LiveUtils;
 import com.enation.app.api.action.live.qiniu.Stream;
 import com.enation.app.api.action.live.rongyun.LiveRYUtil;
+import com.enation.app.api.service.BannerService;
 import com.enation.app.api.service.LiveService;
 import com.enation.app.api.service.PersionService;
 import com.enation.app.base.core.model.Member;
@@ -26,6 +27,46 @@ public class LiveAction extends BaseAction {
 	@Resource
 	private LiveService liveService;
 
+	@Resource
+	private BannerService bannerService;
+	
+	/**
+	 * 获取直播详情分享数据
+	 */
+	public void getLiveShare(){
+		try{
+			String name = paramObject.getString("liveName");
+			Map<String,Object> liveDetails = liveService.getLiveDetails(name,false);
+			Map<String,Object> bannerDetails = bannerService.getBannerDetailsByTitle(name);
+			if(bannerDetails!=null){
+				jsonObject.put("image", this.getImageUrl((String)bannerDetails.get("image")));
+				jsonObject.put("title", (String)bannerDetails.get("title"));
+			}
+			jsonObject.put("details", (String)liveDetails.get("details"));
+			String realPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
+			String url = realPath+"/apiAdmin/ShareAction_getLiveDetails.do?liveName="+name;
+			jsonObject.put("url", url);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			logger.error(e, e);
+			this.logger.error("调用" + methodStr + "方法失败");
+			this.logger.error("参数:" + requestStr);
+			this.logger.error("获取直播分享详情失败！", e);
+			this.logger.error(e, e);
+			if ("success".equalsIgnoreCase(jsonObject.getString("result"))) {
+				jsonObject.put("result", "FAILED");
+			}
+			if (!jsonObject.containsKey("reason")) {
+				jsonObject.put("reason", "系统错误！");
+			}
+		} finally {
+			out.print(jsonObject);
+			out.close();
+		}
+	}
+	
+	
 	/**
 	 * 获取直播推流信息
 	 */
@@ -41,7 +82,7 @@ public class LiveAction extends BaseAction {
 			credentialsObj.put("accessKey", LiveUtils.ACCESS_KEY);
 			credentialsObj.put("secretKey", LiveUtils.SECRET_KEY);
 			jsonObject.put("credentials", credentialsObj);
-			Map<String,Object> liveDetails = liveService.getLiveDetails(name);
+			Map<String,Object> liveDetails = liveService.getLiveDetails(name,true);
 			String publishKey = null;
 			String hub = null;
 			String publishUrl = null;
@@ -70,6 +111,7 @@ public class LiveAction extends BaseAction {
 				map.put("publish", publishUrl);
 				map.put("isSave", -1);
 				map.put("play", playUrl);
+				map.put("playHls", streamObj.hlsLiveUrls().get(Stream.ORIGIN));
 				map.put("title", title);
 				map.put("streamId", streamObj.getStreamId());
 				map.put("playback", streamObj.getPlaybackHlshost());
@@ -123,7 +165,7 @@ public class LiveAction extends BaseAction {
 	public void getLivePlayDetails() {
 		try {
 			String name = paramObject.getString("name");
-			Map<String,Object> liveDetails = liveService.getLiveDetails(name);
+			Map<String,Object> liveDetails = liveService.getLiveDetails(name,false);
 			Member member = this.getMemberDetails(paramObject.getString("accessToken"));
 			String userphoto = this.getImageUrl(member.getFace());
 			int memberId = member.getMember_id();
@@ -133,6 +175,7 @@ public class LiveAction extends BaseAction {
 				jsonObject.put("publishUrl", liveDetails.get("publish"));
 				jsonObject.put("playUrl", liveDetails.get("play"));
 				jsonObject.put("chatId", liveDetails.get("title"));
+				jsonObject.put("liveName", name);
 				if(persionService.getIsFriend(memberId,String.valueOf((int)liveDetails.get("memberId")))){
 					jsonObject.put("isFriend", "yes");
 				}else{

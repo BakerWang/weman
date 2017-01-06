@@ -20,14 +20,16 @@ public class LiveServiceImpl extends BaseSupport implements LiveService{
 	}
 
 	@Override
-	public Map<String, Object> getLiveDetails(String name) throws Exception {
+	public Map<String, Object> getLiveDetails(String name,boolean isUpdateStartTime) throws Exception {
 		String sql = "select * from wh_api_live wal where wal.title = ?";
 		List<Map<String,Object>> livelist = this.daoSupport.queryForList(sql, name);
 		if(livelist==null||livelist.size()==0){
 			return null;
 		}else{
-			String updatesql="update wh_api_live wal set wal.startTime = ?  where wal.title = ?";
-			this.daoSupport.execute(updatesql, new Date().getTime()/1000,name);
+			if(isUpdateStartTime){
+				String updatesql="update wh_api_live wal set wal.startTime = ?  where wal.title = ?";
+				this.daoSupport.execute(updatesql, new Date().getTime()/1000,name);
+			}
 			return livelist.get(0);
 		}
 	}

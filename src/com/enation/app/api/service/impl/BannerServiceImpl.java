@@ -3,7 +3,7 @@ package com.enation.app.api.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -87,6 +87,16 @@ public class BannerServiceImpl extends BaseSupport implements BannerService{
 	public void updateBanner(PhoneBanner phoneBanner) throws Exception {
 		phoneBanner.setCreate_time(new Date().getTime());
 		this.daoSupport.update("es_api_banner", phoneBanner, "id = "+phoneBanner.getId());
+	}
+
+	@Override
+	public Map<String, Object> getBannerDetailsByTitle(String name) throws Exception {
+		String sql = "select * from es_api_banner eab where eab.details = ? and type = '直播' ";
+		List<Map<String, Object>> reslist = this.daoSupport.queryForList(sql, name);
+		if(reslist!=null&&reslist.size()>0){
+			return reslist.get(0);
+		}
+		return null;
 	}
 
 

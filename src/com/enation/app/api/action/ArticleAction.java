@@ -1,7 +1,6 @@
 package com.enation.app.api.action;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,17 +13,11 @@ import org.springframework.context.annotation.Scope;
 import com.enation.app.api.action.admin.form.AdminSearchForm;
 import com.enation.app.api.action.admin.form.ArticleModel;
 import com.enation.app.api.dto.ArticleComment;
-import com.enation.app.api.dto.BeginArticleCat;
-import com.enation.app.api.dto.BeginArticleType;
 import com.enation.app.api.model.PhoneBanner;
-import com.enation.app.api.pushMessage.PushMessage;
 import com.enation.app.api.service.ArticleService;
 import com.enation.app.api.service.BannerService;
-import com.enation.eop.sdk.utils.DateUtil;
-import com.enation.eop.sdk.utils.UploadUtil;
 import com.enation.framework.database.Page;
 import com.enation.framework.util.FileUtil;
-import com.enation.framework.util.StringUtil;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -45,6 +38,45 @@ public class ArticleAction extends BaseAction{
 	private String cutCoverFileName;//图片名字
 	
 	private AdminSearchForm adminSearchForm = new AdminSearchForm();
+	
+	
+	public void saveUserView(){
+		try{
+			int memberId = this.getMemberId(paramObject.getString("accessToken"));
+			String articleId = paramObject.has("articleId")?paramObject.getString("articleId"):null;
+			Map<String,Object> userView = new HashMap<String,Object>();
+			userView.put("status", "1");
+			userView.put("viewCount", "1");
+			userView.put("create_time", new Date().getTime());
+			if(memberId==0){
+				String clientId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+				userView.put("viewUserId", Integer.parseInt(clientId));
+				userView.put("dataId", Integer.parseInt(articleId));
+				userView.put("type", "nologinClickArticle");
+			}else{
+				userView.put("viewUserId", memberId);
+				userView.put("dataId", Integer.parseInt(articleId));
+				userView.put("type", "loginClickArticle");
+			}
+			articleService.saveUserView(userView);
+			jsonObject.put("result", "success");
+		} catch (Exception e) {
+			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
+				jsonObject.put("result", "FAILED");
+			}
+			if(!jsonObject.containsKey("reason")){
+				jsonObject.put("reason", "系统错误！");
+			}
+			e.printStackTrace();
+			this.logger.error("调用"+methodStr+"方法失败");
+			this.logger.error("参数:"+requestStr);
+			this.logger.error("用户日志失败",e);
+			this.logger.error(e,e);
+		} finally {
+			out.print(jsonObject);
+			out.close();
+		}
+	}
 	
 	
 	/**

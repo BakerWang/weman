@@ -1,6 +1,7 @@
 package com.enation.app.api.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.enation.app.api.action.admin.form.AdminSearchForm;
 import com.enation.app.api.model.PhoneBanner;
@@ -19,4 +20,6 @@ public interface BannerService {
 	public PhoneBanner getBannerDetails(String bid) throws Exception;
 
 	public void updateBanner(PhoneBanner phoneBanner) throws Exception;
+
+	public Map<String,Object> getBannerDetailsByTitle(String name) throws Exception;
 }

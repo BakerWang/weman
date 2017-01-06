@@ -223,6 +223,11 @@ public interface ArticleService {
 
 
 
+	void saveUserView(Map<String, Object> userView) throws Exception;
+
+
+
+
 	
 	
 }

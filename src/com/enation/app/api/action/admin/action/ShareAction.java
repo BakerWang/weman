@@ -14,6 +14,8 @@ import com.enation.app.api.action.admin.form.ArticleModel;
 import com.enation.app.api.dto.ArticleComment;
 import com.enation.app.api.model.Theme;
 import com.enation.app.api.service.ArticleService;
+import com.enation.app.api.service.BannerService;
+import com.enation.app.api.service.LiveService;
 import com.enation.app.api.service.ProductService;
 import com.enation.framework.database.Page;
 @Scope("prototype")
@@ -27,6 +29,32 @@ public class ShareAction extends BaseAction{
 	@Resource
 	private ArticleService articleService;
 	
+	@Resource
+	private LiveService liveService;
+
+	@Resource
+	private BannerService bannerService;
+	
+	/**
+	 * 获取直播分享页面
+	 */
+	public String getLiveDetails(){
+		try{
+			String name = request.getParameter("liveName");
+			Map<String,Object> liveDetails = liveService.getLiveDetails(name,false);
+			Map<String,Object> bannerDetails = bannerService.getBannerDetailsByTitle(name);
+			request.setAttribute("liveObj", liveDetails);
+			request.setAttribute("bannerObj", bannerDetails);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "getLiveDetailsSuccess";
+	}
+	
+	/**
+	 * 获取社交发文的分享页面 和获取主题详情的分享页面
+	 * @return
+	 */
 	public String getDataDetails(){
 		try {
 			String type = request.getParameter("type");

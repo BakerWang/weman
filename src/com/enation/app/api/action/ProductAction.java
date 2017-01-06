@@ -14,8 +14,10 @@ import com.enation.app.api.model.PhoneBanner;
 import com.enation.app.api.model.Theme;
 import com.enation.app.api.model.ThemeContent;
 import com.enation.app.api.model.ThemeTag;
+import com.enation.app.api.service.ArticleService;
 import com.enation.app.api.service.BannerService;
 import com.enation.app.api.service.LiveService;
+import com.enation.app.api.service.PersionService;
 import com.enation.app.api.service.ProductService;
 import com.enation.app.base.core.model.Member;
 import com.enation.app.shop.component.gallery.model.GoodsGallery;
@@ -121,11 +123,14 @@ public class ProductAction extends BaseAction{
 						typeJa.add(0,typeObj);
 					}else if("类型".equals(themetag.getName())){
 						typeObj.put("typeStyle", "2");
-						JSONObject childrenTagObj = new JSONObject();
-						childrenTagObj.put("id", "1001");
-						childrenTagObj.put("name", "直播分类");
-						childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findLiveDefault.png"));
-						childrenTag.add(3,childrenTagObj);
+						String version = paramObject.has("version")?paramObject.getString("version"):null;
+						if(version!=null&&version.startsWith("2.")){
+							JSONObject childrenTagObj = new JSONObject();
+							childrenTagObj.put("id", "1001");
+							childrenTagObj.put("name", "直播分类");
+							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findLiveDefault.png"));
+							childrenTag.add(3,childrenTagObj);
+						}
 						typeObj.put("typeData", childrenTag);
 						typeJa.add(typeObj);
 					}
@@ -171,8 +176,27 @@ public class ProductAction extends BaseAction{
 	/**
 	 * 点击banner进入主题列表接口
 	 */
+	@Resource
+	private ArticleService articleService;
+	
 	public void getBannerThemeList(){
 		try {
+//			String clientId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+//			int memberId = this.getMemberId(paramObject.has("accessToken")?paramObject.getString("accessToken"):null);
+//			Map<String,Object> userView = new HashMap<String,Object>();
+//			userView.put("status", "1");
+//			userView.put("viewCount", "1");
+//			userView.put("create_time", new Date().getTime());
+//			if(memberId==0){
+//				userView.put("viewUserId", Integer.parseInt(clientId));
+//				userView.put("dataId", Integer.parseInt(paramObject.getString("bannerId")));
+//				userView.put("type", "nologinClickBanner");
+//			}else{
+//				userView.put("viewUserId", memberId);
+//				userView.put("dataId", Integer.parseInt(paramObject.getString("bannerId")));
+//				userView.put("type", "loginClickBanner");
+//			}
+//			articleService.saveUserView(userView);
 			int pageNo = Integer.parseInt(paramObject.getString("page"));
 			Map<String, Object> maps = new HashMap<String, Object>();
 			maps.put("bannerStatus", paramObject.getString("bannerId"));
@@ -215,6 +239,9 @@ public class ProductAction extends BaseAction{
 	/**
 	 * 获取回放列表接口
 	 */
+	@Resource
+	private PersionService persionService;
+	
 	public void getReplayList(){
 		try {
 			page.setCurrentPageNo(Long.parseLong(paramObject.getString("page")));
@@ -223,12 +250,24 @@ public class ProductAction extends BaseAction{
 			map.put("status", 1);
 			Page resPage = liveService.getLivePalyBackList(map,page);
 			List<Map<String,Object>> livelist = (List<Map<String, Object>>) resPage.getResult();
+			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
 			JSONArray jsonArray = new JSONArray();
 			for(Map<String,Object> liveDetail :livelist){
 				JSONObject liveObj = new JSONObject();
 				liveObj.put("liveImage", this.getImageUrl((String)liveDetail.get("image")));
 				liveObj.put("liveUrl", liveDetail.get("url"));
+				liveObj.put("liveTargetUrl", liveDetail.get("targetUrl"));
 				liveObj.put("liveId", String.valueOf(liveDetail.get("id")));
+				if(accessToken==null){
+					jsonObject.put("isFriend", "nologin");
+				}else{
+					int member_id = this.getMemberId(accessToken);
+					if(persionService.getIsFriend(member_id,String.valueOf((int)liveDetail.get("memberId")))){
+						jsonObject.put("isFriend", "yes");
+					}else{
+						jsonObject.put("isFriend", "no");
+					}
+				}
 				jsonArray.add(liveObj);
 			}
 			jsonObject.put("liveImage", this.getImageUrl("attachment/allDefaultImage/findThemeXiongDefault.png"));
@@ -264,7 +303,7 @@ public class ProductAction extends BaseAction{
 				maps.put("typeId", typeId);
 			}
 			maps.put("findStatus", "1");
-			String type = paramObject.getString("type");
+			String type = paramObject.has("type")?paramObject.getString("type"):null;
 			Page page = null;
 			if(type!=null&&"index".equals(type)){
 				Map<String, String> map = new HashMap<String, String>();
@@ -305,6 +344,11 @@ public class ProductAction extends BaseAction{
 					jsonArray.add(theme);
 					jsonObject.put("themeData", jsonArray); 
 				}
+				jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeQingQuDefault.png"));
+				ThemeTag ctag = productService.getThemeTagById(typeId);
+				if(ctag!=null){
+					jsonObject.put("title", ctag.getName()+"专题");
+				}
 			}else{
 				page =	productService.getThemeProducts(pageNo, 10 , maps);
 				List<ThemeProduct> tps = (List<ThemeProduct>) page.getResult();
@@ -321,6 +365,7 @@ public class ProductAction extends BaseAction{
 				}
 				ThemeTag ctag = productService.getThemeTagById(typeId);
 				if(ctag!=null){
+					jsonObject.put("title", ctag.getName());
 					if("熊".equals(ctag.getName())){
 						jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeXiongDefault.png"));
 					}else if("猴".equals(ctag.getName())){

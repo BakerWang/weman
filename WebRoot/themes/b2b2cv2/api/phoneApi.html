@@ -407,9 +407,20 @@
 		var dataParam = {
 				"loginType":"global",
 				"clientType":"iphone",
-				"type":"index",
 				"page":"1",
 				"typeId":$('#typeId').val(),
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	function getFindThemeListIndex(){
+		var url = "ProductAction_getFindThemeList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"type":"index",
+				"page":"1",
+				"typeId":$('#typeId2').val(),
 				"version":"1.0"
 		};
 		base(url,dataParam);
@@ -584,7 +595,16 @@
 		base(url,dataParam); 
 	}
 	
-	
+	function getShareDetails(){
+		var url = "LiveAction_getLiveShare.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"2.0.1",
+				"liveName":$('#liveName').val()
+		};
+		base(url,dataParam); 
+	}
 </script>
 </head>
 <body>
@@ -603,6 +623,7 @@
 	<input type="text" id="clientId" value="6a4fb9eaaa98824d3272b148ecd60632"/><input type="button" onclick="bindClientId()" value="绑定个推的clientId(唯一标示)"/><br/>
 	
 	<h2>直播接口测试</h2><br/>
+	<input type="text" id="liveName" value="123456"/><input type="button" onclick="getShareDetails()" value="获取直播分享详情"/><br/>
 	<input type="text" value="yimeizhibo01" id="publishKey" /><input type="button" onclick="catchPublishDetails()" value="获取录播接口"/><br/>
 	<input type="text" value="yimeizhibo01" id="playKey" /><input type="button" onclick="catchPlayDetails()" value="获取播放接口"/><br/>
 	<h2>登录注册接口测试</h2><br/>
@@ -650,6 +671,7 @@
 	<input type="button" onclick="getFindList()" value="发现接口"/><br/>
 	<input type="text" id="typeId2" value="1001"/><input type="button" onclick="getFindReplayList()" value="回放列表接口"/><br/>
 	<input type="text" id="typeId" value="21"/><input type="button" onclick="getFindThemeList()" value="点击发现获取主题列表接口"/><br/>
+	<input type="text" id="typeId2" value="21"/><input type="button" onclick="getFindThemeListIndex()" value="点击发现获取主题列表接口(首页)"/><br/>
 	<br/><br/><br/><br/>
 </body>
 </html>

@@ -9,7 +9,7 @@ public interface LiveService {
 
 	void saveLiveDetails(Map<String,Object> liveDetails) throws Exception;
 	
-	Map<String,Object> getLiveDetails(String name) throws Exception;
+	Map<String,Object> getLiveDetails(String name,boolean isUpdateStartTime) throws Exception;
 
 	Page getLivePalyBackList(Map<String,Object> map,Page page) throws Exception;
 
