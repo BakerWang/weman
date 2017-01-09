@@ -65,7 +65,16 @@ public class LiveServiceImpl extends BaseSupport implements LiveService{
 		this.baseDaoSupport.update("wh_api_live", map, " id = "+lid);
 	}
 
-	
+	@Override
+	public List<Map<String, Object>> getLiveUserList(Map<String, Object> map) throws Exception {
+		String sql ="select em.member_id as userid,em.uname as username,em.face as userphoto from es_member em where 1=1 ";
+		if(map!=null){
+			if(map.containsKey("liveName")){
+				sql = sql +" and em.liveName = '"+map.get("liveName")+"'";
+			}
+		}
+		return this.daoSupport.queryForList(sql);
+	}
 	
 	
 }

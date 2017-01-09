@@ -35,6 +35,7 @@ public class PersionAction extends BaseAction{
 	@Resource
 	private ProductService productService;
 	
+	
 	/**
 	 * 获取通知4     被赞列表3   被评论列表2   被加关注列表1
 	 */

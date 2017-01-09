@@ -551,6 +551,16 @@
 			$('#persionUserId2').show();
 		}
 	}
+	function getLiveUserList(){
+		var url = 'LiveAction_fecthLiveUserList.do';
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"1.0",
+				"liveName":$('#livenameInput').val()
+		};
+		base(url,dataParam); 
+	}
 	function catchPublishDetails(){
 		var url = 'LiveAction_getLivePublishDetails.do';
 		var dataParam = {
@@ -617,7 +627,7 @@
 	<br/><br/>
 	测试接口<br/>
 	<input type="button" onclick="installDb()" value="安装API相关DB"/><br/>
-	
+	<input type="text" id="livenameInput" value="123456"/><input type="button" onclick="getLiveUserList()" value="获取某个房间的伪造用户列表"/><br/>
 	<input type="text" id="username" value="1234"/><input type="button" onclick="getAccessToken()" value="获取此用户的accessToken"/><br/>
 	<input type="text" id="deviceToken" value="539869a1fb302e382c44a3b74cc005f39f09051046a6a03be32727a90a8843ab"/>
 	<input type="text" id="clientId" value="6a4fb9eaaa98824d3272b148ecd60632"/><input type="button" onclick="bindClientId()" value="绑定个推的clientId(唯一标示)"/><br/>

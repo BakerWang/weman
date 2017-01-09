@@ -2,6 +2,7 @@ package com.enation.app.api.action.live;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -17,6 +18,7 @@ import com.enation.app.api.service.PersionService;
 import com.enation.app.base.core.model.Member;
 import com.enation.app.shop.core.service.impl.MemberManager;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 @Scope("prototype")
@@ -29,6 +31,12 @@ public class LiveAction extends BaseAction {
 
 	@Resource
 	private BannerService bannerService;
+	
+	@Resource
+	private PersionService persionService;
+	
+	@Resource
+	private MemberManager memberService;
 	
 	/**
 	 * 获取直播详情分享数据
@@ -66,6 +74,44 @@ public class LiveAction extends BaseAction {
 		}
 	}
 	
+	/**
+	 * 获取直播伪造用户列表
+	 */
+	public void fecthLiveUserList(){
+		try{
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("liveName", paramObject.getString("liveName"));
+			List<Map<String,Object>> resmap = liveService.getLiveUserList(map);
+			if(resmap!=null){
+				String path = request.getContextPath();
+				String bpath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+				JSONArray ja = new JSONArray();
+				for(Map<String,Object> obj :resmap){
+					JSONObject userObj = new JSONObject();
+					userObj.put("userid", obj.get("userid"));
+					userObj.put("username", obj.get("username"));
+					userObj.put("userphoto", bpath+"/statics/"+(String)obj.get("userphoto"));
+					ja.add(userObj);
+				}
+				jsonObject.put("liveUserList", ja);
+			}
+		} catch (Exception e) {
+			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
+				jsonObject.put("result", "FAILED");
+			}
+			if(!jsonObject.containsKey("reason")){
+				jsonObject.put("reason", "系统错误！");
+			}
+			e.printStackTrace();
+			this.logger.error("调用"+methodStr+"方法失败");
+			this.logger.error("参数:"+requestStr);
+			this.logger.error("获取填充直播伪造用户列表失败",e);
+			this.logger.error(e,e);
+		} finally {
+			out.print(jsonObject);
+			out.close();
+		}
+	}
 	
 	/**
 	 * 获取直播推流信息
@@ -155,10 +201,6 @@ public class LiveAction extends BaseAction {
 		}
 	}
 
-	@Resource
-	private PersionService persionService;
-	@Resource
-	private MemberManager memberService;
 	/**
 	 * 获取直播拉流信息
 	 */

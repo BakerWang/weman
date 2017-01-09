@@ -16,4 +16,11 @@ public interface LiveService {
 	Map<String, Object> getLiveById(long parseLong) throws Exception;
 
 	void updateLive(long lid,Map<String, Object> map) throws Exception;
+	
+	/**
+	 * 获取直播伪造用户列表
+	 * @param map
+	 * @throws Exception
+	 */
+	List<Map<String,Object>> getLiveUserList(Map<String, Object> map) throws Exception;
 }
