@@ -236,12 +236,12 @@ public class ProductAction extends BaseAction{
 	@Resource
 	private LiveService liveService;
 	
-	/**
-	 * 获取回放列表接口
-	 */
 	@Resource
 	private PersionService persionService;
 	
+	/**
+	 * 获取回放列表接口
+	 */
 	public void getReplayList(){
 		try {
 			page.setCurrentPageNo(Long.parseLong(paramObject.getString("page")));
@@ -251,21 +251,25 @@ public class ProductAction extends BaseAction{
 			Page resPage = liveService.getLivePalyBackList(map,page);
 			List<Map<String,Object>> livelist = (List<Map<String, Object>>) resPage.getResult();
 			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+			int member_id = this.getMemberId(accessToken);
 			JSONArray jsonArray = new JSONArray();
+			String path = request.getContextPath();
+			String bpath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 			for(Map<String,Object> liveDetail :livelist){
 				JSONObject liveObj = new JSONObject();
 				liveObj.put("liveImage", this.getImageUrl((String)liveDetail.get("image")));
 				liveObj.put("liveUrl", liveDetail.get("url"));
 				liveObj.put("liveTargetUrl", liveDetail.get("targetUrl"));
 				liveObj.put("liveId", String.valueOf(liveDetail.get("id")));
+				liveObj.put("liveUserName", liveDetail.get("username"));
+				liveObj.put("liveUserPhoto",bpath+"/statics/"+(String)liveDetail.get("userphoto"));
 				if(accessToken==null){
-					jsonObject.put("isFriend", "nologin");
+					liveObj.put("isFriend", "nologin");
 				}else{
-					int member_id = this.getMemberId(accessToken);
 					if(persionService.getIsFriend(member_id,String.valueOf((int)liveDetail.get("memberId")))){
-						jsonObject.put("isFriend", "yes");
+						liveObj.put("isFriend", "yes");
 					}else{
-						jsonObject.put("isFriend", "no");
+						liveObj.put("isFriend", "no");
 					}
 				}
 				jsonArray.add(liveObj);

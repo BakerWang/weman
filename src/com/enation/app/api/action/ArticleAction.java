@@ -315,59 +315,83 @@ public class ArticleAction extends BaseAction{
 	 */
 	public void articleDetails(){
 		try{
-			int cmemberId = this.getMemberId(paramObject.getString("accessToken"));
+			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+			int cmemberId = this.getMemberId(accessToken);
 			int articleId = Integer.parseInt((String)paramObject.get("articleId"));
-			ArticleModel mapObj = articleService.getArtilceDetails(articleId,cmemberId);
-			JSONObject obj = new JSONObject();
-			if(cmemberId==mapObj.getUserId()){
-				obj.put("canDel", "yes");
-			}else{
-				obj.put("canDel", "no");
-			}
-			obj.put("userId", String.valueOf(mapObj.getUserId()));
-			obj.put("userName", mapObj.getUserName());
-			obj.put("userPhoto", this.getImageUrl(mapObj.getUserPhoto()));
-			String userAttr = this.getAge(mapObj.getUserAge())+"|"+mapObj.getUserHeight()+"|"+mapObj.getUserWeight();
-			obj.put("userAttr", userAttr);
-			if(!paramObject.has("accessToken")){//判断是否关注
-				obj.put("isFollow", "no");
-			}else{
-				int articleUserId = (int)mapObj.getUserId();
-				if(cmemberId==articleUserId){
-					obj.put("isFollow", "yes");
+			if(cmemberId!=0){
+				ArticleModel mapObj = articleService.getArtilceDetails(articleId,cmemberId);
+				JSONObject obj = new JSONObject();
+				if(cmemberId==mapObj.getUserId()){
+					obj.put("canDel", "yes");
 				}else{
-					List<Integer> dataIds = articleService.getFollowsByMemberId(cmemberId, 1);
-					if(dataIds.contains(articleUserId)){
+					obj.put("canDel", "no");
+				}
+				obj.put("userId", String.valueOf(mapObj.getUserId()));
+				obj.put("userName", mapObj.getUserName());
+				obj.put("userPhoto", this.getImageUrl(mapObj.getUserPhoto()));
+				String userAttr = this.getAge(mapObj.getUserAge())+"|"+mapObj.getUserHeight()+"|"+mapObj.getUserWeight();
+				obj.put("userAttr", userAttr);
+				if(!paramObject.has("accessToken")){//判断是否关注
+					obj.put("isFollow", "no");
+				}else{
+					int articleUserId = (int)mapObj.getUserId();
+					if(cmemberId==articleUserId){
 						obj.put("isFollow", "yes");
 					}else{
-						obj.put("isFollow", "no");
+						List<Integer> dataIds = articleService.getFollowsByMemberId(cmemberId, 1);
+						if(dataIds.contains(articleUserId)){
+							obj.put("isFollow", "yes");
+						}else{
+							obj.put("isFollow", "no");
+						}
 					}
 				}
-			}
-			obj.put("articleId", String.valueOf((int)mapObj.getId()));
-			obj.put("articleImage", this.getImageUrl(mapObj.getImage()));
-			obj.put("articleTags", mapObj.getTagStr());
-			obj.put("articleCreateTime", com.enation.framework.util.DateUtil.getShowDate(new Date((Long)mapObj.getCreateTime())));
-			obj.put("articleContent", mapObj.getContent());
-			//obj.put("articleCategoryName", String.valueOf(mapObj.getCategoryName()));
-			obj.put("articleCategoryImage", String.valueOf(mapObj.getCategoryImage()));
-			obj.put("articleBrandName", String.valueOf(mapObj.getBrandName()));
-			//obj.put("articleBrandLogo", String.valueOf(mapObj.getBrandLogo()));
-			obj.put("articleLoveCount", String.valueOf((int)mapObj.getLoveCount()));
-			obj.put("articleComment", String.valueOf((int)mapObj.getCommentCount()));
-			obj.put("articleViewCount", String.valueOf((int)mapObj.getViewCount()));
-			jsonObject.put("data", obj);
-			if(mapObj.getLoveUserList()!=null&&mapObj.getLoveUserList().size()>0){
-				JSONArray loveArray = new JSONArray();
-				for(Map<String,Object> map :(List<Map<String,Object>>)mapObj.getLoveUserList()){
-					JSONObject lobj = new JSONObject();
-					lobj.put("userId", String.valueOf((int)map.get("member_id")));
-					lobj.put("userphoto", this.getImageUrl((String)map.get("photo")));
-					loveArray.add(lobj);
+				obj.put("articleId", String.valueOf((int)mapObj.getId()));
+				obj.put("articleImage", this.getImageUrl(mapObj.getImage()));
+				obj.put("articleTags", mapObj.getTagStr());
+				obj.put("articleCreateTime", com.enation.framework.util.DateUtil.getShowDate(new Date((Long)mapObj.getCreateTime())));
+				obj.put("articleContent", mapObj.getContent());
+				//obj.put("articleCategoryName", String.valueOf(mapObj.getCategoryName()));
+				obj.put("articleCategoryImage", String.valueOf(mapObj.getCategoryImage()));
+				obj.put("articleBrandName", String.valueOf(mapObj.getBrandName()));
+				//obj.put("articleBrandLogo", String.valueOf(mapObj.getBrandLogo()));
+				obj.put("articleLoveCount", String.valueOf((int)mapObj.getLoveCount()));
+				obj.put("articleComment", String.valueOf((int)mapObj.getCommentCount()));
+				obj.put("articleViewCount", String.valueOf((int)mapObj.getViewCount()));
+				jsonObject.put("data", obj);
+				if(mapObj.getLoveUserList()!=null&&mapObj.getLoveUserList().size()>0){
+					JSONArray loveArray = new JSONArray();
+					for(Map<String,Object> map :(List<Map<String,Object>>)mapObj.getLoveUserList()){
+						JSONObject lobj = new JSONObject();
+						lobj.put("userId", String.valueOf((int)map.get("member_id")));
+						lobj.put("userphoto", this.getImageUrl((String)map.get("photo")));
+						loveArray.add(lobj);
+					}
+					jsonObject.put("loveUsers", loveArray);
 				}
-				jsonObject.put("loveUsers", loveArray);
 			}
 			
+			Map<String,Object> userView = new HashMap<String,Object>();
+			userView.put("status", "1");
+			userView.put("viewCount", "1");
+			userView.put("create_time", new Date().getTime());
+			if(cmemberId==0){
+				String clientId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+				if(clientId==null){
+					jsonObject.put("result", "FAILED");
+					jsonObject.put("reason", "没有传clientId");
+					return;
+				}else{
+					userView.put("viewUserId", Integer.parseInt(clientId));
+				}
+				userView.put("dataId", articleId);
+				userView.put("type", "nologinClickArticle");
+			}else{
+				userView.put("viewUserId", cmemberId);
+				userView.put("dataId", articleId);
+				userView.put("type", "loginClickArticle");
+			}
+			articleService.saveUserView(userView);
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
 				jsonObject.put("result", "FAILED");

@@ -123,6 +123,16 @@
 		};
 		base(url,dataParam); 
 	}
+	function articleDetails2(){
+		var articleId = $('#articleId').val();
+		var url = "ArticleAction_articleDetails.do";
+		var dataParam = {
+				"clientType":"iphone",
+				"loginType":"global",
+				"articleId":articleId
+		};
+		base(url,dataParam); 
+	}
 	function createArticleComment(){
 		var articleId = $('#articleIdC').val();
 		var content = $('#commentContent').val();
@@ -428,6 +438,16 @@
 	function getFindReplayList(){
 		var url = "ProductAction_getReplayList.do";
 		var dataParam = {
+				"clientType":"iphone",
+				"accessToken":accessToken,
+				"page":"1",
+				"version":"1.0"
+		};
+		base(url,dataParam);
+	}
+	function getFindReplayList2(){
+		var url = "ProductAction_getReplayList.do";
+		var dataParam = {
 				"loginType":"global",
 				"clientType":"iphone",
 				"page":"1",
@@ -653,7 +673,7 @@
 	<input type="button" onclick="createArticle()" value="发文社交"/><br/>
 	<select id="selArticleType"><option value="1">未登录的情况下</option><option value="all">登录后全部</option><option value="friends">只看我关注的（登录后）</option></select><input type="button" onclick="articleList()" value="发文列表"/><br/>
 	<input type="text" id="articleIdD" value="10" /><input type="button" onclick="articleCommentList()" value="获取发文评论列表"/><br/>
-	<input type="text" id="articleId" value="10" /><input type="button" onclick="articleDetails()" value="发文详情"/><br/>
+	<input type="text" id="articleId" value="125" /><input type="button" onclick="articleDetails()" value="发文详情"/><input type="button" onclick="articleDetails2()" value="(未登录)发文详情"/><br/>
 	<input type="text" id="articleIdDel" value="7" /><input type="button" onclick="deleteArticle()" value="删除发文"/><br/>
 	<input type="text" id="articleIdC" value="7" /><select id="commentType"><option value="1">公开</option><option value="0">私密</option> </select> <input type="text" id="commentContent" value="我是评论。。" /><input type="button" onclick="createArticleComment()" value="评论发文"/><br/>
 	<input type="text" id="articleIdCD" value="7" /><input type="button" onclick="deleteArticleComment()" value="删除发文评论"/><br/>
@@ -679,7 +699,7 @@
 	<select id="selMessageType"><option value="3">获取被赞列表</option><option value="2">获取被评论列表</option><option value="1">获取被加好友列表</option><option value="4">获取系统通知列表</option> </select><input type="button" onclick="fecthMessageList()" value="获取消息类别列表"/>
 	<h2>发现接口测试</h2><br/>
 	<input type="button" onclick="getFindList()" value="发现接口"/><br/>
-	<input type="text" id="typeId2" value="1001"/><input type="button" onclick="getFindReplayList()" value="回放列表接口"/><br/>
+	<input type="text" id="typeId2" value="1001"/><input type="button" onclick="getFindReplayList()" value="回放列表接口"/><input type="button" onclick="getFindReplayList2()" value="(未登录)回放列表接口"/><br/>
 	<input type="text" id="typeId" value="21"/><input type="button" onclick="getFindThemeList()" value="点击发现获取主题列表接口"/><br/>
 	<input type="text" id="typeId2" value="21"/><input type="button" onclick="getFindThemeListIndex()" value="点击发现获取主题列表接口(首页)"/><br/>
 	<br/><br/><br/><br/>

@@ -36,7 +36,9 @@ public class LiveServiceImpl extends BaseSupport implements LiveService{
 
 	@Override
 	public Page getLivePalyBackList(Map<String,Object> map,Page page) throws Exception {
-		String sql = "select wal.* from wh_api_live wal where 1=1 ";
+		String sql = "select wal.*,em.uname as username,em.face as userphoto from wh_api_live wal "
+				+ " left join es_member em on em.member_id = wal.memberId"
+				+ " where 1=1 ";
 		if(map!=null){
 			if(map.containsKey("status")){
 				sql = sql +" and wal.status = 1 ";
