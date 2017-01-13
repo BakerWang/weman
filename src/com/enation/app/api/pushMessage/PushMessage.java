@@ -20,9 +20,9 @@ public class PushMessage {
     	dataMap.put("type", "web");
     	dataMap.put("data", "http://www.baidu.com");
     	DeviceToken dt = new DeviceToken();
-    	dt.setDeviceToken("ce0e79b2fed089deb75555a29358a2302d1e5ff0970bbe9c5e8a8991671c49a6");
+    	dt.setDeviceToken("2920882402e61b161d654cf3db97e92b04b53d348ed26f29d53d7ed0ff5cd29a");
     	dt.setTokenType("iphone");
-    	dt.setClientId("6a4fb9eaaa98824d3272b148ecd60632");
+    	dt.setClientId("54c707552f3d42b6531abbf93cee5fd0");
 //    	dt.setToken("404f9f535df2b917a27b4b7f4fa24586cae3909a4acb5f071b697f42f9085230");
 //    	dt.setTokenType("iphone");
 //    	dt.setClientId("54c707552f3d42b6531abbf93cee5fd0");
@@ -40,6 +40,7 @@ public class PushMessage {
     	//dts.add(dt3);
     	try {
 			pushSingleUser(content, dataMap, dt);
+			System.out.println("....");
 //    		pushUserList("大家好", dataMap, dts);
 		} catch (Exception e) {
 			e.printStackTrace();
