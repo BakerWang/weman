@@ -105,7 +105,7 @@ public class ProductAction extends BaseAction{
 						}else if("护肤".equals(ctag.getName())){
 							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findHuFuDefault.png"));
 						}else if("服装".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findFuZhuangDefault.png"));
+							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/c.png"));
 						}else if("配饰".equals(ctag.getName())){
 							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findPeiShiDefault.png"));
 						}else if("生活".equals(ctag.getName())){
@@ -274,7 +274,7 @@ public class ProductAction extends BaseAction{
 				}
 				jsonArray.add(liveObj);
 			}
-			jsonObject.put("liveImage", this.getImageUrl("attachment/allDefaultImage/findThemeXiongDefault.png"));
+			jsonObject.put("liveImage", this.getImageUrl("attachment/allDefaultImage/findReplayLiveDefault.png"));
 			jsonObject.put("title", "直播回放接口");
 			jsonObject.put("liveData", jsonArray);
 		} catch (Exception e) {

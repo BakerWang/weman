@@ -181,6 +181,8 @@ public class LiveAction extends BaseAction {
 			jsonObject.put("publishUrl", publishUrl);
 			jsonObject.put("playUrl", playUrl);
 			jsonObject.put("chatId", title);
+			jsonObject.put("loveContorller", "yes");
+			jsonObject.put("loveTime", "1");
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e);
@@ -230,6 +232,8 @@ public class LiveAction extends BaseAction {
 				jsonObject.put("username", liveMember.getUname());
 				jsonObject.put("userphoto", this.getImageUrl(liveMember.getFace()));
 				jsonObject.put("liveDetails", liveDetails.get("details"));
+				jsonObject.put("loveContorller", "yes");//控制是否飘出来爱心
+				jsonObject.put("loveTime", "1");//控制点击爱心的间隔时间
 			}else{
 				jsonObject.put("result", "noPublish");
 			}
