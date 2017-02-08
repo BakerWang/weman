@@ -613,5 +613,30 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 		this.daoSupport.insert("es_api_user_view", userView);
 	}
 
+
+	@Override
+	public Page getUserActionArticleList(int parseInt, int i, Map<String, Object> maps) throws Exception {
+		String sql = "select at.*,(select count(*) from es_api_user_view eauv where eauv.type='loginClickArticle' and dataId = at.id ) as loginClickArticle, "
+				+ " (select count(*) from es_api_user_view eauv where eauv.type='nologinClickArticle' and dataId = at.id ) as nologinClickArticle "
+				+ " from wh_api_article at where 1=1 ";
+		if(maps!=null){
+			if(maps.containsKey("startTime")){
+				sql = sql +" and at.create_time > "+ (long)maps.get("startTime");
+			}
+			if(maps.containsKey("endTime")){
+				sql = sql +" and at.create_time < "+ (long)maps.get("endTime");
+			}
+			if(maps.containsKey("keywords")&&!"".equals(maps.get("keywords"))){
+				sql = sql +" and at.content like '%"+maps.get("keywords")+"%' ";
+			}
+			if(maps.containsKey("orderBy")){
+				sql = sql +" order by at."+maps.get("orderBy")+" desc ";
+			}else{
+				sql = sql +" order by at.create_time desc ";
+			}
+		}
+		return this.daoSupport.queryForPage(sql, parseInt, 10);
+	}
+
 	
 }

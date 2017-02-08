@@ -12,6 +12,8 @@ import javax.annotation.Resource;
 import org.springframework.context.annotation.Scope;
 
 import com.enation.app.api.dto.ThemeProduct;
+import com.enation.app.api.model.PhoneBanner;
+import com.enation.app.api.service.BannerService;
 import com.enation.app.api.service.PersionService;
 import com.enation.app.api.service.ProductService;
 import com.enation.app.base.core.model.Member;
@@ -34,6 +36,63 @@ public class PersionAction extends BaseAction{
 	private PersionService persionService;
 	@Resource
 	private ProductService productService;
+	@Resource
+	private BannerService bannerService;
+	
+	public void saveUserActionBanner(){
+		try{ 
+			String bannerCategory = paramObject.has("bannerCategory")?paramObject.getString("bannerCategory"):null;
+			String bannerType = paramObject.has("bannerType")?paramObject.getString("bannerType"):null;
+			String bannerId = paramObject.has("bannerId")?paramObject.getString("bannerId"):null;
+			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+			int memberId = this.getMemberId(accessToken);
+			String viewUserId = null;
+			String type = null;
+			if(memberId==0){
+				viewUserId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+				if("首页banner".equals(bannerCategory)){
+					if("直播".equals(bannerType)){
+						type="nologinClickBanner-index-live";
+					}else if("主题详情页".equals(bannerType)){
+						type="nologinClickBanner-index-theme";
+					}else if("跳至HTML5".equals(bannerType)){
+						type="nologinClickBanner-index-html5";
+					}
+					bannerService.updateBannerClick(Integer.parseInt(bannerId),"no");
+				}
+			}else{
+				viewUserId = String.valueOf(memberId);
+				if("首页banner".equals(bannerCategory)){
+					if("直播".equals(bannerType)){
+						type="loginClickBanner-index-live";
+					}else if("主题详情页".equals(bannerType)){
+						type="loginClickBanner-index-theme";
+					}else if("跳至HTML5".equals(bannerType)){
+						type="loginClickBanner-index-html5";
+					}
+					bannerService.updateBannerClick(Integer.parseInt(bannerId),"yes");
+				}
+			}
+			if(type!=null){
+				persionService.saveUserAction(viewUserId, type, Integer.parseInt(bannerId));
+			}
+		}catch (Exception e) {
+			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
+				jsonObject.put("result", "FAILED");
+			}
+			if(!jsonObject.containsKey("reason")){
+				jsonObject.put("reason", "系统错误！");
+			}
+			e.printStackTrace();
+			this.logger.error("调用"+methodStr+"方法失败");
+			this.logger.error("参数:"+requestStr);
+			this.logger.error("统计banner用户点击失败",e);
+			this.logger.error(e,e);
+		} finally {
+			out.print(jsonObject);
+			out.close();
+		}
+	}
 	
 	
 	/**

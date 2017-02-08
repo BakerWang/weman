@@ -197,13 +197,13 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Se
 			return 0;
 		}
 		//logger.error("根据accessToken查找member_id："+accessToken);
-//		int memberId = initUserService.getMemberIdByAccessToken(accessToken);
-//		if(memberId==0){
-//			jsonObject.put("result", "login");
-//			jsonObject.put("reason", "accessToken失效或者不存在!");
-//			throw new Exception("accessToken失效或者不存在");
-//		}
-		return initUserService.getMemberIdByAccessToken(accessToken);
+		int memberId = initUserService.getMemberIdByAccessToken(accessToken);
+		if(memberId==0){
+			jsonObject.put("result", "login");
+			jsonObject.put("reason", "accessToken失效或者不存在!");
+			throw new Exception("accessToken失效或者不存在");
+		}
+		return memberId;
 	}
 	
 	public Member getMemberDetails(String accessToken) throws Exception{

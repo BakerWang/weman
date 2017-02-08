@@ -86,8 +86,10 @@ public class AdminProductAction extends BaseAction {
 	 */
 	public String noUserThemeCount(){
 		try {
-			String stime = request.getParameter("startTime")==null?"2016-09-01":request.getParameter("startTime");
-			String etime = request.getParameter("endTime")==null?"2020-09-01":request.getParameter("endTime");
+			String newtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()-7*24*60*60*1000);
+			String stime = request.getParameter("startTime")==null?cnewtime:request.getParameter("startTime");
+			String etime = request.getParameter("endTime")==null?newtime:request.getParameter("endTime");
 			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
 			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
 			int dataId = Integer.parseInt(request.getParameter("themeId"));
@@ -97,7 +99,19 @@ public class AdminProductAction extends BaseAction {
 				pageNo = "1";
 			}
 			page.setCurrentPageNo(Long.parseLong(pageNo));
-			Page respage = productService.noUserThemeCount(startTime,endTime,dataId,"clickTheme",page);
+			String contentType = "nologinClickTheme";
+			String contentSl = request.getParameter("contentStyle");
+			if("topic".equals(contentSl)||"default".equals(contentSl)){
+					contentType = "nologinClickTheme";
+			}else if("product".equals(contentSl)){
+					contentType = "nologinClickProduct";
+			}else if("article".equals(contentSl)){
+					contentType = "nologinClickArticle";
+			}else if("banner".equals(contentSl)){
+					contentType = "nologinClickBanner-index";
+			}
+			Page respage = productService.noUserThemeCount(startTime,endTime,dataId,contentType,page);
+			request.setAttribute("contentType", contentSl);
 			request.setAttribute("resPage", respage);
 			request.setAttribute("startTime", stime);
 			request.setAttribute("endTime", etime);
@@ -116,15 +130,17 @@ public class AdminProductAction extends BaseAction {
 	 */
 	public String userThemeCount(){
 		try {
-			String stime = request.getParameter("startTime")==null?"2016-09-01":request.getParameter("startTime");
-			String etime = request.getParameter("endTime")==null?"2020-09-01":request.getParameter("endTime");
-			String usertartTime = request.getParameter("userStartTime")==null?"2016-04-01":request.getParameter("userStartTime");
-			String userndTime = request.getParameter("userEndTime")==null?"1":request.getParameter("userEndTime");
+			String newtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()-7*24*60*60*1000);
+			String stime = request.getParameter("startTime")==null?cnewtime:request.getParameter("startTime");
+			String etime = request.getParameter("endTime")==null?newtime:request.getParameter("endTime");
+			String usertartTime = request.getParameter("userStartTime")==null?cnewtime:request.getParameter("userStartTime");
+			String userndTime = request.getParameter("userEndTime")==null?newtime:request.getParameter("userEndTime");
 			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
 			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
 			Long userStartTime = new SimpleDateFormat("yyyy-MM-dd").parse(usertartTime).getTime()/1000;
 			Long userEndTime =new Date().getTime();
-			if(!"1".equals(userndTime)){
+			if(!newtime.equals(userndTime)){
 				userEndTime = new SimpleDateFormat("yyyy-MM-dd").parse(userndTime).getTime()/1000;
 			}
 			int dataId = Integer.parseInt(request.getParameter("themeId"));
@@ -134,12 +150,24 @@ public class AdminProductAction extends BaseAction {
 				pageNo = "1";
 			}
 			page.setCurrentPageNo(Long.parseLong(pageNo));
-			Page respage = productService.userThemeCount(startTime,endTime,userStartTime,userEndTime,dataId,"clickTheme",page);
+			String contentType = "";
+			String contentSl = request.getParameter("contentStyle");
+			if("topic".equals(contentSl)||"default".equals(contentSl)){
+					contentType = "loginClickTheme";
+			}else if("product".equals(contentSl)){
+					contentType = "loginClickProduct";
+			}else if("article".equals(contentSl)){
+					contentType = "loginClickArticle";
+			}else if("banner".equals(contentSl)){
+					contentType = "loginClickBanner-index";
+			}
+			Page respage = productService.userThemeCount(startTime,endTime,userStartTime,userEndTime,dataId,contentType,page);
+			request.setAttribute("contentType", contentSl);
 			request.setAttribute("resPage", respage);
 			request.setAttribute("startTime", stime);
 			request.setAttribute("endTime", etime);
 			request.setAttribute("userStartTime", usertartTime);
-			request.setAttribute("userEndTime", new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()));
+			request.setAttribute("userEndTime", userndTime);
 			request.setAttribute("dataId", dataId);
 			request.setAttribute("type", "user");
 		} catch (Exception e) {
@@ -175,7 +203,7 @@ public class AdminProductAction extends BaseAction {
 			int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
 			int productBrand = Integer.parseInt(request.getParameter("productBrand"));
 			int isShowMKPrice = Integer.parseInt(request.getParameter("isShowMKPrice"));
-			int hasCoupon = Integer.parseInt(request.getParameter("hasCoupon"));
+			//int hasCoupon = Integer.parseInt(request.getParameter("hasCoupon"));
 			if(productImage!=null&&productImageFileName!=null&&!"".equals(productImageFileName)){
 				if (FileUtil.isAllowUp(productImageFileName)) {
 					String saveName = uploadImage(productImage,productImageFileName, "productImage");
@@ -193,7 +221,7 @@ public class AdminProductAction extends BaseAction {
 					map.put("price", price);
 					map.put("mktprice", mkprice);
 					map.put("productOrigin", productOrigin);
-					map.put("hasCoupon", hasCoupon);
+					map.put("hasCoupon", -1);
 					productService.addProduct(map);
 				}
 			}

@@ -72,6 +72,22 @@ public interface PersionService {
 	 * @throws Exception
 	 */
 	boolean getIsFriend(int member_id, String userId)throws Exception;
+	
+	
+	
+	/**
+	 * 保存用户的动作  1.loginClickTheme 2.nologinClickTheme  
+	 * 3.loginClickProduct 4.nologinClickProduct
+	 * 5.loginClickBanner-index-live/theme/html5 6.nologinClickBanner-index
+	 * 7.loginClickBanner-find 8.nologinClickBanner-find
+	 * 8.loginClickBanner-article  9.nologinClickBanner-article
+	 * 10.loginClickArticle 11.nologinClickArticle
+	 * @param member_id
+	 * @param type
+	 * @param data_id
+	 * @throws Exception
+	 */
+	void saveUserAction(String member_id,String type,int data_id) throws Exception;
 
 	
 }

@@ -53,7 +53,7 @@ public class InitUserAction extends BaseAction{
 				jsonObject.put("bodyUrl", bpath+"/api/body.html");//身型说明
 				jsonObject.put("skinUrl", bpath+"/api/skin.html");//肤质说明
 				jsonObject.put("loginBackgroundImage", this.getImageUrl("attachment/allDefaultImage/loginBackgroundImage.png"));//登录背景图
-				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImageD.gif"));//启动图
+				jsonObject.put("startImage", this.getImageUrl("attachment/allDefaultImage/startImage.jpg"));//启动图
 				jsonObject.put("eulaUrl", bpath+"/api/eula.html");
 				jsonObject.put("fontColor", "c2c2c2");
 				jsonObject.put("fontColor2", "ff6251");

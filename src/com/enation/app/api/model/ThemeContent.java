@@ -20,10 +20,12 @@ public class ThemeContent {
 	private Double productPrice = 100.0;
 	private Double productMkPrice = 100.0;
 	private String productOrigin = "taobao";
+	private String productBrief = "";
 	private String intro;//商品的介绍
 	private String productImage;
 	private String productCategoryImage;//商品分类的图片
 	private String productBrandName;//商品品牌的名字
+	private int isIndexShow = -1;//主题里面的商品是否显示 -1 否  1 显示
 	private String url;//购买地址
 	
 	private int isCollect = 0;//如果是商品  是否收藏 0 是没有收藏
@@ -33,6 +35,18 @@ public class ThemeContent {
 	
 	
 	
+	public int getIsIndexShow() {
+		return isIndexShow;
+	}
+	public void setIsIndexShow(int isIndexShow) {
+		this.isIndexShow = isIndexShow;
+	}
+	public String getProductBrief() {
+		return productBrief;
+	}
+	public void setProductBrief(String productBrief) {
+		this.productBrief = productBrief;
+	}
 	public String getProductOrigin() {
 		return productOrigin;
 	}

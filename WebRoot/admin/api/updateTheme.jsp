@@ -325,7 +325,7 @@ function updateContentIndex(tt,status){
 	    success: function(msg){
 	    	if(msg.result=='yes'){
     			alert('设置成功！');
-    			$(tt).parent().parent().remove();
+    			//$(tt).parent().parent().remove();
 	    	}
 	    }
 	});

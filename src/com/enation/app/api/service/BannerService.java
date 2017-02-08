@@ -22,4 +22,14 @@ public interface BannerService {
 	public void updateBanner(PhoneBanner phoneBanner) throws Exception;
 
 	public Map<String,Object> getBannerDetailsByTitle(String name) throws Exception;
+
+	/**
+	 * 保存banner的点击数
+	 * type : 是否登陆
+	 * @param bannerId
+	 * @throws Exception
+	 */
+	public void updateBannerClick(int bannerId,String type) throws Exception;
+
+	public Page getUserActionBannerList(int parseInt, int i, Map<String, Object> maps) throws Exception;
 }

@@ -1,5 +1,6 @@
 package com.enation.app.api.action;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,18 +44,41 @@ public class ProductAction extends BaseAction{
 	
 	
 	/**
-	 * 商品二级详情页
+	 * 商品二级详情页 浮层页
 	 */
 	public void getProductDetailsAPP(){
 		try {
+			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+			int memberId = this.getMemberId(accessToken);
 			int pid = Integer.parseInt(paramObject.getString("pid"));
 			Map<String,Object> map = productService.getProductDetails(pid);
+			Map<String, Object> nmap = new HashMap<String, Object>();
+			int clickCount = 0;
+			if(map.get("nologinClickCount")!=null){
+				clickCount = (int)map.get("nologinClickCount");
+			}
+			if(memberId==0){
+				nmap.put("nologinClickCount", clickCount+1);
+			}else{
+				nmap.put("loginClickCount", clickCount+1);
+			}
+			productService.updateProduct(pid, nmap);
 			if(map!=null){
 				jsonObject.put("pid", String.valueOf(pid));
 				jsonObject.put("purl", String.valueOf(map.get("url")));
 				jsonObject.put("hasCoupon", String.valueOf(map.get("hasCoupon")));
 				jsonObject.put("h5Url", "http://www.weman.cc:8089/b2b2cbak/apiAdmin/AdminProductAction_getPrdocutDetailsApp.do?pid="+pid);
 			}
+			String viewUserId = null;
+			String type = null;
+			if(memberId==0){
+				viewUserId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+				type = "nologinClickProduct";
+			}else{
+				viewUserId = String.valueOf(memberId);
+				type = "loginClickProduct";
+			}
+			persionService.saveUserAction(viewUserId, type, pid);
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
 				jsonObject.put("result", "FAILED");
@@ -105,7 +129,7 @@ public class ProductAction extends BaseAction{
 						}else if("护肤".equals(ctag.getName())){
 							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findHuFuDefault.png"));
 						}else if("服装".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/c.png"));
+							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findFuZhuangDefault.png"));
 						}else if("配饰".equals(ctag.getName())){
 							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findPeiShiDefault.png"));
 						}else if("生活".equals(ctag.getName())){
@@ -146,6 +170,7 @@ public class ProductAction extends BaseAction{
 					bannerObj.put("bannerId", String.valueOf(pb.getId()));
 					bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
 					bannerObj.put("bannerData", pb.getDetails());
+					bannerObj.put("bannerCategory", pb.getCategory());
 					if(pb.getThemeContentStyle()!=null&&!pb.getThemeContentStyle().equals("0")){
 						bannerObj.put("contentStyle", pb.getThemeContentStyle());
 					}
@@ -296,7 +321,7 @@ public class ProductAction extends BaseAction{
 	}
 	
 	/**
-	 * 点击发现列表进入主题列表接口
+	 * 点击发现列表进入主题列表接口  包含首页的
 	 */
 	public void getFindThemeList(){
 		try {
@@ -316,36 +341,38 @@ public class ProductAction extends BaseAction{
 				map.put("typeId", typeId);
 				page =	productService.getThemeProductsAPPVersion2(pageNo, 10 , map);
 				List<Map<String,Object>> tps = (List<Map<String,Object>>) page.getResult();
-				JSONArray jsonArray = new JSONArray();
-				JSONObject theme = new JSONObject();
-				int beforThemeId = 0;
+				List<Integer> themeIds = new ArrayList<Integer>();
 				for(Map<String,Object> tp:tps){
-					if(beforThemeId == (int)tp.get("id")){
-						JSONObject productObj = new JSONObject();
-						productObj.put("pid", tp.get("pid"));
-						productObj.put("pname", tp.get("pname"));
-						productObj.put("pimage", this.getImageUrl((String)tp.get("pimage")));
-						productObj.put("pprice", String.valueOf(tp.get("pprice")));
-						productObj.put("purl", tp.get("purl"));
-						productObj.put("productOrigin", tp.get("productOrigin"));
-						JSONArray ja = theme.getJSONArray("productData");
-						ja.add(productObj);
-						theme.put("productData", ja);
-					}else{
-						if(beforThemeId != 0){
-							jsonArray.add(theme);
+					themeIds.add((int)tp.get("id"));
+				}
+				List<Map<String,Object>> tcbts = productService.getThemeContentByThemeIds(themeIds);
+				JSONArray jsonArray = new JSONArray();
+				for(Map<String,Object> tp:tps){
+					JSONObject theme = new JSONObject();
+					int tpid = (int)tp.get("id");
+					theme.put("themeId", tpid);
+					theme.put("themeImage", this.getImageUrl((String)tp.get("image")));
+					theme.put("contentStyle", tp.get("contentStyle"));
+					theme.put("tags", this.getImageUrl((String)tp.get("tagImage")));
+					JSONArray productDataJa = new JSONArray();
+					for(Map<String,Object> tcbt:tcbts){
+						int tid = (int)tcbt.get("tid");
+						if(tid == tpid){
+							JSONObject productObj = new JSONObject();
+							productObj.put("pid", tcbt.get("pid"));
+							//productObj.put("pname", tcbt.get("pname"));
+							productObj.put("pname", tcbt.get("pbrief"));
+							productObj.put("pimage", this.getImageUrl((String)tcbt.get("pimage")));
+							productObj.put("pprice", String.valueOf(tcbt.get("pprice")));
+							productObj.put("purl", tcbt.get("purl"));
+							productObj.put("productOrigin", tcbt.get("productOrigin"));
+							productDataJa.add(productObj);
 						}
-						theme = new JSONObject();
-						theme.put("themeId", String.valueOf(tp.get("id")));
-						theme.put("themeImage", this.getImageUrl((String)tp.get("image")));
-						theme.put("contentStyle", tp.get("contentStyle"));
-						theme.put("tags", this.getImageUrl((String)tp.get("tagImage")));
-						theme.put("productData", new JSONArray());
-						beforThemeId = (int)tp.get("id");
 					}
+					theme.put("productData", productDataJa);
+					jsonArray.add(theme);
 				}
 				if(tps!=null&&tps.size()>0){
-					jsonArray.add(theme);
 					jsonObject.put("themeData", jsonArray); 
 				}
 				jsonObject.put("image", this.getImageUrl("attachment/allDefaultImage/findThemeQingQuDefault.png"));
@@ -504,6 +531,16 @@ public class ProductAction extends BaseAction{
 			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
 			int memberId = this.getMemberId(accessToken);
 			Theme theme = productService.getThemeDetails(themeId,memberId);
+			String viewUserId = null;
+			String type = null;
+			if(memberId==0){
+				viewUserId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+				type = "nologinClickTheme";
+			}else{
+				viewUserId = String.valueOf(memberId);
+				type = "loginClickTheme";
+			}
+			persionService.saveUserAction(viewUserId, type, theme.getId());
 			jsonObject.put("themeId", String.valueOf(theme.getId()));
 			jsonObject.put("themeImage", this.getImageUrl(theme.getMinorImage()));
 			jsonObject.put("themeTile", theme.getTitle());
@@ -539,12 +576,12 @@ public class ProductAction extends BaseAction{
 					}else if("product".equals(tc.getType())){
 						content.put("contentProductId", String.valueOf(tc.getGoods_id()));
 						content.put("productOrigin", tc.getProductOrigin());
-						content.put("contentProductName", tc.getProductName());
+						content.put("contentProductName", tc.getProductBrief());//商品名字修改为商品标题
 						content.put("contentProductImage", this.getImageUrl(tc.getProductImage()));
 						content.put("contentProductCategoryImage", this.getImageUrl(tc.getProductCategoryImage()));
 						content.put("contentProuctBrandName", tc.getProductBrandName());
 						content.put("contentProductPrice", String.valueOf(tc.getProductPrice()));
-						content.put("contentProductIntro", tc.getIntro());
+						content.put("contentProductIntro", tc.getProductName());//简介修改为商品名字
 						content.put("contentProductMKPrice", tc.getProductMkPrice());
 						content.put("contentProductUrl", tc.getUrl());
 						if("1".equals(tc.getStatus())){
@@ -660,36 +697,38 @@ public class ProductAction extends BaseAction{
 				map.put("contentStyle", "topic");
 				Page page =	productService.getThemeProductsAPPVersion2(pageNo, 10 , map);
 				List<Map<String,Object>> tps = (List<Map<String,Object>>) page.getResult();
-				JSONArray jsonArray = new JSONArray();
-				JSONObject theme = new JSONObject();
-				int beforThemeId = 0;
+				List<Integer> themeIds = new ArrayList<Integer>();
 				for(Map<String,Object> tp:tps){
-					if(beforThemeId == (int)tp.get("id")){
-						JSONObject productObj = new JSONObject();
-						productObj.put("pid", tp.get("pid"));
-						productObj.put("pname", tp.get("pname"));
-						productObj.put("pimage", this.getImageUrl((String)tp.get("pimage")));
-						productObj.put("pprice", String.valueOf(tp.get("pprice")));
-						productObj.put("purl", tp.get("purl"));
-						productObj.put("productOrigin", tp.get("productOrigin"));
-						JSONArray ja = theme.getJSONArray("productData");
-						ja.add(productObj);
-						theme.put("productData", ja);
-					}else{
-						if(beforThemeId != 0){
-							jsonArray.add(theme);
+					themeIds.add((int)tp.get("id"));
+				}
+				List<Map<String,Object>> tcbts = productService.getThemeContentByThemeIds(themeIds);
+				JSONArray jsonArray = new JSONArray();
+				for(Map<String,Object> tp:tps){
+					JSONObject theme = new JSONObject();
+					int tpid = (int)tp.get("id");
+					theme.put("themeId", tpid);
+					theme.put("themeImage", this.getImageUrl((String)tp.get("image")));
+					theme.put("contentStyle", tp.get("contentStyle"));
+					theme.put("tags", this.getImageUrl((String)tp.get("tagImage")));
+					JSONArray productDataJa = new JSONArray();
+					for(Map<String,Object> tcbt:tcbts){
+						int tid = (int)tcbt.get("tid");
+						if(tid == tpid){
+							JSONObject productObj = new JSONObject();
+							productObj.put("pid", tcbt.get("pid"));
+							//productObj.put("pname", tcbt.get("pname"));
+							productObj.put("pname", tcbt.get("pbrief"));
+							productObj.put("pimage", this.getImageUrl((String)tcbt.get("pimage")));
+							productObj.put("pprice", String.valueOf(tcbt.get("pprice")));
+							productObj.put("purl", tcbt.get("purl"));
+							productObj.put("productOrigin", tcbt.get("productOrigin"));
+							productDataJa.add(productObj);
 						}
-						theme = new JSONObject();
-						theme.put("themeId", String.valueOf(tp.get("id")));
-						theme.put("themeImage", this.getImageUrl((String)tp.get("image")));
-						theme.put("contentStyle", tp.get("contentStyle"));
-						theme.put("tags", this.getImageUrl((String)tp.get("tagImage")));
-						theme.put("productData", new JSONArray());
-						beforThemeId = (int)tp.get("id");
 					}
+					theme.put("productData", productDataJa);
+					jsonArray.add(theme);
 				}
 				if(tps!=null&&tps.size()>0){
-					jsonArray.add(theme);
 					jsonObject.put("themeData", jsonArray); 
 				}
 				String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
@@ -743,7 +782,7 @@ public class ProductAction extends BaseAction{
 			//banner获取
 			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
 			int cmemberid = this.getMemberId(accessToken);
-			if(cmemberid!=0&&(cmemberid==3||cmemberid==1||cmemberid==36||cmemberid==4||cmemberid==30)){
+			//if(cmemberid!=0&&(cmemberid==3||cmemberid==1||cmemberid==36||cmemberid==4||cmemberid==30)){
 				List<PhoneBanner> phoneBanners = bannerService.getCurrentBanners("首页banner");
 				if(phoneBanners!=null&&phoneBanners.size()>0){
 					JSONArray bannerJarray = new JSONArray();
@@ -753,6 +792,7 @@ public class ProductAction extends BaseAction{
 						bannerObj.put("bannerId", String.valueOf(pb.getId()));
 						bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
 						bannerObj.put("bannerData", pb.getDetails());
+						bannerObj.put("bannerCategory", pb.getCategory());
 						if(pb.getThemeContentStyle()!=null&&!pb.getThemeContentStyle().equals("0")){
 							bannerObj.put("contentStyle", pb.getThemeContentStyle());
 						}
@@ -760,7 +800,7 @@ public class ProductAction extends BaseAction{
 					}
 					jsonObject.put("bannerList", bannerJarray);
 				}
-			}
+			//}
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
 				jsonObject.put("result", "FAILED");

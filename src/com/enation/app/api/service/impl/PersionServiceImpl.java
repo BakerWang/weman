@@ -1,5 +1,7 @@
 package com.enation.app.api.service.impl;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -233,6 +235,23 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 			return true;
 		}
 		return false;
+	}
+
+	/*  保存用户的动作  1.loginClickTheme 2.nologinClickTheme  
+	 * 3.loginClickProduct 4.nologinClickProduct
+	 * 5.loginClickBanner 6.nologinClickBanner
+	 * 7.loginClickArticle 8.nologinClickArticle
+	 */
+	@Override
+	public void saveUserAction(String member_id, String type, int data_id) throws Exception {
+		Map<String,Object> userView = new HashMap<String,Object>();
+		userView.put("dataId", data_id);
+		userView.put("type", type);
+		userView.put("status", "1");
+		userView.put("viewCount", "1");
+		userView.put("viewUserId", member_id);
+		userView.put("create_time", new Date().getTime());
+		this.daoSupport.insert("es_api_user_view", userView);
 	}
 
 }

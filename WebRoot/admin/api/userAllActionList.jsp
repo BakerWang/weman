@@ -90,17 +90,18 @@ tr:hover td .updateThemeA{
 
 <div class='buttonArea'>
 	<div style="height:30px;margin-top:4px;">
-		<span style="float:left;height:28px;">
-			<a href="javascript:void(0)" class="b_fr" onclick="parent.addTab1('主题添加','/b2b2cbak/apiAdmin/AdminProductAction_goNewTheme.do')">新建</a>
-		</span>
-		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do" id="searchForm" method="post">
+		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminUserActionAction_getUserAction.do" id="searchForm" method="post">
 			<span style="float: right;height:28px;"> 
 				<input type="hidden" value="1" name="pageNo" id="goodsPage"/>
-				类型：<select name="contentStyle">
-					<option value="0">所有</option>
-					<option <s:if test="#request.contentStyle=='topic'">selected="selected"</s:if> value="topic">首页（专题）</option>
-					<option <s:if test="#request.contentStyle=='default'">selected="selected"</s:if> value="default">发现（主题）</option>
-				</select>
+				<div style="float:left;">
+					类型：<select name="contentStyle">
+						<option <s:if test="#request.contentStyle=='topic'">selected="selected"</s:if> value="topic">首页（专题）</option>
+						<option <s:if test="#request.contentStyle=='default'">selected="selected"</s:if> value="default">发现（主题）</option>
+						<option <s:if test="#request.contentStyle=='product'">selected="selected"</s:if> value="product">商品详情页</option>
+						<option <s:if test="#request.contentStyle=='article'">selected="selected"</s:if> value="article">社交详情页</option>
+						<option <s:if test="#request.contentStyle=='banner'">selected="selected"</s:if> value="banner">banner页</option>
+					</select>
+				</div>
 				<span style="float:left;height:28px;margin-left:15px;">
 					主题上架时间 : <input class="easyui-datebox" name="startTime" value="${startTime }" style="width: 130px;height: 28px;" id="start_time" data-options="buttons:buttons" />
 					<input class="easyui-datebox" name="endTime" value="${endTime }" style="width: 130px;height: 28px;" id="end_time" data-options="buttons:buttons" />
@@ -113,77 +114,97 @@ tr:hover td .updateThemeA{
 	<div style="background: #d7d7d7 none repeat scroll 0 0;margin-top:10px;">
 		<div style="width:auto;font-size: 12px; border-bottom: 1px solid #ccc;border-top: 1px solid #ccc;cursor: default;">
 			<table style="width:100%;font-size: 12px; " cellspacing="0" cellpadding="0" border="0">
-				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>操作</td><td>主题赞数</td><td>主题分类</td><td>创建时间</td><td>登录用户点击次数</td><td>点击次数(未)</td><td>删除</td></tr>
-<!-- 				<td>修改</td> -->
+				<tr class="datagrid-header"><td style="border-left: 1px solid #ccc;">主题标题</td><td>主题图片</td><td>上架时间</td><td>创建时间</td>
+				<s:if test="#request.contentStyle=='banner'"><td>类型</td></s:if>
+				<td>登录用户点击次数</td><td>点击次数(未)</td></tr>
 				<s:iterator value="#request.page.result" var="themeObj">
-					<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">
-						<a href="javascript:void(0)" style="text-decoration: none;" onclick="parent.addTab1('主题浏览','/b2b2cbak/apiAdmin/ShareAction_getDataDetails.do?type=theme&dataId=${themeObj.theme.id}')">${themeObj.theme.title } </a>
-					</td><td><img src="/b2b2cbak/statics/${themeObj.theme.image }" width="80px" height="80px"/></td>
-					<td>
-						<input type="checkbox" <s:if test="#themeObj.theme.indexStatus==1">checked="checked"</s:if> class="statusArray1">首页页
-						<input type="checkbox" <s:if test="#themeObj.theme.findStatus==1">checked="checked"</s:if> class="statusArray2">发现页
-						<input type="checkbox" <s:if test="#themeObj.theme.recommendStatus==1">checked="checked"</s:if> class="statusArray3">推荐页
-						<button onclick="updateThemeStatus(${themeObj.theme.id},this)">确定修改</button>
-					</td><td>(${themeObj.theme.realClickCount })<input type="text" style="width:50px;" value="${themeObj.theme.love_count }" class="themeLoveCount" /><button onclick="updateLoveCount(this,${themeObj.theme.id })">修改</button></td>
-					<td>
-						<s:if test="#themeObj.theme.themetagList.size()>0">
-							<s:iterator value="#themeObj.theme.themetagList" var="tagMap">
-								<div>
-									<select class="pcategory" onchange="tagSel(this)">
-										<s:iterator value="#request.parentTags" var="ptag">
-													<option value="${ptag.id }" <s:if test="#ptag.id == #tagMap.key">selected="selected"</s:if>>${ptag.name }</option>
-										</s:iterator>
-									</select> : 
-									<select class="ccategory">
-										<option value="0" name="0">未选择</option>
-										<s:iterator value="#request.childrenTags" var="ctag">
-													<option value="${ctag.id }" name="${ctag.category }" <s:if test="#ctag.id == #tagMap.value">selected="selected"</s:if>>${ctag.name }</option>
-										</s:iterator>
-									</select>
-									<button onclick="updateCategroy(this,${themeObj.theme.id})">确定修改</button>
-								</div>
-							</s:iterator>
-						</s:if><s:else>
-							<div>
-								<select class="pcategory" onchange="tagSel(this)">
-									<s:iterator value="#request.parentTags" var="ptag">
-												<option value="${ptag.id }">${ptag.name }</option>
-									</s:iterator>
-									<option value="0" selected="selected">未选择</option>
-								</select> : 
-								<select class="ccategory">
-									<s:iterator value="#request.childrenTags" var="ctag">
-												<option value="${ctag.id }" name="${ctag.category }">${ctag.name }</option>
-									</s:iterator>
-									<option value="0" name="0" selected="selected">未选择</option>
-								</select>
-								<button onclick="updateCategroy(this,${themeObj.theme.id})">确定修改</button>
-							</div>	
-						</s:else>
-					</td>
-					<td>
-						<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.theme.create_time }"/>
-					</td>
-<!-- 					<td style="text-align: center;"> -->
-<%-- 						<a class="updateThemeA" onclick='parent.addTab1("主题修改","/b2b2cbak/apiAdmin/AdminProductAction_goThemeDetails.do?themeId=${themeObj.theme.id}");' href="javascript:void(0);" title="修改" ></a> --%>
-<!-- 					</td> -->
-					<td>
-						${themeObj.theme.loginClickCount }
-					</td>
-					<td>
-						${themeObj.theme.clickCount }
-					</td>
-					<td>
-						<a style="text-decoration: none;" class="b_fr" onclick="parent.addTab1('修改主题','/b2b2cbak/apiAdmin/AdminProductAction_getThemeDetails.do?themeId=${themeObj.theme.id}')" href="javascript:void(0);">修改</a>
-						<a style="text-decoration: none;" class="b_fr" onclick="updateTheme(this,${themeObj.theme.id})" href="javascript:void(0);">删除</a>
-					</td></tr>
+					<s:if test="#request.contentStyle=='product'">
+						<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">
+							<a href="${themeObj.url }" style="text-decoration: none;" >${themeObj.name } </a>
+						</td><td><img src="/b2b2cbak/statics/${themeObj.original }" width="80px" height="80px"/></td>
+						<td>
+							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.startTime }"/>
+						</td>
+						<td>
+							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.endTime }"/>
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('登录详情${themeObj.goods_id}','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId=${themeObj.goods_id}&contentStyle=${contentStyle }')">${themeObj.loginClickCount }</a>
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('未登录详情${themeObj.goods_id}','/b2b2cbak/apiAdmin/AdminProductAction_noUserThemeCount.do?themeId=${themeObj.goods_id}&contentStyle=${contentStyle }')">${themeObj.nologinClickCount }</a>
+						</td>
+						</tr>
+					</s:if><s:elseif test="#request.contentStyle=='banner'">
+						<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">
+							${themeObj.title } 
+						</td><td><img src="/b2b2cbak/statics/${themeObj.image }" width="80px" height="80px"/></td>
+						<td>
+							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.start_time }"/>
+						</td>
+						<td>
+							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.end_time }"/>
+						</td>
+						<td>
+							${themeObj.category }|${themeObj.type }
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('登录详情${themeObj.id}','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId=${themeObj.id}&contentStyle=${contentStyle }')">
+								${themeObj.click_count }
+							</a>
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('未登录详情${themeObj.id}','/b2b2cbak/apiAdmin/AdminProductAction_noUserThemeCount.do?themeId=${themeObj.id}&contentStyle=${contentStyle }')">
+								${themeObj.nologinClickCount }
+							</a>
+						</td>
+						</tr>
+					</s:elseif><s:elseif test="#request.contentStyle=='article'">
+						<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">
+							${themeObj.content } 
+						</td><td><img src="/b2b2cbak/statics/${themeObj.image }" width="80px" height="80px"/></td>
+						<td>
+							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.create_time }"/>
+						</td>
+						<td>
+							${themeObj.comment_count }
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('登录详情${themeObj.id}','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId=${themeObj.id}&contentStyle=${contentStyle }')">
+									${themeObj.loginClickArticle }
+							</a>
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('未登录详情${themeObj.id }','/b2b2cbak/apiAdmin/AdminProductAction_noUserThemeCount.do?themeId=${themeObj.id}&contentStyle=${contentStyle }')">
+									${themeObj.nologinClickArticle }
+							</a>
+						</td>
+						</tr>
+					</s:elseif><s:elseif test="#request.contentStyle=='topic'||#request.contentStyle=='default'">
+						<tr class="divTr" height="100px" ><td style="border-left: 1px solid #ccc;">
+							<a href="javascript:void(0)" style="text-decoration: none;" onclick="parent.addTab1('主题浏览','/b2b2cbak/apiAdmin/ShareAction_getDataDetails.do?type=theme&dataId=${themeObj.theme.id}')">${themeObj.theme.title } </a>
+						</td><td><img src="/b2b2cbak/statics/${themeObj.theme.image }" width="80px" height="80px"/></td>
+						<td>
+							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.theme.startTime }"/>
+						</td>
+						<td>
+							<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${themeObj.theme.create_time }"/>
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('登录详情${themeObj.theme.id}','/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId=${themeObj.theme.id}&contentStyle=${contentStyle }')">${themeObj.theme.loginClickCount }</a>
+						</td>
+						<td>
+							<a href="javascript:void(0)" onclick="parent.addTab1('未登录详情${themeObj.theme.id}','/b2b2cbak/apiAdmin/AdminProductAction_noUserThemeCount.do?themeId=${themeObj.theme.id}&contentStyle=${contentStyle }')">${themeObj.theme.clickCount }</a>
+						</td>
+						</tr>
+					</s:elseif>
 				</s:iterator>
 			</table>
 		</div>
 	</div>
 </div>
 <div class="pagelist">
-	<div style="line-height:46px;height:46px;width:150px;float:left"><span>共 ${page.totalPageCount} 页/${page.totalCount}条记录 </span></div>
+	<div style="line-height:46px;height:46px;width:180px;float:left"><span>共 ${page.totalPageCount} 页/${page.totalCount}条记录 </span></div>
 	<div id="adminUserManagePagination" class="pagination" style="float:left;margin-top:15px"></div>
 </div>
 <script type="text/javascript">
@@ -306,32 +327,5 @@ tr:hover td .updateThemeA{
 // 		url = encodeURI(encodeURI(url));
 // 		window.location.href= url;
 	}
-	function updateCategroy(themeid){
-		var pcategory = $('#pcategory').val();
-		var ccategory = $('#ccategory').val();
-	}
-	function updateCategroy(tt,tid){
-		var keyId = $(tt).parent('div').children('.pcategory').val();
-		var valueId = $(tt).parent('div').children('.ccategory').val();
-		if(keyId==0&&valueId==0){
-			alert('选择错误!');
-		}
-		$.ajax({
-			type:'POST',
-			url:'/b2b2cbak/apiAdmin/AdminProductAction_updateThemeTag.do',
-			data:{
-				'themeId':tid,
-				'keyId':keyId,
-				'valueId':valueId
-			},
-			dataType:'json',
-		    success: function(msg){
-		    	if(msg.result=='yes'){
-		    		alert('修改成功！');
-		    	}else{
-		    		alert('系统错误!');
-		    	}
-		    }
-		})
-	}
+	
 </script>

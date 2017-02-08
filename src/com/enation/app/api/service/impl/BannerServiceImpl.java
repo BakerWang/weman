@@ -99,6 +99,39 @@ public class BannerServiceImpl extends BaseSupport implements BannerService{
 		return null;
 	}
 
+	@Override
+	public void updateBannerClick(int bannerId,String type) throws Exception {
+		if("yes".equals(type)){
+			String sql = "update es_api_banner eab set eab.clickCount = eab.clickCount+1 where eab.id = ?";
+			this.daoSupport.execute(sql, bannerId);
+		}else{
+			String sql = "update es_api_banner eab set eab.nologinClickCount = eab.nologinClickCount+1 where eab.id = ?";
+			this.daoSupport.execute(sql, bannerId);
+		}
+	}
+
+	@Override
+	public Page getUserActionBannerList(int parseInt, int i, Map<String, Object> maps) throws Exception {
+		String sql = "select at.* from es_api_banner at where 1=1 ";
+		if(maps!=null){
+			if(maps.containsKey("startTime")){
+				sql = sql +" and at.start_time > "+ (long)maps.get("startTime");
+			}
+			if(maps.containsKey("endTime")){
+				sql = sql +" and at.end_time > "+ (long)maps.get("endTime");
+			}
+			if(maps.containsKey("keywords")&&!"".equals(maps.get("keywords"))){
+				sql = sql +" and at.content like '%"+maps.get("keywords")+"%' ";
+			}
+			if(maps.containsKey("orderBy")){
+				sql = sql +" order by at."+maps.get("orderBy")+" desc ";
+			}else{
+				sql = sql +" order by at.start_time desc ";
+			}
+		}
+		return this.daoSupport.queryForPage(sql, parseInt, 10);
+	}
+
 
 	
 }

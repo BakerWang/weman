@@ -143,10 +143,10 @@ a {
 			<div style="float: left; height: 44px;left: 6px;position: absolute;top: 8px;width: 44px;"><img alt="" src="../admin/api/image/logo64.png"></div>
 			<div style="color: #fff;font-size: 16px;line-height: 18px;padding: 13px 55px 0;text-align: left;">
 				<p>WeMan我们</p>
-				<p>1st为同志精选的型男好物平台</p>
+				<p>1st型男直播电商平台 </p>
 			</div>
 			<!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.xymens.app" class="btn">点击下载</a>-->
-	           <a style="  background-color: black;border-radius: 3px; color: white;border:1px solid rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="https://itunes.apple.com/cn/app/id1122061713">下载APP</a>
+	           <a style="  background-color: black;border-radius: 3px; color: white;border:1px solid rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="javascript:;" onclick="location.href='downloadAppStore.jsp?type=1'">下载APP</a>
 	           <a style="z-index: 8" class="close" href="javascript:;"></a>
 		</header>
 	</div>

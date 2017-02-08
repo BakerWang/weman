@@ -1,0 +1,91 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@page import="java.util.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>WeMan我们-App Store下载</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<script type="text/javascript" src="script/jquery-1.7.js"></script>
+<script type="text/javascript">
+function startDown(ib){
+//     var ua = navigator.userAgent.toLowerCase();
+//     if (/iphone|ipod/.test(ua)) {
+//         if(/micromessenger/.test(ua)){
+//              document.getElementById("popweixin").style.display = "block";
+//         }else{
+//         	document.getElementById("popweixin").style.display = "block";
+//         }
+//     }else{
+//     	$("#popweixin").show();
+//     }
+	if(ib==1){
+		$("#popweixin").hide();
+	}else if(ib==2){
+		$("#popweixin").show();
+	}
+	if($('#downType').val()==2){
+		$("#popweixin").show();
+	}
+     if(is_weixin()){
+		//var random=new Date();
+     	//var uu=encodeURIComponent("https://itunes.apple.com/us/app/ka-you-qu/id824073884?ls=1&mt=8&a="+random);
+      	//window.location.href="http://mp.weixin.qq.com/mp/redirect?url="+uu;
+     }else{
+    	window.location.href="https://itunes.apple.com/cn/app/id1122061713";
+    	//window.open("http://mp.weixin.qq.com/mp/redirect?url=https://itunes.apple.com/cn/app/ka-you-qu-xing-qu-she-jiao/id824073884?l=en&mt=8");
+     }
+}
+
+function is_weixin(){
+	var ua = navigator.userAgent.toLowerCase();
+	if(ua.match(/MicroMessenger/i)=="micromessenger") {
+		return true;
+ 	} else {
+		return false;
+	}
+}
+function finDown(){
+	$('#popweixin').hide();
+}
+//百度统计
+(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "https://hm.baidu.com/hm.js?25ba811c7ff5d1921df44faf10c306e5";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+</script>
+</head>
+<input type="hidden" value="${param.type }" id="downType" />
+<body onload="startDown(1)" style="padding:0px;margin:0px;overflow: hidden;">
+	<div style="margin:0px;padding:0px;width:100%;">
+		<img id="imageBg" src="bgapp.jpg" style="display:block;margin:0px;padding:0px;" width="100%" height="100px"/>
+	</div>
+	<div onclick="startDown(2)" style="dispaly:none;width:100%;overflow: hidden;position: absolute;top:0px;left: 0px;" >
+		<img src="down.png" width="100%" id="downApp" style="display:block;margin:0px;"/>
+	</div>
+	<div onclick="finDown()" style="width:100%;overflow: hidden;position: absolute;top: 0px;left:0px;z-index: 0;display:none;" id="popweixin">
+		<img src="downApp.png" width="300px" id="popweixinImg" style="display:block;"/>
+		<div id="ydiv" style="width:100%;background: rgb(94,94,94);opacity:0.5;margin:0px;"></div>
+	</div>
+</body>
+<script type="text/javascript">
+var hh=document.documentElement.clientHeight;
+var ww=document.documentElement.clientWidth;
+$("#imageBg").width(ww+'px');
+$("#imageBg").height(hh+'px');
+$("#downApp").width(ww+'px');
+$("#downApp").height(hh+'px');
+$("#popweixin").height(hh+'px');
+$("#popweixinImg").width(ww+'px');
+$('#ydiv').height((hh-$('#popweixinImg').height())+'px')
+</script>
+</html>

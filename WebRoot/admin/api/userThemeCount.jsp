@@ -58,6 +58,7 @@
 		<input type="hidden" value="1" id="pageNo" />
 		<input type="hidden" value="${dataId }" id="dataIdInput" />
 		<input type="hidden" value="${type }" id="dataTypeInput" />
+		<input type="hidden" value="${contentType }" id="contentTypeInput" />
 			<span style="float:left;height:28px;margin-left:15px;padding-top:3px;">
 				${resPage.result[0].title }
 			</span>
@@ -159,9 +160,9 @@
 		if(userEndTime==null||userEndTime==''){
 			userEndTime='2010-01-01';
 		}
-		var url = '/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId='+dataId+'&pageNo='+pageNo+'&startTime='+st+'&endTime='+et+'&userStartTime='+userStartTime+'&userEndTime='+userEndTime;
+		var url = '/b2b2cbak/apiAdmin/AdminProductAction_userThemeCount.do?themeId='+dataId+'&pageNo='+pageNo+'&startTime='+st+'&endTime='+et+'&userStartTime='+userStartTime+'&userEndTime='+userEndTime+'&contentStyle='+$('#contentTypeInput').val();
 		if(type=='nouser'){
-			url = '/b2b2cbak/apiAdmin/AdminProductAction_noUserThemeCount.do?themeId='+dataId+'&pageNo='+pageNo+'&startTime='+st+'&endTime='+et;
+			url = '/b2b2cbak/apiAdmin/AdminProductAction_noUserThemeCount.do?themeId='+dataId+'&pageNo='+pageNo+'&startTime='+st+'&endTime='+et+'&contentStyle='+$('#contentTypeInput').val();
 		}
 		console.log(url);
 		url = encodeURI(encodeURI(url));

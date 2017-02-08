@@ -232,5 +232,19 @@ public interface ProductService {
 	Page getThemeProductsAPPVersion2(int pageNo, int i, Map<String, String> map) throws Exception;
 
 
+	/**
+	 * 后台获取点击商品的统计信息
+	 * @param pageNo
+	 * @param i
+	 * @param maps
+	 * @return
+	 * @throws Exception
+	 */
+	Page getUserActionProduct(String pageNo, int i, Map<String, Object> maps)throws Exception;
+
+
+	List<Map<String, Object>> getThemeContentByThemeIds(List<Integer> themeIds) throws Exception;
+
+
 
 }

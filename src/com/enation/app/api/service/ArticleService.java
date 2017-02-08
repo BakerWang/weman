@@ -228,6 +228,11 @@ public interface ArticleService {
 
 
 
+	Page getUserActionArticleList(int parseInt, int i, Map<String, Object> maps) throws Exception;
+
+
+
+
 	
 	
 }

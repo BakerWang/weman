@@ -33,6 +33,9 @@
 		</action>
 	</package>
 	<package name="apiAdmin" namespace="/apiAdmin" extends="eop_default">
+		<action name="AdminUserActionAction_*" class="com.enation.app.api.action.admin.action.AdminUserActionAction" method="{1}">
+			<result name="getUserActionSuccess">/admin/api/userAllActionList.jsp</result>
+		</action>
 		<action name="AdminLiveAction_*" class="com.enation.app.api.action.live.AdminLiveAction" method="{1}">
 			<result name="getLiveListSuccess">/admin/api/liveList.jsp</result>
 			<result name="getLiveDetailsSuccess">/admin/api/liveDetails.jsp</result>

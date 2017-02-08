@@ -16,6 +16,7 @@ import com.enation.app.api.dto.ArticleComment;
 import com.enation.app.api.model.PhoneBanner;
 import com.enation.app.api.service.ArticleService;
 import com.enation.app.api.service.BannerService;
+import com.enation.app.api.service.PersionService;
 import com.enation.framework.database.Page;
 import com.enation.framework.util.FileUtil;
 
@@ -31,6 +32,8 @@ public class ArticleAction extends BaseAction{
 	private ArticleService articleService;
 	@Resource
 	private BannerService bannerService;
+	@Resource
+	private PersionService persionService;
 	
 	private java.io.File originalCover;//发文封面原图
 	private String originalCoverFileName;//发文封面原图 图片名字
@@ -288,6 +291,7 @@ public class ArticleAction extends BaseAction{
 					bannerObj.put("bannerId", String.valueOf(pb.getId()));
 					bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
 					bannerObj.put("bannerData", pb.getDetails());
+					bannerObj.put("bannerCategory", pb.getCategory());
 					bannerJarray.add(bannerObj);
 				}
 				jsonObject.put("bannerList", bannerJarray);
@@ -371,27 +375,17 @@ public class ArticleAction extends BaseAction{
 				}
 			}
 			
-			Map<String,Object> userView = new HashMap<String,Object>();
-			userView.put("status", "1");
-			userView.put("viewCount", "1");
-			userView.put("create_time", new Date().getTime());
+			String viewUserId = null;
+			String type = null;
 			if(cmemberId==0){
-				String clientId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
-				if(clientId==null){
-					jsonObject.put("result", "FAILED");
-					jsonObject.put("reason", "没有传clientId");
-					return;
-				}else{
-					userView.put("viewUserId", Integer.parseInt(clientId));
-				}
-				userView.put("dataId", articleId);
-				userView.put("type", "nologinClickArticle");
+				viewUserId = paramObject.has("clientId")?paramObject.getString("clientId"):null;
+				type = "nologinClickArticle";
 			}else{
-				userView.put("viewUserId", cmemberId);
-				userView.put("dataId", articleId);
-				userView.put("type", "loginClickArticle");
+				viewUserId = String.valueOf(cmemberId);
+				type = "loginClickArticle";
 			}
-			articleService.saveUserView(userView);
+			persionService.saveUserAction(viewUserId, type, articleId);
+			
 		} catch (Exception e) {
 			if("success".equalsIgnoreCase(jsonObject.getString("result"))){
 				jsonObject.put("result", "FAILED");
@@ -418,6 +412,7 @@ public class ArticleAction extends BaseAction{
 	public void articleList(){
 		try{
 			page.setCurrentPageNo(Integer.parseInt((String)paramObject.get("page")));
+			page.setPageSize(10);
 			String accessToken = paramObject.has("accessToken")?(String)paramObject.get("accessToken"):null;
 			if(accessToken!=null){
 				int cmemberId = this.getMemberId(paramObject.getString("accessToken"));
@@ -431,7 +426,6 @@ public class ArticleAction extends BaseAction{
 			}else{
 				adminSearchForm.setStatus(100);//未登录的情况下  
 			}
-			page.setPageSize(10);
 			Page resPage = articleService.getArticleList(adminSearchForm, page);
 			JSONArray jarray = new JSONArray();
 			for(ArticleModel mapObj:(List<ArticleModel>)resPage.getResult()){
