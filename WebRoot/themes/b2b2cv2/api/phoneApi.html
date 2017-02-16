@@ -237,7 +237,7 @@
 	}
 	
 	function getThemeList2(){
-		var page = $('#themeListPage').val();
+		var page = $('#themeListPage2').val();
 		var url = "ProductAction_getThemeList.do";
 		var dataParam = {
 				"loginType":"global",
@@ -249,12 +249,23 @@
 		base(url,dataParam);
 	}
 	function getThemeList3(){
-		var page = $('#themeListPage').val();
+		var page = $('#themeListPage3').val();
 		var url = "ProductAction_getThemeList.do";
 		var dataParam = {
 				"loginType":"global",
 				"clientType":"iphone",
 				"version":"2.0.1",
+				"page":page
+		};
+		base(url,dataParam);
+	}
+	function getThemeList4(){
+		var page = $('#themeListPage4').val();
+		var url = "ProductAction_getThemeList.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"3.0.1",
 				"page":page
 		};
 		base(url,dataParam);
@@ -683,7 +694,8 @@
         商品id：<input value="55" id="productId" /><input type="button" onclick="getThemeDetailsApp()" value="获取商品详情"/><br/>
 	页数：<input value="1" id="themeListPage" /><input type="button" onclick="getThemeList()" value="获取主题列表"/><br/>
 	页数：<input value="1" id="themeListPage2" /><input type="button" onclick="getThemeList2()" value="获取主题列表(登录的version2)"/><br/>
-	页数：<input value="1" id="themeListPage2" /><input type="button" onclick="getThemeList3()" value="获取主题列表(未登录的version2)"/><br/>
+	页数：<input value="1" id="themeListPage3" /><input type="button" onclick="getThemeList3()" value="获取主题列表(未登录的version2)"/><br/>
+	页数：<input value="1" id="themeListPage4" /><input type="button" onclick="getThemeList4()" value="获取主题列表(未登录的version3)"/><br/>
 	页数：<input value="1" id="bannerThemeListPage" /><input value="49" id="bannerIdInput" /><input type="button" onclick="getBannerThemeList()" value="获取banner主题列表"/><br/>
 	主题id：<input value="30" id="themeIdA" /><input type="button" onclick="getThemeDetails()" value="获取主题详情"/><br/>
 	<h2>个人主页接口测试</h2><br/>

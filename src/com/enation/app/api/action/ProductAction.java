@@ -738,50 +738,149 @@ public class ProductAction extends BaseAction{
 				}else{
 					jsonObject.put("canLive", "no");
 				}
-			}
-			//类型列表
-			List<ThemeTag> themeTags = productService.getThemeTagList();
-			for(ThemeTag themetag:themeTags){
-				if("类型".equals(themetag.getName())){
-					JSONObject typeObj = new JSONObject();
-					typeObj.put("typeId", String.valueOf(themetag.getId()));
-					typeObj.put("typeName", themetag.getName());
-					JSONArray childrenTag = new JSONArray();
-					for(ThemeTag ctag:themetag.getChildrenThemeTag()){
-						JSONObject childrenTagObj = new JSONObject();
-						childrenTagObj.put("id", String.valueOf(ctag.getId()));
-						childrenTagObj.put("name", ctag.getName());
-						if("熊".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findXiongDefault.png"));
-						}else if("猴".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findHouDefault.png"));
-						}else if("狒狒".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findFeiFeiDefault.png"));
-						}else if("通用".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findAllDefault.png"));
-						}else if("情趣".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findQingQuDefault.png"));
-						}else if("护肤".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findHuFuDefault.png"));
-						}else if("服装".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findFuZhuangDefault.png"));
-						}else if("配饰".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findPeiShiDefault.png"));
-						}else if("生活".equals(ctag.getName())){
-							childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findShengHuoDefault.png"));
-						}else{
-							childrenTagObj.put("image", this.getImageUrl("123.png"));
+				//类型列表
+				List<ThemeTag> themeTags = productService.getThemeTagList();
+				for(ThemeTag themetag:themeTags){
+					if("类型".equals(themetag.getName())){
+						JSONObject typeObj = new JSONObject();
+						typeObj.put("typeId", String.valueOf(themetag.getId()));
+						typeObj.put("typeName", themetag.getName());
+						JSONArray childrenTag = new JSONArray();
+						for(ThemeTag ctag:themetag.getChildrenThemeTag()){
+							JSONObject childrenTagObj = new JSONObject();
+							childrenTagObj.put("id", String.valueOf(ctag.getId()));
+							childrenTagObj.put("name", ctag.getName());
+							if("熊".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findXiongDefault.png"));
+							}else if("猴".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findHouDefault.png"));
+							}else if("狒狒".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findFeiFeiDefault.png"));
+							}else if("通用".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findAllDefault.png"));
+							}else if("情趣".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findQingQuDefault.png"));
+							}else if("护肤".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findHuFuDefault.png"));
+							}else if("服装".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findFuZhuangDefault.png"));
+							}else if("配饰".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findPeiShiDefault.png"));
+							}else if("生活".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findShengHuoDefault.png"));
+							}else{
+								childrenTagObj.put("image", this.getImageUrl("123.png"));
+							}
+							if(ctag.getName().indexOf("双十一")<0){
+								childrenTag.add(childrenTagObj);
+							}
 						}
-						if(ctag.getName().indexOf("双十一")<0){
-							childrenTag.add(childrenTagObj);
+						jsonObject.put("typeData", childrenTag);
+					}
+				}
+			}else if(version.startsWith("3.")){
+				map.put("contentStyle", "topic");
+				Page page =	productService.getThemeProductsAPPVersion2(pageNo, 10 , map);
+				List<Map<String,Object>> tps = (List<Map<String,Object>>) page.getResult();
+				List<Integer> themeIds = new ArrayList<Integer>();
+				for(Map<String,Object> tp:tps){
+					themeIds.add((int)tp.get("id"));
+				}
+				List<Map<String,Object>> tcbts = productService.getThemeContentByThemeIds(themeIds);
+				JSONArray jsonArray = new JSONArray();
+				for(Map<String,Object> tp:tps){
+					JSONObject theme = new JSONObject();
+					int tpid = (int)tp.get("id");
+					theme.put("themeId", tpid);
+					theme.put("themeImage", this.getImageUrl((String)tp.get("image")));
+					theme.put("contentStyle", tp.get("contentStyle"));
+					theme.put("tags", this.getImageUrl((String)tp.get("tagImage")));
+					JSONArray productDataJa = new JSONArray();
+					for(Map<String,Object> tcbt:tcbts){
+						int tid = (int)tcbt.get("tid");
+						if(tid == tpid){
+							JSONObject productObj = new JSONObject();
+							productObj.put("pid", tcbt.get("pid"));
+							//productObj.put("pname", tcbt.get("pname"));
+							productObj.put("pname", tcbt.get("pbrief"));
+							productObj.put("pimage", this.getImageUrl((String)tcbt.get("pimage")));
+							productObj.put("pprice", String.valueOf(tcbt.get("pprice")));
+							productObj.put("purl", tcbt.get("purl"));
+							productObj.put("productOrigin", tcbt.get("productOrigin"));
+							productDataJa.add(productObj);
 						}
 					}
-					jsonObject.put("typeData", childrenTag);
+					theme.put("productData", productDataJa);
+					jsonArray.add(theme);
+				}
+				if(tps!=null&&tps.size()>0){
+					jsonObject.put("themeData", jsonArray); 
+				}
+				String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+				Member member = this.getMemberDetails(accessToken);
+				if(member!=null&&member.getCanLive()==1){
+					jsonObject.put("canLive", "yes");
+				}else{
+					jsonObject.put("canLive", "no");
+				}
+				//类型列表
+				List<ThemeTag> themeTags = productService.getThemeTagList();
+				for(ThemeTag themetag:themeTags){
+					if("类型".equals(themetag.getName())){
+						JSONObject typeObj = new JSONObject();
+						typeObj.put("typeId", String.valueOf(themetag.getId()));
+						typeObj.put("typeName", themetag.getName());
+						JSONArray childrenTag = new JSONArray();
+						for(ThemeTag ctag:themetag.getChildrenThemeTag()){
+							JSONObject childrenTagObj = new JSONObject();
+							childrenTagObj.put("id", String.valueOf(ctag.getId()));
+							childrenTagObj.put("name", ctag.getName());
+							if("情趣".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findQingQuDefault-17.png"));
+							}else if("护肤".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findHuFuDefault-17.png"));
+								childrenTagObj.put("name", "美护");
+							}else if("服装".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findFuZhuangDefault-17.png"));
+								childrenTagObj.put("name", "穿搭");
+							}else if("配饰".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findPeiShiDefault-17.png"));
+								childrenTagObj.put("name", "美妆");
+							}else if("生活".equals(ctag.getName())){
+								childrenTagObj.put("image", this.getImageUrl("attachment/allDefaultImage/findShengHuoDefault-17.png"));
+							}else{
+								childrenTagObj.put("image", this.getImageUrl("123.png"));
+							}
+							if(ctag.getName().indexOf("双十一")<0){
+								childrenTag.add(childrenTagObj);
+							}
+						}
+						jsonObject.put("typeData", childrenTag);
+					}
+				}
+				//banner2的获取  首页两个banner
+				List<PhoneBanner> phoneBanners = bannerService.getCurrentBanners("首页banner2");
+				if(phoneBanners!=null&&phoneBanners.size()>0){
+					JSONArray bannerJarray = new JSONArray();
+					for(PhoneBanner pb:phoneBanners){
+						JSONObject bannerObj = new JSONObject();
+						bannerObj.put("bannerType", String.valueOf(pb.getType()));
+						bannerObj.put("bannerId", String.valueOf(pb.getId()));
+						bannerObj.put("bannerImage", this.getImageUrl(pb.getImage()));
+						bannerObj.put("bannerData", pb.getDetails());
+						bannerObj.put("bannerCategory", pb.getCategory());
+						if(pb.getThemeContentStyle()!=null&&!pb.getThemeContentStyle().equals("0")){
+							bannerObj.put("contentStyle", pb.getThemeContentStyle());
+						}
+						bannerJarray.add(bannerObj);
+					}
+					jsonObject.put("bannerList2", bannerJarray);
 				}
 			}
+			
 			//banner获取
-			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
-			int cmemberid = this.getMemberId(accessToken);
+//			String accessToken = paramObject.has("accessToken")?paramObject.getString("accessToken"):null;
+//			int cmemberid = this.getMemberId(accessToken);
 			//if(cmemberid!=0&&(cmemberid==3||cmemberid==1||cmemberid==36||cmemberid==4||cmemberid==30)){
 				List<PhoneBanner> phoneBanners = bannerService.getCurrentBanners("首页banner");
 				if(phoneBanners!=null&&phoneBanners.size()>0){

@@ -91,6 +91,7 @@ a {
 			<tr height="38px"><td class="spanFront">banner分类 : </td><td>
 				<select name="phoneBanner.category">
 					<option value="首页banner">首页banner</option>
+					<option value="首页banner">首页banner2</option>
 					<option value="发现banner">发现banner</option>
 					<option value="社交banner">社交banner</option>
 				</select>
