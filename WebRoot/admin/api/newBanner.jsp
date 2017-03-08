@@ -91,7 +91,7 @@ a {
 			<tr height="38px"><td class="spanFront">banner分类 : </td><td>
 				<select name="phoneBanner.category">
 					<option value="首页banner">首页banner</option>
-					<option value="首页banner">首页banner2</option>
+					<option value="首页banner2">首页下方banner</option>
 					<option value="发现banner">发现banner</option>
 					<option value="社交banner">社交banner</option>
 				</select>
@@ -120,10 +120,10 @@ a {
 				<span id="bannerDetailsMsg"></span>
 			</td></tr>
 			<tr height="38px"><td class="spanFront">主题开始时间 : </td><td>
-				<input class="easyui-datebox" name="startTime" style="width: 90px;height: 28px;" id="start_time" data-options="buttons:buttons" />
+				<input class="easyui-datetimebox" name="startTime" style="width: 150px;height: 28px;" id="start_time" data-options="buttons:buttons" />
 				</td></tr>
 			<tr height="38px"><td class="spanFront">主题结束时间 : </td><td>
-				<input class="easyui-datebox" name="endTime" style="width: 90px;height: 28px;" id="end_time" data-options="buttons:e_buttons" />
+				<input class="easyui-datetimebox" name="endTime" style="width: 150px;height: 28px;" id="end_time" data-options="buttons:e_buttons" />
 			</td></tr>
 			<tr height="38px"><td class="spanFront">主题点击次数 : </td><td>
 				<input class="inputFront" name="phoneBanner.click_count" /></td></tr>
@@ -152,19 +152,19 @@ a {
 </div>
 <script>
 	
-	var buttons = $.extend([], $.fn.datebox.defaults.buttons);
+	var buttons = $.extend([], $.fn.datetimebox.defaults.buttons);
 	buttons.splice(1, 0, {
 	text: '清空',
 	handler: function(target){
-		 $('#start_time').datebox('setValue',"");
+		 $('#start_time').datetimebox('setValue',"");
 	}
 	});
 	
-	var e_buttons = $.extend([], $.fn.datebox.defaults.buttons);
+	var e_buttons = $.extend([], $.fn.datetimebox.defaults.buttons);
 	e_buttons.splice(1, 0, {
 	text: '清空',
 	handler: function(target){
-		 $('#end_time').datebox('setValue',"");
+		 $('#end_time').datetimebox('setValue',"");
 	}
 	});
 	function BannerDetailsSel(tt){

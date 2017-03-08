@@ -1,8 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@page import="java.util.*"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="format-detection" content="telephone=no">
-<script type="text/javascript" src="script/jquery-1.7.js"></script>
+<script type="text/javascript" src="${ctx}/themes/b2b2cv2/js/jquery.js"></script>
 <script type="text/javascript">
 function startDown(ib){
 //     var ua = navigator.userAgent.toLowerCase();
@@ -31,7 +26,8 @@ function startDown(ib){
 	}else if(ib==2){
 		$("#popweixin").show();
 	}
-	if($('#downType').val()==2){
+	
+	if(GetQueryString('type')==2){
 		$("#popweixin").show();
 	}
      if(is_weixin()){
@@ -39,7 +35,7 @@ function startDown(ib){
      	//var uu=encodeURIComponent("https://itunes.apple.com/us/app/ka-you-qu/id824073884?ls=1&mt=8&a="+random);
       	//window.location.href="http://mp.weixin.qq.com/mp/redirect?url="+uu;
      }else{
-    	window.location.href="https://itunes.apple.com/cn/app/id1122061713";
+    	//window.location.href="https://itunes.apple.com/cn/app/id1122061713";
     	//window.open("http://mp.weixin.qq.com/mp/redirect?url=https://itunes.apple.com/cn/app/ka-you-qu-xing-qu-she-jiao/id824073884?l=en&mt=8");
      }
 }
@@ -62,18 +58,24 @@ function finDown(){
 	  var s = document.getElementsByTagName("script")[0]; 
 	  s.parentNode.insertBefore(hm, s);
 	})();
+	
+function GetQueryString(name)
+{
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+}
 </script>
 </head>
-<input type="hidden" value="${param.type }" id="downType" />
 <body onload="startDown(1)" style="padding:0px;margin:0px;overflow: hidden;">
 	<div style="margin:0px;padding:0px;width:100%;">
-		<img id="imageBg" src="bgapp.jpg" style="display:block;margin:0px;padding:0px;" width="100%" height="100px"/>
+		<img id="imageBg" src="../themes/b2b2cv2/api/image/bgapp.jpg" style="display:block;margin:0px;padding:0px;" width="100%" height="100px"/>
 	</div>
 	<div onclick="startDown(2)" style="dispaly:none;width:100%;overflow: hidden;position: absolute;top:0px;left: 0px;" >
-		<img src="down.png" width="100%" id="downApp" style="display:block;margin:0px;"/>
+		<img src="../themes/b2b2cv2/api/image/down.png" width="100%" id="downApp" style="display:block;margin:0px;"/>
 	</div>
 	<div onclick="finDown()" style="width:100%;overflow: hidden;position: absolute;top: 0px;left:0px;z-index: 0;display:none;" id="popweixin">
-		<img src="downApp.png" width="100%" id="popweixinImg" style="display:block;"/>
+		<img src="../themes/b2b2cv2/api/image/downApp.png" width="100%" id="image/popweixinImg" style="display:block;"/>
 		<div id="ydiv" style="width:100%;background: rgb(94,94,94);opacity:0.5;margin:0px;"></div>
 	</div>
 </body>

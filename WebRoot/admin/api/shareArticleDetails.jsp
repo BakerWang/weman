@@ -49,19 +49,19 @@ a {
 </head>
 <body style="overflow-x: hidden;margin:0px;padding:0px;">
 	<div id="secDiv" style="width:320px;margin:0 auto;position: relative;">
-		<div style="width:100%;height:500px;position: relative;overflow: hidden;">
-			<img width="100%" height="500px" src="http://www.weman.cc:8089/b2b2cbak/statics/${article.image}" id="bImage" style="position: absolute;z-index: 0;top:0px;left:0px;" />
-			<div style="width:120px;height: 500px;float: left;background: white;opacity: 0.9;-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0.9);filter: alpha(opacity = 0.9);">
+		<div style="width:100%;height:390px;position: relative;overflow: hidden;">
+			<img width="100%" height="390px" src="http://www.weman.cc:8089/b2b2cbak/statics/${article.image}" id="bImage" style="position: absolute;z-index: 0;top:0px;left:0px;" />
+			<div style="width:120px;height: 390px;float: left;background: white;opacity: 0.9;-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0.9);filter: alpha(opacity = 0.9);">
 				<div style="margin-top:27px;height:180px;">
 					<div style="float:left;width:3px;background: red;height:120px;"></div>
 					<div style="float:left;width:117px;">
 						<div style="width:50px;margin:0 auto;"><img src="http://www.weman.cc:8089/b2b2cbak/statics/${article.userPhoto }" width="50px" style="border-radius: 25px;" /></div>
 						<div style="width:8px;height:1px;background: black;margin:0 auto;margin-top:15px;"></div>
 						<div style="text-align: center;font-size: 16px;margin-top:10px;">${article.userName }</div>
-						<div style="font-size:13px;text-align: center;margin-top:7px;">${userAttr }</div>
+						<div style="font-size:13px;text-align: center;margin-top:7px;color:rgb(173,173,173);">${userAttr }</div>
 					</div>
 				</div>
-				<div style="margin-top: 160px;height:130px;margin-left:10px;width:100px;overflow: hidden;">
+				<div style="margin-top: 90px;height:130px;margin-left:10px;width:100px;overflow: hidden;">
 					<s:iterator value="#request.categoryImages" var="cimage" status="statu">
 						<div style="border:1px gray solid;height:14px;margin-top:4px;padding-right:4px;width:-moz-max-content;display:inline-block; ">
 							<div style="width:12px;height:12px;overflow: hidden;float:left;margin-top:1px;margin-left:2px;"><img src="${cimage }" width="12px" /></div>
@@ -136,7 +136,7 @@ a {
 				<p>1st为同志精选的型男好物平台</p>
 			</div>
 			<!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.xymens.app" class="btn">点击下载</a>-->
-	           <a style="  background-color: black;border-radius: 3px; color: white;border:1px solid rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="https://itunes.apple.com/cn/app/id1122061713">下载APP</a>
+	           <a style="  background-color: black;border-radius: 3px; color: white;border:1px solid rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="http://www.weman.cc:8089/b2b2cbak/api/downloadAppStore.html?type=2">下载APP</a>
 	           <a style="z-index: 8" class="close" href="javascript:;"></a>
 		</header>
 	</div>

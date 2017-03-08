@@ -15,6 +15,7 @@ public class ThemeContent {
 	private String status;
 	private Long createtime;
 	private int goods_id;
+	private String fontweight;
 	
 	private String productName;
 	private Double productPrice = 100.0;
@@ -26,6 +27,7 @@ public class ThemeContent {
 	private String productCategoryImage;//商品分类的图片
 	private String productBrandName;//商品品牌的名字
 	private int isIndexShow = -1;//主题里面的商品是否显示 -1 否  1 显示
+	private int isShowMKPrice = -1;//主题详情里面是否显示商品的mk价格
 	private String url;//购买地址
 	
 	private int isCollect = 0;//如果是商品  是否收藏 0 是没有收藏
@@ -35,6 +37,18 @@ public class ThemeContent {
 	
 	
 	
+	public int getIsShowMKPrice() {
+		return isShowMKPrice;
+	}
+	public void setIsShowMKPrice(int isShowMKPrice) {
+		this.isShowMKPrice = isShowMKPrice;
+	}
+	public String getFontweight() {
+		return fontweight;
+	}
+	public void setFontweight(String fontweight) {
+		this.fontweight = fontweight;
+	}
 	public int getIsIndexShow() {
 		return isIndexShow;
 	}

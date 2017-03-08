@@ -370,7 +370,6 @@ function updateContent(type,tt){
 function updateTr(tt,tcid){
 	var $this = $($(tt).parent().parent().find('.themeContentTd')[0]);
 	var type = $this.attr('type');
-	$(this)
 	if(type =='text'){
 		$('#imageDiv').hide();
 		$('#productDiv').hide();
@@ -379,7 +378,7 @@ function updateTr(tt,tcid){
 		$('#wenziDiv').show();
 		$("#selectType").find("option[value='1']").attr("selected",true);
 		$('#content').val($this.attr('content'));
-		$("#fontSize").find("option[value='"+$this.attr('content')+"']").attr("selected",true);
+		$("#fontSize").find("option[value='"+$this.attr('fontSize')+"']").attr("selected",true);
 		$("#center").find("option[value='"+$this.attr('center')+"']").attr("selected",true);
 		$($('#wenziDiv').find('.updateC')[0]).attr('tcid',tcid);
 	}else if(type =='image'){

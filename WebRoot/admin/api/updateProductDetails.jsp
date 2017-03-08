@@ -79,6 +79,12 @@ body {
 						<option <s:if test="#request.product.isShowMKPrice==-1">selected="selected"</s:if> value="-1">不显示</option>			 		
 			 		</select>
 			 	</td></tr>
+			 	<tr><td>是否有优惠券：</td><td>
+			 		<select name="hasCoupon">
+			 			<option value="-1">无</option>
+			 			<option value="1">有</option>
+			 		</select>
+			 	</td></tr>
 			 </table>
 			 
 		</form>

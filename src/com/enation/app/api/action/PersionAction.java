@@ -206,6 +206,7 @@ public class PersionAction extends BaseAction{
 				theme.put("themeDetails", tp.getTheme().getDetails());
 				theme.put("contentStyle", tp.getTheme().getContentStyle());
 				theme.put("tags", tp.getTheme().getTagsImage());
+				theme.put("themeTime", com.enation.framework.util.DateUtil.getShowDate(new Date((Long)tp.getTheme().getStartTime())));
 				jsonArray.add(theme);
 			}
 			jsonObject.put("themeData", jsonArray);
@@ -501,6 +502,7 @@ public class PersionAction extends BaseAction{
 					obj.put("themeTitle", map.get("themeTitle"));
 					obj.put("themeDetails", map.get("themeDetails"));
 					obj.put("contentStyle", map.get("contentStyle"));
+					obj.put("themeTime", com.enation.framework.util.DateUtil.getShowDate(new Date((Long)map.get("starttime"))));
 				}else if(type==3){
 					obj.put("pid", String.valueOf(map.get("goods_id")));
 					obj.put("pname", map.get("name"));
@@ -519,7 +521,7 @@ public class PersionAction extends BaseAction{
 				ja.add(obj);
 			}
 			if(type==2&&pageNo==1){
-				if(member_id==1||member_id==40||member_id==2||member_id==5){
+				if(member_id==1||member_id==40||member_id==2||member_id==5||member_id==274){
 					List<Map<String,Object>> btps = productService.getBrowseThemeList();
 					for(Map<String,Object> tp:btps){
 						JSONObject theme = new JSONObject();

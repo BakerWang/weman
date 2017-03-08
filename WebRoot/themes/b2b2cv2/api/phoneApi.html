@@ -270,6 +270,21 @@
 		};
 		base(url,dataParam);
 	}
+	function getThemeList5(){
+		var page = $('#themeListPage5').val();
+		var type = $('#themeListPage51').val();
+		var typename = $('#themeListPage52').val();
+		var url = "ProductAction_findListByCat.do";
+		var dataParam = {
+				"loginType":"global",
+				"clientType":"iphone",
+				"version":"3.0.1",
+				"type":type,
+				"typename":typename,
+				"page":page
+		};
+		base(url,dataParam);
+	}
 	function getThemeList(){
 		var page = $('#themeListPage2').val();
 		var url = "ProductAction_getThemeList.do";
@@ -419,7 +434,7 @@
 		var dataParam = {
 				"loginType":"global",
 				"clientType":"iphone",
-				"version":"1.0"
+				"version":"3.0"
 		};
 		base(url,dataParam);
 	}
@@ -696,6 +711,7 @@
 	页数：<input value="1" id="themeListPage2" /><input type="button" onclick="getThemeList2()" value="获取主题列表(登录的version2)"/><br/>
 	页数：<input value="1" id="themeListPage3" /><input type="button" onclick="getThemeList3()" value="获取主题列表(未登录的version2)"/><br/>
 	页数：<input value="1" id="themeListPage4" /><input type="button" onclick="getThemeList4()" value="获取主题列表(未登录的version3)"/><br/>
+	页数：<input value="1" id="themeListPage5" /><select id="themeListPage51"><option value="index">专题</option><option value="find">主题</option></select><select id="themeListPage52"><option value="全部">全部</option><option value="熊">熊</option><option value="猴">猴</option><option value="狒狒">狒狒</option></select><input type="button" onclick="getThemeList5()" value="获取主题或专题列表"/><br/>
 	页数：<input value="1" id="bannerThemeListPage" /><input value="49" id="bannerIdInput" /><input type="button" onclick="getBannerThemeList()" value="获取banner主题列表"/><br/>
 	主题id：<input value="30" id="themeIdA" /><input type="button" onclick="getThemeDetails()" value="获取主题详情"/><br/>
 	<h2>个人主页接口测试</h2><br/>

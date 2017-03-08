@@ -80,8 +80,8 @@ public class AdminBannerAction extends BaseAction{
 		try {
 			String startTime = request.getParameter("startTime");
 			String endTime = request.getParameter("endTime");
-			phoneBanner.setStart_time(new SimpleDateFormat("yyyy-MM-dd").parse(startTime).getTime());
-			phoneBanner.setEnd_time(new SimpleDateFormat("yyyy-MM-dd").parse(endTime).getTime());
+			phoneBanner.setStart_time(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(startTime).getTime());
+			phoneBanner.setEnd_time(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(endTime).getTime());
 			if(phoneBanner.getStart_time()>=phoneBanner.getEnd_time()){
 				jsonObject.put("result", "no");
 				return;

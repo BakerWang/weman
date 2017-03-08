@@ -21,22 +21,22 @@ body{
 </style>
 </head>
 <body style="margin:0px;padding:0px;font-family: 微软雅黑;overflow: hidden;width:100%;">
-<div id="divd" style="width:88%;height:auto;overflow: hidden;margin:0 auto;margin-top:24px;margin-right:6%;margin-left:6%;">
-	<div style="width:92%;margin:0 auto;text-align: center;max-height:200px;overflow: hidden;">
-		<img src="/b2b2cbak/statics/${resObj.original }" width="100%" />
+<div id="divd" style="width:88%;height:auto;overflow: hidden;margin:0 auto;margin-top:0px;margin-right:6%;margin-left:6%;">
+	<div style="width:68%;margin:0 auto;text-align: center;max-height:200px;overflow: hidden;">
+		<img src="/b2b2cbak/statics/${resObj.original }" width="100%" height="100%" />
 	</div>
-	<div style="width:100%;text-align: center;color:#313131;word-break:break-all; font-weight: bold;font-size:15px;margin-top:12px;">
+	<div style="width:100%;text-align: center;color:#333333;word-break:break-all; font-weight: bold;font-size:22px;margin-top:12px;">
 		${resObj.brief }
 	</div>
-	<div style="width:100%;text-align: center;color:#626262;word-break:break-all; font-size:12px;margin-top:0px;">
+	<div style="width:100%;text-align: center;color:#333333;word-break:break-all; font-size:16px;margin-top:0px;">
 		${resObj.name }
 	</div>
-	<div style="width:100%;text-align: center;color:#FF5149;font-weight: bold;font-size: 22px;margin-top:4px;">
+	<div style="width:100%;text-align: center;color:#D10000;font-weight: bold;font-size: 22px;margin-top:2px;">
 		￥${resObj.price }
 	</div>
-	<div style="height:6px;width:100%;"></div>
+	<div style="height:3px;width:100%;"></div>
 </div>
-<div id="introDiv" style="width:75%;margin:0 auto;text-align: left;word-break:break-all; color:#626262;letter-spacing: 0.1px;font-size: 12px;margin-top:6px;text-align:justify;text-justify:inter-ideograph;overflow: scroll;height:100px;">
+<div id="introDiv" style="font-family: '方正';width:75%;margin:0 auto;text-align: left;word-break:break-all; color:#666666;letter-spacing: 0px;font-size: 14px;margin-top:15px;text-align:justify;text-justify:inter-ideograph;overflow: scroll;height:76px;line-height:160%;">
 	<div id="innerHeight">
 		${resObj.intro }
 	</div>

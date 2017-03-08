@@ -112,7 +112,8 @@ function  ajaxFileUpload(i){
 			<tr height="38px"><td class="spanFront">主题图片 : </td><td width="480px"><input id="themeImageFile" type="file" name="themeFile"/></td>
 			<td width="140px">上架：<input class="easyui-datetimebox" name="startTime" style="width: 90px;height: 28px;" id="start_time" data-options="buttons:buttons" /></td></tr>
 			<tr height="38px"><td class="spanFront">主题副图 : </td><td width="480px"><input id="themeImageFile2" type="file" name="themeFile2"/></td><td></td></tr>
-			<tr height="38px"><td class="spanFront">主题标题 : </td><td><input class="inputFront" name="theme.title" /></td>
+			<tr height="38px"><td class="spanFront">主题主标题 : </td><td><input class="inputFront" name="theme.title" /></td>
+			<tr height="38px"><td class="spanFront">主题副标题 : </td><td><input class="inputFront" name="theme.title2" /></td>
 			<td></td></tr>
 			<tr height="38px"><td class="spanFront">主题日期 : </td><td><input class="inputFront" name="theme.showDate" /></td><td></td></tr>
 			<tr height="38px"><td class="spanFront">主题描述 : </td><td><input class="inputFront" name="theme.details" /></td>
@@ -145,6 +146,12 @@ function  ajaxFileUpload(i){
 								<option value="15">15</option>
 								<option value="17">17</option>
 								<option value="18">18</option>
+							</select>
+				</div>
+				<div style="width:100%;margin-top:10px;">
+					文字是否加粗：<select id="fontWeight">
+								<option value="no">正常</option>
+								<option value="yes">加粗</option>
 							</select>
 				</div>
 				<div style="width:100%;margin-top:10px;">
@@ -281,8 +288,9 @@ handler: function(target){
 			var fontSize= $('#fontSize').val();
 			var center=$('#center').val();
 			var content=$('#content').val();
+			var fontWeight=$('#fontWeight').val();
 			type = 'text';
-			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td style="max-width:530px;word-wrap:break-word;" class="themeContentTd" type="'+type+'" position="'+position+'" fontSize="'+fontSize+'" center="'+center+'" content="'+content+'" >文字：'+content+'&nbsp;&nbsp;(文字大小：'+fontSize+',文字位置：'+center+')</td><td><button onclick="removeTr(this)">删除</button></td></tr>';
+			var divhtml='<tr height="38px"><td class="spanFront">'+tdContent+'</td><td style="max-width:530px;word-wrap:break-word;" class="themeContentTd" type="'+type+'" position="'+position+'" fontWeight="'+fontWeight+'" fontSize="'+fontSize+'" center="'+center+'" content="'+content+'" >文字：'+content+'&nbsp;&nbsp;(文字大小：'+fontSize+',文字位置：'+center+')</td><td><button onclick="removeTr(this)">删除</button></td></tr>';
 			$('#addThemeTable').append(divhtml);
 		}else if(type == 2){
 			var image = '../statics/'+upImage;
@@ -348,6 +356,7 @@ handler: function(target){
 					textJson['type'] = type;
 					textJson.position = position;
 					textJson.fontSize = $($('.themeContentTd')[i]).attr('fontSize');
+					textJson.fontWeight = $($('.themeContentTd')[i]).attr('fontWeight');
 					textJson.center = $($('.themeContentTd')[i]).attr('center');
 					textJson.content = $($('.themeContentTd')[i]).attr('content');
 					contentJson.push(textJson);
@@ -398,6 +407,8 @@ handler: function(target){
 						parent.addTab1("主题列表",
 								"/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do");
 						parent.CloseTabByTitle("主题添加");
+					}else{
+						alert("出现错误 ，请重试"+e);
 					}
 					if (data.result == 0) {
 						$.Loading.error(data.message);

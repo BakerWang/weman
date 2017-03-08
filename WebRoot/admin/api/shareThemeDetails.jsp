@@ -55,20 +55,38 @@ a {
 		</div>
 		<section style="margin: 0 auto;position: relative;width:100%;" >
 			<div style=" position: relative;width:100%;">
-				<div style="font-weight: bold;font-size: 18px;text-align: center;margin-top:4px;padding-left:3%;padding-right:3%;">
-					${theme.title }
-				</div>
-				<div style="font-size:14px;text-align: center;color:rgb(193,193,193);margin-top:4px;padding-left:3%;padding-right:3%;">
-					${theme.showDate }
-				</div>
-				<div style="font-size:16px;color:rgb(113,113,113);margin-top:4px;padding-left:3%;padding-right:3%;">
-					${theme.details }
-				</div>
+				<s:if test="#request.theme.contentStyle=='topic'">
+					<div style="font-weight: bold;font-size: 18px;text-align: left;margin-top:4px;padding-left:3%;padding-right:3%;">
+						${theme.title }
+					</div>
+					<div style="width:100%;height:30px;">
+						<div style="width:70%;text-align: left;font-size:14px;float: left;">
+							${theme.title2 }
+						</div>
+						<div style="font-size:13px;text-align: center;color:rgb(193,193,193);margin-top:4px;padding-right:3%;width:25%;float: right;">
+							${theme.showDate }
+						</div>
+					</div>
+					<div style="font-size:16px;color:rgb(113,113,113);margin-top:4px;padding-left:3%;padding-right:3%;">
+						${theme.details }
+					</div>
+				</s:if><s:else>
+					<div style="font-weight: bold;font-size: 18px;text-align: left;margin-top:4px;padding-left:3%;padding-right:3%;">
+						${theme.title }
+					</div>
+					<div style="width:96%;height:2px;background: rgb(193,193,193);margin-top:4px;margin: 0 auto;"></div>
+					<div style="font-size:14px;text-align: left;color:rgb(193,193,193);margin-top:4px;padding-left:3%;padding-right:3%;">
+						${theme.showDate }
+					</div>
+					<div style="font-size:16px;color:rgb(113,113,113);margin-top:4px;padding-left:3%;padding-right:3%;">
+						${theme.details }
+					</div>
+				</s:else>
 				<% int i = 1; %>
 				<div style="width:100%;height:auto;overflow: hidden;">
 				<s:iterator value="#request.theme.themeContent" var="themeContent" >
 					<s:if test="#themeContent.type=='text'">
-						<div style="font-size:16px;color:rgb(113,113,113);margin-top:5px;margin-bottom:5px;padding-left:3%;padding-right:3%;text-align: center;">
+						<div style="font-size:16px;color:rgb(113,113,113);margin-top:5px;margin-bottom:5px;padding-left:3%;padding-right:3%;text-align: left;">
 							${themeContent.content }
 						</div>
 					</s:if><s:elseif test="#themeContent.type=='image'">
@@ -78,25 +96,42 @@ a {
 					</s:elseif>
 					<s:elseif test="#themeContent.type=='product'">
 							<s:if test="#request.theme.contentStyle=='default'">
-								<div style="padding-left:3%;padding-right:3%;">
-									<div style="text-align: center;margin:0 auto;margin-top:5px;height:50px;position: relative;width:300px;">
-										<img src="../admin/api/image/themeline.png" width="100%" />
-										<span style="width:20;margin:0 auto;top:26%;margin-left:-3%;position: absolute;font-size:15px;">0<%=i++ %></span>
-									</div>
-									<div style="text-align: center;margin-top:5px;margin-bottom: 5px;color:black;font-size:18px;">${themeContent.productName }</div>
-									<div style="text-align: center;margin-top:5px;margin-bottom: 5px;padding-left:4px;padding-right:4px;font-size:16px;color:rgb(113,113,113);">${themeContent.intro }</div>
-									<div style="position: relative; ">
-										<div style="overflow: hidden;width:100%;">
+								<div style="margin-left:3%;margin-right:3%;width:91%;border: 1px solid rgb(193,193,193);padding:1%;height:85px;margin-top:10px;">
+									<div style="overflow: hidden;width:25%;max-height:85px;overflow: hidden;float: left;">
 											<img src="http://www.weman.cc:8089/b2b2cbak/statics/${themeContent.productImage }" width="100%" />
-										</div>
-										<div style="position: absolute;bottom: 0px;">
-											<img width="100%" src="../admin/api/image/goshow.png" />
-										</div>
-										<div style="position: absolute;bottom: 10px;color: white;font-size:18px;left:10px;font-weight: bold;">
-											¥ ${productPrice } 
+									</div>
+									<div style="width:70%;margin-left:4%;float:left;">
+										<div style="text-align: left;margin-top:2px;color:black;font-size:16px;font-weight: bold;overflow: hidden;height:20px;">${themeContent.productBrief }</div>
+										<div style="text-align: left;margin-top:4px;font-size:14px;height:35px;overflow: hidden;line-height: 18px;color:rgb(113,113,113);">${themeContent.productName }</div>
+										<div style="text-align: left;margin-top:0px;font-size:14px;height:25px;overflow: hidden;">
+											<div style="float:left;font-size:18px;color:red;">¥ ${productPrice } </div>
+											<a href="http://www.weman.cc:8089/b2b2cbak/api/downloadAppStore.html?type=2" style="text-decoration: none;">
+												<div style="float:right;margin-right:5px;">
+													<div style="width:60px;height:22px;background: rgb(191,2,2);color:white;line-height: 22px;text-align: center;border-radius: 2px; ">去购买</div>
+												</div>
+											</a>
 										</div>
 									</div>
 								</div>
+<!-- 								<div style="padding-left:3%;padding-right:3%;"> -->
+<!-- 									<div style="text-align: center;margin:0 auto;margin-top:5px;height:50px;position: relative;width:300px;"> -->
+<!-- 										<img src="../admin/api/image/themeline.png" width="100%" /> -->
+<%-- 										<span style="width:20;margin:0 auto;top:26%;margin-left:-3%;position: absolute;font-size:15px;">0<%=i++ %></span> --%>
+<!-- 									</div> -->
+<%-- 									<div style="text-align: center;margin-top:5px;margin-bottom: 5px;color:black;font-size:18px;">${themeContent.productName }</div> --%>
+<%-- 									<div style="text-align: center;margin-top:5px;margin-bottom: 5px;padding-left:4px;padding-right:4px;font-size:16px;color:rgb(113,113,113);">${themeContent.intro }</div> --%>
+<!-- 									<div style="position: relative; "> -->
+<!-- 										<div style="overflow: hidden;width:100%;"> -->
+<%-- 											<img src="http://www.weman.cc:8089/b2b2cbak/statics/${themeContent.productImage }" width="100%" /> --%>
+<!-- 										</div> -->
+<!-- 										<div style="position: absolute;bottom: 0px;"> -->
+<!-- 											<img width="100%" src="../admin/api/image/goshow.png" /> -->
+<!-- 										</div> -->
+<!-- 										<div style="position: absolute;bottom: 10px;color: white;font-size:18px;left:10px;font-weight: bold;"> -->
+<%-- 											¥ ${productPrice }  --%>
+<!-- 										</div> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
 							</s:if><s:else>
 								<div style="float:left;width:44%;height:auto;overflow: hidden;padding-top:1%;padding-left:3%;padding-right:3%;padding-bottom: 3%;background: rgb(240,240,240);">
 									<a href="${themeContent.url }" style="cursor: pointer;list-style: none;">
@@ -116,9 +151,9 @@ a {
 <!-- 				</div> -->
 			</div>
 			<div style="margin-top:4px;margin-bottom: 4px;">
-				<div style="width:100%;height:1px;background: rgb(193,193,193);"></div>
+				<div style="width:100%;height:0.5px;background: rgb(193,193,193);"></div>
 				<img src="../admin/api/image/moretheme.png" width="100%" />
-				<div style="width:100%;height:1px;background: rgb(193,193,193);"></div>
+				<div style="width:100%;height:0.5px;background: rgb(193,193,193);"></div>
 			</div>
 		</section>
 	<div style="width:94%;padding-left:3%;padding-right:3%;height:auto;overflow: hidden;height:auto;padding-bottom:3%;" id="moreThemeDiv">
@@ -127,11 +162,12 @@ a {
 				<div style="padding-top:7px;padding-bottom:7px;height:70px;width:100%;overflow: hidden;">
 					<div style="float:left;width:33%;"><img src="http://www.weman.cc:8089/b2b2cbak/statics/${themeObj.theme.minorImage }"/></div>
 					<div style="float:left;margin-left:2%;width:64%;">
-						<div style="margin-top:7px;font-size:16px;color: black;">${themeObj.theme.title }</div>
+						<div style="margin-top:4px;font-size:16px;color: black;">${themeObj.theme.title }</div>
 						<div style="margin-top:4px;font-size:14px;color:rgb(193,193,193);width:100%;overflow: hidden;height:38px">${themeObj.theme.details }</div>
 					</div>
 				</div>
 			</a>
+			<div style="width:100%;height:0.5px;background: rgb(193,193,193);"></div>
 		</s:iterator>
 	</div>
 	</div>
@@ -141,12 +177,12 @@ a {
 		</div>
 		<header onclick="location.href='http://www.weman.cc/downloadAppStore.jsp?downType=2'" id="appDiv" style="position: fixed; bottom: 0px; width: 320px; background-color: #383838;height: 60px;">
 			<div style="float: left; height: 44px;left: 6px;position: absolute;top: 8px;width: 44px;"><img alt="" src="../admin/api/image/logo64.png"></div>
-			<div style="color: #fff;font-size: 16px;line-height: 18px;padding: 13px 55px 0;text-align: left;">
+			<div style="color: #fff;font-size: 15px;line-height: 18px;padding: 13px 55px 0;text-align: left;">
 				<p>WeMan我们</p>
-				<p>1st型男直播电商平台 </p>
+				<p>1st为型男精选好物的直播购物APP</p>
 			</div>
 			<!--<a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.xymens.app" class="btn">点击下载</a>-->
-	           <a style="  background-color: black;border-radius: 3px; color: white;border:1px solid rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="javascript:;" onclick="location.href='downloadAppStore.jsp?type=1'">下载APP</a>
+	           <a style="  background-color: black;border-radius: 3px; color: white;border:1px solid rgb(234,83,67); font-size: 12px;line-height: 20px;padding: 5px 10px;position: absolute;right: 10px;text-align: center;top: 15px;" id="openApp" href="http://www.weman.cc:8089/b2b2cbak/api/downloadAppStore.html?type=2" >下载APP</a>
 	           <a style="z-index: 8" class="close" href="javascript:;"></a>
 		</header>
 	</div>

@@ -102,7 +102,7 @@ public class BannerServiceImpl extends BaseSupport implements BannerService{
 	@Override
 	public void updateBannerClick(int bannerId,String type) throws Exception {
 		if("yes".equals(type)){
-			String sql = "update es_api_banner eab set eab.clickCount = eab.clickCount+1 where eab.id = ?";
+			String sql = "update es_api_banner eab set eab.click_count = eab.click_count+1 where eab.id = ?";
 			this.daoSupport.execute(sql, bannerId);
 		}else{
 			String sql = "update es_api_banner eab set eab.nologinClickCount = eab.nologinClickCount+1 where eab.id = ?";

@@ -125,14 +125,27 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			}
 			if(map.containsKey("typeId")){
 				int typeId = Integer.parseInt((String)map.get("typeId"));
-				if(typeId==0){
-					sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagkeyid = "+typeId +" )";
-				}else{
-					sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagvalueid = "+typeId +" )";
+				if(typeId!=0){
+					//sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagvalueid = "+typeId +" )";
+					if(map.containsKey("typeName")){
+						String typename = (String) map.get("typeName");
+						int typenameId = 33;
+						if(typename.equals("熊")){
+							typenameId = 33;
+						}else if(typename.equals("猴")){
+							typenameId = 36;
+						}else if(typename.equals("狒狒")){
+							typenameId = 37;
+						}
+						sql = sql +" and at.id in (select tat.themeid from es_api_theme_themetag tat where tat.themeid in (select tt.themeid from es_api_theme_themetag tt where tt.themetagvalueid="+typeId+") and tat.themetagvalueid = "+typenameId+" )";
+					}else{
+						sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagvalueid = "+typeId +" )";
+					}
 				}
 			}
 		}
 		sql = sql+" order by at.startTime desc";
+		//System.out.println(sql);
 		List<Map> themeList = this.daoSupport.queryForListPage(sql, pageNo, pageSize);
 		String themeIdsStr = "";
 		List<ThemeProduct> themeProducts = new ArrayList<ThemeProduct>();
@@ -359,7 +372,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		if(theme == null){
 			throw new Exception("主题id错误!");
 		}
-		String contentSql="select eatc.*,eg.name as productName,eg.original as productImage,eg.brief as productBrief,eg.productOrigin as productOrigin,eatc.status as status,eg.price as productPrice,eg.mktprice as productMkPrice,eg.intro as intro,eg.url as url ";
+		String contentSql="select eatc.*,eg.name as productName,eg.original as productImage,eg.brief as productBrief,eg.productOrigin as productOrigin,eatc.status as status,eg.price as productPrice,eg.mktprice as productMkPrice,eg.intro as intro,eg.url as url, ifnull(eg.isShowMKPrice,-1) as isShowMKPrice ";
 		if(memberId!=0){
 			contentSql = contentSql +",(select count(*) from wh_api_action waa where waa.status != -1 and waa.type = 3 and member_id = "+memberId+" and data_id = eg.goods_id) as isCollect";
 		}
@@ -616,10 +629,22 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 			}
 			if(map.containsKey("typeId")){
 				int typeId = Integer.parseInt((String)map.get("typeId"));
-				if(typeId==0){
-					sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagkeyid = "+typeId +" )";
-				}else{
-					sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagvalueid = "+typeId +" )";
+				if(typeId!=0){
+					//sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagvalueid = "+typeId +" )";
+					if(map.containsKey("typeName")){
+						String typename = map.get("typeName");
+						int typenameId = 33;
+						if(typename.equals("熊")){
+							typenameId = 33;
+						}else if(typename.equals("猴")){
+							typenameId = 36;
+						}else if(typename.equals("狒狒")){
+							typenameId = 37;
+						}
+						sql = sql +" and at.id in (select tat.themeid from es_api_theme_themetag tat where tat.themeid in (select tt.themeid from es_api_theme_themetag tt where tt.themetagvalueid="+typeId+") and tat.themetagvalueid = "+typenameId+" )";
+					}else{
+						sql = sql +" and at.id in (select eatt.themeid from es_api_theme_themetag eatt where eatt.themetagvalueid = "+typeId +" )";
+					}
 				}
 			}
 		}
@@ -632,7 +657,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 
 	
 	public List<Map<String,Object>> getThemeContentByThemeIds(List<Integer> themeIds){
-		String sqlContent = "select eac.theme_id as tid,eg.productOrigin as productOrigin,eg.brief as pbrief,eg.url as purl,eg.name as pname,eg.original as pimage,eg.price as pprice,eg.goods_id as pid "
+		String sqlContent = "select eac.theme_id as tid,eg.productOrigin as productOrigin,eg.brief as pbrief,eg.url as purl,eg.name as pname,eg.original as pimage,eg.price as pprice,eg.goods_id as pid,eg.isShowMKPrice as isShowMKPrice,eg.mktprice as mkprice "
 				+ " from es_api_theme_content eac  "
 				+ " left join es_goods eg on eg.goods_id = eac.goods_id where 1=1 "
 				+ " and eac.type = 'product' and eac.isIndexShow = 1  ";

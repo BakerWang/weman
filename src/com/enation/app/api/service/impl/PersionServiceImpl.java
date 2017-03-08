@@ -94,7 +94,7 @@ public class PersionServiceImpl extends BaseSupport implements PersionService{
 			String sql ="select waa.id as articleId,waa.image as articleImage from wh_api_article waa where waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);
 		}else if(type==2){//收藏主题列表
-			String sql ="select eat.id as themeId,eat.title as themeTitle,eat.contentStyle as contentStyle,eat.details as themeDetails,eat.minorImage as themeImage from wh_api_action waa "
+			String sql ="select eat.id as themeId,eat.title as themeTitle,eat.contentStyle as contentStyle,eat.details as themeDetails,eat.minorImage as themeImage,eat.startTime as starttime from wh_api_action waa "
 					+ " left join es_api_theme eat on eat.id = waa.data_id "
 					+ " where exists(select 1 from es_api_theme et where waa.data_id = et.id) and waa.type = 2 and waa.status != -1 and waa.member_id = ? order by waa.create_time desc";
 			return this.daoSupport.queryForPage(sql, (int)page.getCurrentPageNo(), page.getPageSize(), member_id);
