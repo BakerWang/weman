@@ -61,6 +61,7 @@ body {
 			 	<tr><td>商品名字：</td><td><input name="title" style="width:350px;" value="${product.name }" /></td></tr>
 			 	<tr><td>商品标题：</td><td><input name="title2" style="width:350px;" value="${product.brief }" /></td></tr>
 			 	<tr><td>购买地址：</td><td><input name="url" style="width:350px;" value="${product.url }"/></td></tr>
+			 	<tr><td>店铺名字：</td><td><input name="originalName" style="width:350px;" /></td></tr>
 			 	<tr><td>商品价格：</td><td><input name="price" value="${product.price }"/>(纯数字)</td></tr>
 			 	<tr><td>市场价格：</td><td><input name="mkprice" value="${product.mktprice }" /></td></tr>
 			 	<tr><td>商品描述：</td><td><textarea name="details" rows="5" cols="40">${product.intro }</textarea> </td></tr>

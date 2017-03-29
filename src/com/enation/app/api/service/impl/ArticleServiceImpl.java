@@ -36,7 +36,7 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 		dtoMap.put("view_count", 0);
 		dtoMap.put("love_count", 0);
 		dtoMap.put("comment_count", 0);
-		dtoMap.put("status", 1);//未通过审核
+		dtoMap.put("status", -1);//未通过审核
 		String good_type_name = (String) dtoMap.get("good_type_name");
 		String[] good_type_names = good_type_name.split(",");
 		String good_type_id = "";
@@ -170,13 +170,15 @@ public class ArticleServiceImpl extends BaseSupport implements ArticleService{
 			}else if(adminSearchForm.getStatus()==110){//登录的情况   只看关注   (关注人的全部) 
 				sql = sql+" and waa.status != -1 and (waa.member_id ="+adminSearchForm.getUserId()+" or waa.member_id in (select waac.data_id from wh_api_action waac where waac.type = 1 and waac.status != -1 and waac.member_id = "+adminSearchForm.getUserId()+") )";
 			}else if(adminSearchForm.getStatus()==120){//登录的情况   全部    (除陌生人未通过审核的 )  1是通过的  0 是未通过的  -1 删除的 
-				//看到关注的通过和未通过
-				sql = sql+" and ((waa.status != -1 and "
-							 + "(waa.member_id ="+adminSearchForm.getUserId()+" "
-							 		+ "or waa.member_id in (select waac.data_id from wh_api_action waac where waac.type = 1 and waac.status != -1 and waac.member_id = "+adminSearchForm.getUserId()+")"
-			 				 + " ))"
-						+ " or (waa.status = 1 and waa.member_id not in (select waac.data_id from wh_api_action waac where waac.type = 1 and waac.status != -1 and waac.member_id = "+adminSearchForm.getUserId()+") ))";
-				//看到未关注的通过
+				//0310更新
+				sql = sql+" and waa.status = 1 ";
+//				//看到关注的通过和未通过
+//				sql = sql+" and ((waa.status = -1 and "
+//							 + "(waa.member_id ="+adminSearchForm.getUserId()+" "
+//							 		+ "or waa.member_id in (select waac.data_id from wh_api_action waac where waac.type = 1 and waac.status != -1 and waac.member_id = "+adminSearchForm.getUserId()+")"
+//			 				 + " ))"
+//						+ " or (waa.status = 1 and waa.member_id not in (select waac.data_id from wh_api_action waac where waac.type = 1 and waac.status != -1 and waac.member_id = "+adminSearchForm.getUserId()+") ))";
+//				//看到未关注的通过
 			}else if(adminSearchForm.getStatus()!=111){//if(adminSearchForm.getStatus()!=0)
 				sql = sql+" and waa.status = "+adminSearchForm.getStatus();
 			}

@@ -175,7 +175,7 @@ public class StringUtil {
 	public static void main(String[] args){
 
 //		//System.out.println(md5.getMD5("123456".getBytes()) );
-		//System.out.println( md5("123456"));
+		System.out.println( md5("Weman111"));
 	}
 
 	

@@ -60,7 +60,7 @@ a {
 						${theme.title }
 					</div>
 					<div style="width:100%;height:30px;">
-						<div style="width:70%;text-align: left;font-size:14px;float: left;">
+						<div style="width:67%;text-align: left;font-size:14px;float: left;margin-left:3%;">
 							${theme.title2 }
 						</div>
 						<div style="font-size:13px;text-align: center;color:rgb(193,193,193);margin-top:4px;padding-right:3%;width:25%;float: right;">

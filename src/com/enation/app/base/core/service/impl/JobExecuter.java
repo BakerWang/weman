@@ -20,7 +20,6 @@ public class JobExecuter implements IJobExecuter {
 	@Override
 	public void everyHour() {
 		try {
-			System.out.println("testet");
 			sendMessageService.saveAndSendMessage();
 		} catch (Exception e) {
 			e.printStackTrace();

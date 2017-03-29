@@ -167,6 +167,13 @@ function  ajaxFileUpload(i){
 			<td>
 				商品描述位置：<select name="productPosition"><option <s:if test="#request.theme.productPosition=='center'">selected="selected"</s:if> value="center">中</option><option <s:if test="#request.theme.productPosition=='left'">selected="selected"</s:if> value="left">左</option></select>
 			</td></tr>
+			<tr height="38px"><td class="spanFront">主题作者 : </td><td>
+				<select name="theme.author">
+					<option <s:if test="#request.theme.author==1">selected="selected"</s:if> value="1">路姐姐</option>
+					<option <s:if test="#request.theme.author==2">selected="selected"</s:if> value="2">路姐姐2</option>
+					<option <s:if test="#request.theme.author==3">selected="selected"</s:if> value="3">路姐姐3</option>
+				</select>
+			</td></tr>
 			<tr height="38px"><td class="spanFront">主题日期 : </td><td><input class="inputFront" value="${theme.showDate }" name="showDate" /></td><td></td></tr>
 			<tr height="38px"><td class="spanFront">主题描述 : </td><td><input class="inputFront" value="${theme.details }" name="details" /></td>
 		</table>

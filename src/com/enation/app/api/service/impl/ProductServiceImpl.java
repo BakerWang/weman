@@ -372,7 +372,7 @@ public class ProductServiceImpl extends BaseSupport implements ProductService{
 		if(theme == null){
 			throw new Exception("主题id错误!");
 		}
-		String contentSql="select eatc.*,eg.name as productName,eg.original as productImage,eg.brief as productBrief,eg.productOrigin as productOrigin,eatc.status as status,eg.price as productPrice,eg.mktprice as productMkPrice,eg.intro as intro,eg.url as url, ifnull(eg.isShowMKPrice,-1) as isShowMKPrice ";
+		String contentSql="select eatc.*,eg.name as productName,eg.original as productImage,eg.intro as productIntro,eg.brief as productBrief,eg.productOrigin as productOrigin,eatc.status as status,eg.price as productPrice,eg.mktprice as productMkPrice,eg.intro as intro,eg.url as url, ifnull(eg.isShowMKPrice,-1) as isShowMKPrice ";
 		if(memberId!=0){
 			contentSql = contentSql +",(select count(*) from wh_api_action waa where waa.status != -1 and waa.type = 3 and member_id = "+memberId+" and data_id = eg.goods_id) as isCollect";
 		}

@@ -53,23 +53,25 @@ body {
 	<div style="background-color: white; padding: 15px 0 8px 10px; margin: 0px; position: relative; overflow: hidden;">
 		<form id="addForm" enctype="multipart/form-data" method="post" style="width: 40%; float: left;">
 			 <table>
-			 	<tr><td>商品来源：</td><td><select name="productOrigin"><option value="taobao">淘宝</option><option value="tmall">天猫</option><option value="jingdong">京东</option><option value="yamaxun">亚马逊</option><option value="wemantb">weman专场</option> </select> </td></tr>
-			 	<tr><td>上架时间：</td><td><input class="easyui-datebox" name="startTime" style="width: 150px;height: 28px;" value="" id="start_time" data-options="buttons:buttons" /></td></tr>
-			 	<tr><td>下架时间：</td><td><input class="easyui-datebox" name="endTime" style="width: 150px;height: 28px;" value="" id="end_time" data-options="buttons:buttons" /></td></tr>
-			 	<tr><td>商品名字：</td><td><input name="title" style="width:350px;" /></td></tr>
-			 	<tr><td>商品标题：</td><td><input name="title2" style="width:350px;" /></td></tr>
-			 	<tr><td>购买地址：</td><td><input name="url" style="width:350px;"/></td></tr>
-			 	<tr><td>是否有优惠券：</td><td>
+			 	<tr><td>商品来源：</td><td><select name="productOrigin" onchange="orginalProduct(this)"><option value="taobao">淘宝</option><option value="tmall">天猫</option><option value="youzan">有赞</option><option value="jingdong">京东</option><option value="yamaxun">亚马逊</option><option value="wemantb">weman专场</option> </select> </td></tr>
+			 	<tr class="youzan" id="youzanid"><td>有赞的外部编号：</td><td><input name="yzid" style="width:350px;"/></td></tr>
+			 	<tr class="noyouzan"><td>上架时间：</td><td><input class="easyui-datebox" name="startTime" style="width: 150px;height: 28px;" value="" id="start_time" data-options="buttons:buttons" /></td></tr>
+			 	<tr class="noyouzan"><td>下架时间：</td><td><input class="easyui-datebox" name="endTime" style="width: 150px;height: 28px;" value="" id="end_time" data-options="buttons:buttons" /></td></tr>
+			 	<tr class="noyouzan"><td>商品名字：</td><td><input name="title" style="width:350px;" /></td></tr>
+			 	<tr class="noyouzan"><td>商品标题：</td><td><input name="title2" style="width:350px;" /></td></tr>
+			 	<tr class="noyouzan"><td>购买地址：</td><td><input name="url" style="width:350px;"/></td></tr>
+			 	<tr class="noyouzan"><td>店铺名字：</td><td><input name="originalName" style="width:350px;" /></td></tr>
+			 	<tr class="youzan"><td>是否有优惠券：</td><td>
 			 		<select name="hasCoupon">
 			 			<option value="-1">无</option>
 			 			<option value="1">有</option>
 			 		</select>
 			 	</td></tr>
-			 	<tr><td>商品价格：</td><td><input name="price"/>(纯数字)</td></tr>
-			 	<tr><td>市场价格：</td><td><input name="mkprice" /></td></tr>
-			 	<tr><td>商品描述：</td><td><textarea name="details" rows="5" cols="40"></textarea> </td></tr>
-			 	<tr><td>商品图片：</td><td><input type="file" name="productImage"/></td></tr>
-			 	<tr><td>分类和品牌：</td><td>
+			 	<tr class="noyouzan"><td>商品价格：</td><td><input name="price"/>(纯数字)</td></tr>
+			 	<tr class="noyouzan"><td>市场价格：</td><td><input name="mkprice" /></td></tr>
+			 	<tr class="noyouzan"><td>商品描述：</td><td><textarea name="details" rows="5" cols="40"></textarea> </td></tr>
+			 	<tr class="noyouzan"><td>商品图片：</td><td><input type="file" name="productImage"/></td></tr>
+			 	<tr class="youzan"><td>分类和品牌：</td><td>
 			 		<select id="productCategory" onchange="selCategory(this)" name="productCategory">
 			 		</select>
 			 		<select id="productCategory2" onchange="selBrand(this)" name="productCategory2">
@@ -77,7 +79,7 @@ body {
 			 		<select id="productBrand" name="productBrand">
 			 		</select>
 			 	</td></tr>
-			 	<tr><td>APP里是否显示市场价格：</td><td>
+			 	<tr class="noyouzan"><td>APP里是否显示市场价格：</td><td>
 			 		<select name="isShowMKPrice">
 						<option value="1">显示</option>
 						<option value="-1">不显示</option>			 		
@@ -107,6 +109,18 @@ handler: function(target){
 	 $('#end_time').datebox('setValue',"");
 }
 });
+function orginalProduct(tt){
+	var val = $(tt).val();
+	if(val=='youzan'){
+		$('.noyouzan').hide();
+		$('.youzan').show();
+	}else{
+		$('.noyouzan').show();
+		$('.youzan').show();
+		$('#youzanid').hide();
+	}
+}
+
 	$(document).ready(function() {
 		$.ajax({
 			type:'POST',

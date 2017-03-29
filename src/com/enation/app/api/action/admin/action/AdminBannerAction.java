@@ -51,6 +51,23 @@ public class AdminBannerAction extends BaseAction{
 	
 	public void updateBanner(){
 		try {
+			if(bannerFile!=null&&bannerFile.size()>1){
+				File image = bannerFile.get(0);
+				String imageName = bannerFileFileName.get(0);
+				if (FileUtil.isAllowUp(imageName)) {
+					String saveName = uploadImage(image, imageName, "banner");
+					phoneBanner.setImage(saveName);
+					String imagePath = request.getSession().getServletContext().getRealPath("/statics")+"/"+phoneBanner.getImage();
+					FileUtil.delete(imagePath);
+				} else {
+					jsonObject.put("result", "no");
+					jsonObject.put("reason", "上传格式不对！");
+				}
+			}
+			String startTime = request.getParameter("startTime");
+			String endTime = request.getParameter("endTime");
+			phoneBanner.setStart_time(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(startTime).getTime());
+			phoneBanner.setEnd_time(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(endTime).getTime());
 			bannerService.updateBanner(phoneBanner);
 			jsonObject.put("result", "yes");
 		} catch (Exception e) {

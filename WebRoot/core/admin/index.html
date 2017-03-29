@@ -16,7 +16,7 @@
 }
 </style>
 <div class="main">
-	<div class="index_nav" style="text-align: c">欢迎您登录管理后台</div>
+	<div class="index_nav" style="text-align: center;">欢迎您登录管理后台</div>
 	
 	<div style="width:100%;height:40px;margin-top:10px;font-size:15px;">
 		<span style="float:left;height:28px;margin-left:15px;">
@@ -171,12 +171,16 @@ $(function(){
 // 	<#list itemList as item>
 // 		addItem('${item.title}','${ctx}${item.url}',${item.sort});
 // 	</#list>
-	subBut();
+ 	var userId = window.parent.$('#userId').val();
+ 	if(userId!=3&&userId!=4&&userId!=2){
+		subBut();
+ 	}else{
+ 		$('.main').hide();
+ 	}
 	
 });
 
 function subBut(){
-	console.log($('#start_time').val()+'||'+$('#end_time').val());
 	$.ajax({
 		type:'POST',
 		url:'/b2b2cbak/apiAdmin/AdminProductAction_adminIndexDetails.do',

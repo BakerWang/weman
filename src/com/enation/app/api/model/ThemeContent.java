@@ -26,6 +26,7 @@ public class ThemeContent {
 	private String productImage;
 	private String productCategoryImage;//商品分类的图片
 	private String productBrandName;//商品品牌的名字
+	private String productIntro;//商品的详情
 	private int isIndexShow = -1;//主题里面的商品是否显示 -1 否  1 显示
 	private int isShowMKPrice = -1;//主题详情里面是否显示商品的mk价格
 	private String url;//购买地址
@@ -37,6 +38,12 @@ public class ThemeContent {
 	
 	
 	
+	public String getProductIntro() {
+		return productIntro;
+	}
+	public void setProductIntro(String productIntro) {
+		this.productIntro = productIntro;
+	}
 	public int getIsShowMKPrice() {
 		return isShowMKPrice;
 	}

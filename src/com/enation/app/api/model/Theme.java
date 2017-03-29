@@ -14,6 +14,7 @@ public class Theme {
 	private String minorImage;//主题副图
 	private String productPosition;//主题商品描述的位置
 	private String detailsPosition;//主题内容的位置
+	private int author;//主题的作者
 	private String details;
 	private String showDate;
 	private int love_count;
@@ -40,6 +41,12 @@ public class Theme {
 	
 	
 	
+	public int getAuthor() {
+		return author;
+	}
+	public void setAuthor(int author) {
+		this.author = author;
+	}
 	public String getTitle2() {
 		return title2;
 	}

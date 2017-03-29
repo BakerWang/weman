@@ -69,7 +69,7 @@ public class BannerServiceImpl extends BaseSupport implements BannerService{
 		sql = sql+" order by create_time desc";
 		String countSql = "SELECT COUNT(*) from es_api_banner where status =1";
 		int totalCount = this.daoSupport.queryForInt(countSql);
-		return new Page(0, totalCount, page.getPageSize(), this.daoSupport.queryForList(sql, PhoneBanner.class));
+		return new Page(page.getCurrentPageNo()*20, totalCount, page.getPageSize(), this.daoSupport.queryForList(sql, PhoneBanner.class));
 	}
 
 	@Override

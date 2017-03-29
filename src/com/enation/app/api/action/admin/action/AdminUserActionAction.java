@@ -1,6 +1,7 @@
 package com.enation.app.api.action.admin.action;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,10 @@ public class AdminUserActionAction extends BaseAction {
 				maps.put("keywords", keywords);
 			}
 			String newtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()-7*24*60*60*1000);
+			Calendar calendar = Calendar.getInstance();//日历对象  
+	        calendar.setTime(new Date());//设置当前日期  
+	        calendar.add(Calendar.MONTH, -1);//月份减一 
+			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
 			String stime = (request.getParameter("startTime")==null||"".equals(request.getParameter("startTime")))?cnewtime:request.getParameter("startTime");
 			String etime = (request.getParameter("endTime")==null||"".equals(request.getParameter("startTime")))?newtime:request.getParameter("endTime");
 			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
@@ -60,6 +64,7 @@ public class AdminUserActionAction extends BaseAction {
 			}else if(("banner").equals(contentSl)){
 				page = bannerService.getUserActionBannerList(Integer.parseInt(pageNo), 10, maps);
 			}else{
+				contentSl="topic";
 				maps.put("contentStyle", contentSl);
 				page = productService.getThemeProducts(Integer.parseInt(pageNo), 10, maps);
 			}

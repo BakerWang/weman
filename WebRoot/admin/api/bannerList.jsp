@@ -98,7 +98,7 @@ tr:hover td .updateThemeA{
 		<span style="float:left;height:28px;">
 			<a href="javascript:void(0)" class="b_fr" onclick="parent.addTab1('banner添加','/b2b2cbak/apiAdmin/AdminBannerAction_newBanner.do')">新建</a>
 		</span>
-		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminProductAction_getThemeList.do" id="searchForm" method="post">
+		<form id="searchForm" action="/b2b2cbak/apiAdmin/AdminBannerAction_bannerList.do" id="searchForm" method="post">
 			<span style="float: right;height:28px;"> 
 				<input type="hidden" value="1" name="pageNo" id="goodsPage" />
 			</span>
@@ -126,7 +126,8 @@ tr:hover td .updateThemeA{
 						<cc:dateFormat format="yyyy-MM-dd HH:mm" time="${bannerObj.create_time }"/>
 					</td>
 					<td>
-						<a style="text-decoration: none;" class="b_fr" onclick="updateTheme(this,${bannerObj.id})" href="javascript:void(0);">删除</a>
+<%-- 						<a style="text-decoration: none;" class="b_fr" onclick="updateTheme(this,${bannerObj.id})" href="javascript:void(0);">删除</a> --%>
+						<a style="text-decoration: none;" class="b_fr" href="/b2b2cbak/apiAdmin/AdminBannerAction_getBannerDetails.do?bid=${bannerObj.id }">更改</a>
 					</td></tr>
 				</s:iterator>
 			</table>
@@ -140,7 +141,7 @@ tr:hover td .updateThemeA{
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#adminUserManagePagination").pagination('${page.totalCount}', {  
-            'items_per_page'      : 10,  
+            'items_per_page'      : 20,  
             'num_display_entries' : 5, 
             'ellipse_text'        : "...",
             'num_edge_entries'    : 2,  
@@ -150,7 +151,8 @@ tr:hover td .updateThemeA{
             'callback'            : function(page_id,jq){
 //            		var type = "${type}";
            		var page = parseInt(page_id)+1;
-           		$("#searchForm").find("#goodsPage").val(page);
+           		alert(page);
+           		$("#goodsPage").val(page);
            		$("#searchForm").submit();
             } 
         });

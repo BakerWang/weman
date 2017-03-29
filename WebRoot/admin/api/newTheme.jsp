@@ -115,6 +115,13 @@ function  ajaxFileUpload(i){
 			<tr height="38px"><td class="spanFront">主题主标题 : </td><td><input class="inputFront" name="theme.title" /></td>
 			<tr height="38px"><td class="spanFront">主题副标题 : </td><td><input class="inputFront" name="theme.title2" /></td>
 			<td></td></tr>
+			<tr height="38px"><td class="spanFront">主题作者 : </td><td>
+				<select name="theme.author">
+					<option value="1">路姐姐</option>
+					<option value="2">路姐姐2</option>
+					<option value="3">路姐姐3</option>
+				</select>
+			</td></tr>
 			<tr height="38px"><td class="spanFront">主题日期 : </td><td><input class="inputFront" name="theme.showDate" /></td><td></td></tr>
 			<tr height="38px"><td class="spanFront">主题描述 : </td><td><input class="inputFront" name="theme.details" /></td>
 				<td>

@@ -602,6 +602,16 @@ public class ProductAction extends BaseAction{
 			}else{
 				jsonObject.put("isLove", "yes");
 			}
+			if(theme.getAuthor()==1){
+				jsonObject.put("authorName", "路姐姐");
+				jsonObject.put("authorImage", this.getImageUrl("attachment/allDefaultImage/lujiejie.jpg"));
+			}else if(theme.getAuthor()==2){
+				jsonObject.put("authorName", "Victor");
+				jsonObject.put("authorImage", this.getImageUrl("attachment/allDefaultImage/qingjiejie.png"));
+			}else if(theme.getAuthor()==3){
+				jsonObject.put("authorName", "Demon");
+				jsonObject.put("authorImage", this.getImageUrl("attachment/allDefaultImage/daijiejie.png"));
+			}
 			if(theme.getThemeContent()!=null){
 				JSONArray contents = new JSONArray();
 				for(ThemeContent tc:theme.getThemeContent()){
@@ -630,6 +640,7 @@ public class ProductAction extends BaseAction{
 						content.put("contentProuctBrandName", tc.getProductBrandName());
 						content.put("contentProductPrice", String.valueOf(tc.getProductPrice()));
 						content.put("contentProductIntro", tc.getProductName());//简介修改为商品名字
+						content.put("contentProductDetails", tc.getProductIntro());//商品的详情简介
 						content.put("contentProductMKPrice", tc.getProductMkPrice());
 						content.put("contentProductUrl", tc.getUrl());
 						if(tc.getIsShowMKPrice()==-1){

@@ -3,6 +3,7 @@ package com.enation.app.api.action.admin.action;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,16 @@ import com.enation.framework.database.Page;
 import com.enation.framework.util.DateUtil;
 import com.enation.framework.util.FileUtil;
 import com.enation.framework.util.StringUtil;
+import com.youzan.open.sdk.client.auth.Sign;
+import com.youzan.open.sdk.client.core.DefaultKDTClient;
+import com.youzan.open.sdk.client.core.KDTClient;
+import com.youzan.open.sdk.gen.v1_0_0.api.KdtItemsCustomGet;
+import com.youzan.open.sdk.gen.v1_0_0.api.KdtUmpPromotionGet;
+import com.youzan.open.sdk.gen.v1_0_0.model.KdtItemsCustomGetParams;
+import com.youzan.open.sdk.gen.v1_0_0.model.KdtItemsCustomGetResult;
+import com.youzan.open.sdk.gen.v1_0_0.model.KdtItemsCustomGetResult.GoodsDetail;
+import com.youzan.open.sdk.gen.v1_0_0.model.KdtUmpPromotionGetParams;
+import com.youzan.open.sdk.gen.v1_0_0.model.KdtUmpPromotionGetResult;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -87,7 +98,7 @@ public class AdminProductAction extends BaseAction {
 	public String noUserThemeCount(){
 		try {
 			String newtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()-7*24*60*60*1000);
+			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()-365*24*60*60*1000);
 			String stime = request.getParameter("startTime")==null?cnewtime:request.getParameter("startTime");
 			String etime = request.getParameter("endTime")==null?newtime:request.getParameter("endTime");
 			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
@@ -123,6 +134,16 @@ public class AdminProductAction extends BaseAction {
 		return "userThemeCountSuccess";
 	}
 	
+	public static void main(String[] args) {
+		Calendar calendar = Calendar.getInstance();//日历对象  
+        calendar.setTime(new Date());//设置当前日期  
+        calendar.add(Calendar.MONTH, -12);//月份减一 
+		String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+		calendar.setTime(new Date());//设置当前日期  
+		calendar.add(Calendar.MONTH, -11);//月份减一 
+		String cnewtime2 = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+		System.out.println(cnewtime+"||"+cnewtime2);
+	}
 	
 	/**
 	 * 登录用户点击主题的详情
@@ -131,10 +152,16 @@ public class AdminProductAction extends BaseAction {
 	public String userThemeCount(){
 		try {
 			String newtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()-7*24*60*60*1000);
+			Calendar calendar = Calendar.getInstance();//日历对象  
+	        calendar.setTime(new Date());//设置当前日期  
+	        calendar.add(Calendar.MONTH, -12);//月份减一 
+			String cnewtime = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+			calendar.setTime(new Date());//设置当前日期  
+			calendar.add(Calendar.MONTH, -24);//月份减一
+			String cnewtime2 = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
 			String stime = request.getParameter("startTime")==null?cnewtime:request.getParameter("startTime");
 			String etime = request.getParameter("endTime")==null?newtime:request.getParameter("endTime");
-			String usertartTime = request.getParameter("userStartTime")==null?cnewtime:request.getParameter("userStartTime");
+			String usertartTime = request.getParameter("userStartTime")==null?cnewtime2:request.getParameter("userStartTime");
 			String userndTime = request.getParameter("userEndTime")==null?newtime:request.getParameter("userEndTime");
 			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(stime).getTime();
 			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(etime).getTime();
@@ -165,9 +192,9 @@ public class AdminProductAction extends BaseAction {
 			request.setAttribute("contentType", contentSl);
 			request.setAttribute("resPage", respage);
 			request.setAttribute("startTime", stime);
-			request.setAttribute("endTime", etime);
+			request.setAttribute("endTime", new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()+24*60*60*1000));
 			request.setAttribute("userStartTime", usertartTime);
-			request.setAttribute("userEndTime", userndTime);
+			request.setAttribute("userEndTime", new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()+24*60*60*1000));
 			request.setAttribute("dataId", dataId);
 			request.setAttribute("type", "user");
 		} catch (Exception e) {
@@ -191,38 +218,81 @@ public class AdminProductAction extends BaseAction {
 	 */
 	public void saveProduct(){
 		try {
-			String title = request.getParameter("title");
-			String title2 = request.getParameter("title2");
-			String url = request.getParameter("url");
-			String details = request.getParameter("details");
-			String price = request.getParameter("price");
-			String mkprice=  request.getParameter("mkprice");
+			
 			String productOrigin = request.getParameter("productOrigin");
-			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("startTime")).getTime();
-			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("endTime")).getTime();
-			int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
-			int productBrand = Integer.parseInt(request.getParameter("productBrand"));
-			int isShowMKPrice = Integer.parseInt(request.getParameter("isShowMKPrice"));
-			int hasCoupon = Integer.parseInt(request.getParameter("hasCoupon"));
-			if(productImage!=null&&productImageFileName!=null&&!"".equals(productImageFileName)){
-				if (FileUtil.isAllowUp(productImageFileName)) {
-					String saveName = uploadImage(productImage,productImageFileName, "productImage");
-					Map<String,Object> map = new HashMap<String,Object>();
-					map.put("startTime", startTime);
-					map.put("endTime", endTime);
-					map.put("name", title);
-					map.put("brief", title2);
-					map.put("url", url);
-					map.put("intro", details);
-					map.put("cat_id", productCategory2);
-					map.put("brand_id", productBrand);
-					map.put("isShowMKPrice", isShowMKPrice);
-					map.put("original", saveName);
-					map.put("price", price);
-					map.put("mktprice", mkprice);
-					map.put("productOrigin", productOrigin);
-					map.put("hasCoupon", hasCoupon);
-					productService.addProduct(map);
+			if("youzan".equals(productOrigin)){
+				String yzid = request.getParameter("yzid");
+				KdtItemsCustomGetParams kdtItemsCustomGetParams = new KdtItemsCustomGetParams();
+				kdtItemsCustomGetParams.setOuterId(yzid);
+				KdtItemsCustomGet kdtItemsCustomGet = new KdtItemsCustomGet();
+				kdtItemsCustomGet.setAPIParams(kdtItemsCustomGetParams);
+				KDTClient client = new DefaultKDTClient(new Sign("33061573210ca6f119", "b5c2ee1e666a00b3b2d9ff69fc23fc80"));
+				KdtItemsCustomGetResult result = client.invoke(kdtItemsCustomGet);
+				
+				KdtUmpPromotionGetParams kdtUmpPromotionGetParams = new KdtUmpPromotionGetParams();
+				kdtUmpPromotionGetParams.setItemId(result.getItems()[0].getNumIid());
+				KdtUmpPromotionGet kdtUmpPromotionGet = new KdtUmpPromotionGet();
+				kdtUmpPromotionGet.setAPIParams(kdtUmpPromotionGetParams);
+				KdtUmpPromotionGetResult result2 = client.invoke(kdtUmpPromotionGet);
+				Map<String,Object> map = new HashMap<String,Object>();
+				if(result2.getItemPromotion()!=null){
+					map.put("startTime", result2.getItemPromotion().getStartDate().getTime());
+					map.put("endTime", result2.getItemPromotion().getEndDate().getTime());
+				}
+				GoodsDetail gd = result.getItems()[0];
+				int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
+				int productBrand = Integer.parseInt(request.getParameter("productBrand"));
+				int hasCoupon = Integer.parseInt(request.getParameter("hasCoupon"));
+				map.put("name", gd.getTitle());
+				map.put("brief", gd.getTitle());
+				map.put("intro", gd.getDesc());
+				map.put("url", gd.getShareUrl());
+				map.put("cat_id", productCategory2);
+				map.put("brand_id", productBrand);
+				map.put("isShowMKPrice", 1);
+				map.put("original", gd.getPicThumbUrl());
+				map.put("price", gd.getPrice());
+				map.put("mktprice", gd.getOriginPrice());
+				map.put("productOrigin", productOrigin);
+				map.put("hasCoupon", hasCoupon);
+				map.put("originalName", "Weman我们-有赞商城");
+				productService.addProduct(map);
+				client.close();
+			}else{
+				String title = request.getParameter("title");
+				String title2 = request.getParameter("title2");
+				String url = request.getParameter("url");
+				String details = request.getParameter("details");
+				String price = request.getParameter("price");
+				String mkprice=  request.getParameter("mkprice");
+				String originalName = request.getParameter("originalName");
+				Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("startTime")).getTime();
+				Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("endTime")).getTime();
+				int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
+				int productBrand = Integer.parseInt(request.getParameter("productBrand"));
+				int isShowMKPrice = Integer.parseInt(request.getParameter("isShowMKPrice"));
+				int hasCoupon = Integer.parseInt(request.getParameter("hasCoupon"));
+				if(productImage!=null&&productImageFileName!=null&&!"".equals(productImageFileName)){
+					if (FileUtil.isAllowUp(productImageFileName)) {
+						String saveName = uploadImage(productImage,productImageFileName, "productImage");
+						Map<String,Object> map = new HashMap<String,Object>();
+						map.put("startTime", startTime);
+						map.put("endTime", endTime);
+						map.put("name", title);
+						map.put("brief", title2);
+						map.put("url", url);
+						map.put("intro", details);
+						map.put("cat_id", productCategory2);
+						map.put("brand_id", productBrand);
+						map.put("isShowMKPrice", isShowMKPrice);
+						map.put("original", saveName);
+						map.put("price", price);
+						map.put("mktprice", mkprice);
+						map.put("productOrigin", productOrigin);
+						map.put("hasCoupon", hasCoupon);
+						map.put("originalName", originalName);
+						productService.addProduct(map);
+					}
 				}
 			}
 			
@@ -258,6 +328,7 @@ public class AdminProductAction extends BaseAction {
 			String price = request.getParameter("price");
 			String mkprice=  request.getParameter("mkprice");
 			String productOrigin = request.getParameter("productOrigin");
+			String originalName = request.getParameter("originalName");
 			Long startTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("startTime")).getTime();
 			Long endTime = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("endTime")).getTime();
 //			int productCategory2 = Integer.parseInt(request.getParameter("productCategory2"));
@@ -271,6 +342,7 @@ public class AdminProductAction extends BaseAction {
 					map.put("original", saveName);
 				}
 			}
+			map.put("originalName", originalName);
 			map.put("startTime", startTime);
 			map.put("endTime", endTime);
 			map.put("name", title);

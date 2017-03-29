@@ -95,14 +95,16 @@
 					<th data-options="field:'uname',width:200">用户名</th>
 					<th data-options="field:'mobile',width:200">手机</th>
 <!-- 					<th data-options="field:'lv_name',sortable:'true',width:200">会员等级</th> -->
+					<th data-options="field:'face',width:200,align:'center'"
+						formatter="formatImage">头像</th>
 					<th data-options="field:'birthday',width:200" formatter="formatBirthday">年龄</th>
 					<th data-options="field:'regtime',width:200,sortable:'true'"
 						formatter="formatRegtime">注册时间</th>
 					<th data-options="field:'lastlogin',width:200,sortable:'true'"
 						formatter="formatLastlogin">上次登录日期</th>
-					<th data-options="field:'logincount',width:200,sortable:'true'">启动app次数</th>
-					<th data-options="field:'viewthemecount',width:200,sortable:'true'">浏览主题数</th>
-					<th data-options="field:'viewarticlecount',width:200,sortable:'true'">浏览社交数</th>
+					<th data-options="field:'logincount',width:100,sortable:'true'">启动app次数</th>
+					<th data-options="field:'viewthemecount',width:100,sortable:'true'">浏览主题数</th>
+					<th data-options="field:'viewarticlecount',width:100,sortable:'true'">浏览社交数</th>
 <!-- 					<th data-options="field:'area',width:200" formatter="formatArea">城市</th> -->
 <!-- 					<th data-options="field:'sex',width:200,sortable:'true'" formatter="formatSex">性别</th> -->
 					<!-- <th data-options="field:'login',width:100,align:'center'"
@@ -198,6 +200,11 @@
 		$(map["formId"]).form('clear');
 	}
 
+	function formatImage(vaule,row,index){
+		var val = "<img src='/b2b2cbak/statics/"+row.face+"' width='50px' height='50px' />";
+		return val;
+	}
+	
 	function formatOperation(value, row, index) {
 		var val = "<a class='edit' title='修改' href='javascript:void(0);' onclick='newTab(\""
 				+ row.uname

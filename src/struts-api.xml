@@ -64,6 +64,7 @@
 		<action name="AdminBannerAction_*" class="com.enation.app.api.action.admin.action.AdminBannerAction" method="{1}">
 			<result name="bannerListSuccess">/admin/api/bannerList.jsp</result>
 			<result name="newBannerSuccess">/admin/api/newBanner.jsp</result>
+			<result name="getBannerSucccess">/admin/api/updateBanner.jsp</result>
 		</action>
 		<action name="AdminArticleAction_*" class="com.enation.app.api.action.admin.action.AdminArticleAction" method="{1}">
 			<result name="articleListSuccess">/admin/api/articleList.jsp</result>
